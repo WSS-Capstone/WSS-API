@@ -4,6 +4,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{467BC193-3DF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSS.API", "src\WSS.API\WSS.API.csproj", "{24810029-96B4-4731-AD1E-62CD9F2B0861}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L.Core", "..\L-Core\src\L.Core\L.Core.csproj", "{F9F26AEC-5ABF-4C41-95C1-E48361AA7B84}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{61E39AA3-8F89-4B0D-B3C3-209E4C339A83}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -11,11 +18,16 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{24810029-96B4-4731-AD1E-62CD9F2B0861} = {467BC193-3DFA-4D65-9CD3-758D5013CBA8}
+		{F9F26AEC-5ABF-4C41-95C1-E48361AA7B84} = {467BC193-3DFA-4D65-9CD3-758D5013CBA8}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{24810029-96B4-4731-AD1E-62CD9F2B0861}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{24810029-96B4-4731-AD1E-62CD9F2B0861}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24810029-96B4-4731-AD1E-62CD9F2B0861}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24810029-96B4-4731-AD1E-62CD9F2B0861}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9F26AEC-5ABF-4C41-95C1-E48361AA7B84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9F26AEC-5ABF-4C41-95C1-E48361AA7B84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9F26AEC-5ABF-4C41-95C1-E48361AA7B84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9F26AEC-5ABF-4C41-95C1-E48361AA7B84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

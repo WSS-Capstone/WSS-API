@@ -11,18 +11,33 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 7.0.x
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
         run: dotnet build --no-restore
       - name: Test
         run: dotnet test --no-build --verbosity normal
+        
+      - name: Publish
+        run: dotnet publish -c Release -o website/publish
+      # publish to IIS server using MSDeploy publish profile
+      - name: Publish to IIS
+        uses: ChristopheLav/iis-deploy@v1
+        with:
+          website-name: 'WSS-API'
+          msdeploy-service-url: ${{ secrets.MSDEPLOY_URL }}
+          msdeploy-username: ${{ secrets.MSDEPLOY_USERNAME }}
+          msdeploy-password: ${{ secrets.MSDEPLOY_PASSWORD }}
+          source-path: ${{ github.workspace }}\website\publish
+      
+       
+      
+        
+    

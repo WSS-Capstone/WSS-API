@@ -1,4 +1,11 @@
+using System.Reflection;
+using MediatR;
+using L.Core.Config;
+using L.Core.Data;
+using L.Core.Logging;
+using WSS.API.Data.Repositories;
 using WSS.API.Infrastructure.Config;
+using WSS.API.Infrastructure.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://*;https://*");
@@ -7,8 +14,14 @@ builder.WebHost.UseUrls("http://*;https://*");
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddMediatR(cfg=>cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+builder.Services.RegisterSwaggerModule();
+builder.Services.RegisterFireAuth();
+builder.Services.RegisterCoreData();
+builder.Services.RegisterDataRepositories();
+builder.Services.RegisterLogging();
+builder.Services.AddFireBaseAsync();
 var app = builder.Build();
 
 app
@@ -18,13 +31,14 @@ app
         .AllowAnyHeader())
     .UseDeveloperExceptionPage()
     .UseApplicationSwagger()
-    .UseHttpsRedirection()
-    ;
+    .UseHttpsRedirection();
+app.UseMiddleware<UserFireMiddleware>();
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseApplicationSecurity();
 
-app.MapControllers();
+app.MapControllers().RequireAuthorization();
 
 app.Run();
+
