@@ -1,4 +1,4 @@
-namespace WSS_API;
+namespace WSS.API;
 
 public class WeatherForecast
 {

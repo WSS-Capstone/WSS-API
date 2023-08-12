@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace WSS_API.Controllers;
+namespace WSS.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
