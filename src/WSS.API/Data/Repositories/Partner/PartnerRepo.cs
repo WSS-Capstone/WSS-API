@@ -1,40 +1,37 @@
-using System.Linq.Expressions;
-using L.Core.Data.EFCore.DbContextFactory;
-using L.Core.Data.EFCore.Repository;
-using WSS.API.Data.Models;
-
 namespace WSS.API.Data.Repositories.Partner;
 
 public class PartnerRepo : IPartnerRepo
 {
-      private readonly IGenericRepository<Models.Partner> _repo;
-    private readonly IDbContextFactory _dbContextFactory;
+     private readonly IDbContextFactory _dbContextFactory;
+    private readonly IGenericRepository<Models.Partner> _repo;
 
     /// <summary>
-    /// Init
+    ///     Init
     /// </summary>
     /// <param name="dbContextFactory"></param>
     /// <exception cref="InvalidOperationException"></exception>
     public PartnerRepo(IDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-        _repo = _dbContextFactory.UnitOfWork<WssContext, Models.Partner>().Repository ?? throw new InvalidOperationException();
+        _repo = _dbContextFactory.UnitOfWork<WssContext, Models.Partner>().Repository ??
+                throw new InvalidOperationException();
     }
 
     /// <inheritdoc />
-    public IQueryable<Models.Partner> GetPartners(Expression<Func<Models.Partner, object>>[]? includeProperties = null)
+    public IQueryable<Models.Partner> GetPartners(Expression<Func<Models.Partner, bool>>? predicate = null,
+        Expression<Func<Models.Partner, object>>[]? includeProperties = null)
     {
-        return this._repo.GetAll(includeProperties);
+        return _repo.Get(predicate, includeProperties);
     }
 
     /// <inheritdoc />
     public async Task<Models.Partner> CreatePartner(Models.Partner user, bool tempSave = false)
     {
-        await this._repo.InsertAsync(user);
+        await _repo.InsertAsync(user);
 
         _ = tempSave
-            ? await this._dbContextFactory.UnitOfWork<WssContext, Models.Partner>().SaveTempChangesAsync()
-            : await this._dbContextFactory.SaveAllAsync();
+            ? await _dbContextFactory.UnitOfWork<WssContext, Models.Partner>().SaveTempChangesAsync()
+            : await _dbContextFactory.SaveAllAsync();
 
         return user;
     }
@@ -42,11 +39,11 @@ public class PartnerRepo : IPartnerRepo
     /// <inheritdoc />
     public async Task<Models.Partner> UpdatePartner(Models.Partner user, bool tempSave = false)
     {
-        await this._repo.UpdateAsync(user);
+        await _repo.UpdateAsync(user);
 
         _ = tempSave
-            ? await this._dbContextFactory.UnitOfWork<WssContext, Models.Partner>().SaveTempChangesAsync()
-            : await this._dbContextFactory.SaveAllAsync();
+            ? await _dbContextFactory.UnitOfWork<WssContext, Models.Partner>().SaveTempChangesAsync()
+            : await _dbContextFactory.SaveAllAsync();
 
         return user;
     }
@@ -54,19 +51,20 @@ public class PartnerRepo : IPartnerRepo
     /// <inheritdoc />
     public async Task<Models.Partner> DeletePartner(Models.Partner user, bool tempSave = false)
     {
-        await this._repo.DeleteAsync(user);
-        
+        await _repo.DeleteAsync(user);
+
         _ = tempSave
-            ? await this._dbContextFactory.UnitOfWork<WssContext, Models.Partner>().SaveTempChangesAsync()
-            : await this._dbContextFactory.SaveAllAsync();
+            ? await _dbContextFactory.UnitOfWork<WssContext, Models.Partner>().SaveTempChangesAsync()
+            : await _dbContextFactory.SaveAllAsync();
 
         return user;
     }
 
     /// <inheritdoc />
-    public async Task<Models.Partner?> GetPartnerById(Guid id, Expression<Func<Models.Partner, object>>[]? includeProperties = null)
+    public async Task<Models.Partner?> GetPartnerById(Guid id,
+        Expression<Func<Models.Partner, object>>[]? includeProperties = null)
     {
-        Models.Partner? user = await this._repo.GetByIdAsync(id, includeProperties);
+        var user = await _repo.GetByIdAsync(id, includeProperties);
         return user;
     }
 }

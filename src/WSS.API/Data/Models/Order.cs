@@ -33,9 +33,17 @@ public partial class Order
 
     public int? Status { get; set; }
 
+    public virtual Combo? Combo { get; set; }
+
     public virtual Customer? Customer { get; set; }
 
+    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+
     public virtual Owner? Owner { get; set; }
+
+    public virtual ICollection<PartnerPaymentHistory> PartnerPaymentHistories { get; set; } = new List<PartnerPaymentHistory>();
+
+    public virtual ICollection<PaymentHistory> PaymentHistories { get; set; } = new List<PaymentHistory>();
 
     public virtual WeddingInformation? WeddingInformation { get; set; }
 }

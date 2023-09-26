@@ -1,10 +1,8 @@
-
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Google.Apis.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-
 
 namespace WSS.API.Infrastructure.Config;
 
@@ -21,7 +19,11 @@ public static class FirebaseAuthConfig
                 var content = File.ReadAllText(jsonFirebasePath);
 
                 var firebaseOptions = JsonSerializer.Deserialize<FirebaseOptions>(content);
-                firebaseOptions.Authority = $"https://securetoken.google.com/{firebaseOptions.ProjectId}";
+                if (firebaseOptions is not null)
+                {
+                    firebaseOptions.Authority = $"https://securetoken.google.com/{firebaseOptions.ProjectId}";
+                }
+
                 opt.IncludeErrorDetails = true;
                 opt.Authority = firebaseOptions?.Authority.ThrowIfNull(nameof(firebaseOptions.Authority));
                 opt.TokenValidationParameters = new TokenValidationParameters
@@ -38,8 +40,7 @@ public static class FirebaseAuthConfig
 
 public class FirebaseOptions
 {
-    [JsonPropertyName("project_id")]
-    public string ProjectId { get; set; }
-    [JsonPropertyName("auth_uri")]
-    public string Authority { get; set; }
+    [JsonPropertyName("project_id")] public string ProjectId { get; set; }
+
+    [JsonPropertyName("auth_uri")] public string Authority { get; set; }
 }

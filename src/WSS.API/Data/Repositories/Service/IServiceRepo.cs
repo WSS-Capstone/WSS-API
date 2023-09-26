@@ -1,10 +1,10 @@
-using System.Linq.Expressions;
-
 namespace WSS.API.Data.Repositories.Service;
 
 public interface IServiceRepo
 {
-    IQueryable<Data.Models.Service> GetServices(Expression<Func<Models.Service, object>>[]? includeProperties = null);
+    IQueryable<Models.Service> GetServices(Expression<Func<Models.Service, bool>>? predicate = null,
+        Expression<Func<Models.Service, object>>[]? includeProperties = null);
+
     Task<Models.Service?> GetServiceById(Guid id, Expression<Func<Models.Service, object>>[]? includeProperties = null);
     Task<Models.Service> CreateService(Models.Service user, bool tempSave = false);
     Task<Models.Service> UpdateService(Models.Service user, bool tempSave = false);

@@ -16,4 +16,8 @@ public partial class Combo
     public string? Description { get; set; }
 
     public int? Status { get; set; }
+
+    public virtual ICollection<ComboService> ComboServices { get; set; } = new List<ComboService>();
+
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

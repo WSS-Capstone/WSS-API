@@ -22,4 +22,6 @@ public partial class Voucher
     public DateTime? StartTime { get; set; }
 
     public Guid? CreateBy { get; set; }
+
+    public virtual Owner? CreateByNavigation { get; set; }
 }

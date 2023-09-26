@@ -26,4 +26,12 @@ public partial class OrderDetail
     public string? Description { get; set; }
 
     public int? Status { get; set; }
+
+    public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
+
+    public virtual Order? Order { get; set; }
+
+    public virtual Service? Service { get; set; }
+
+    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
 }

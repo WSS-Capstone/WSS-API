@@ -1,15 +1,16 @@
 using FirebaseAdmin;
+using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
 
 namespace WSS.API.Infrastructure.Config;
 
 /// <summary>
-/// FirebaseConfig class.
+///     FirebaseConfig class.
 /// </summary>
 public static class FirebaseConfig
 {
     /// <summary>
-    /// Add Firebase to the project.
+    ///     Add Firebase to the project.
     /// </summary>
     public static void AddFireBaseAsync(this IServiceCollection serviceCollection)
     {
@@ -22,11 +23,14 @@ public static class FirebaseConfig
         {
             Credential = GoogleCredential.FromFile(jsonFirebasePath)
         });
+
+        var fbAuth = FirebaseAuth.GetAuth(defaultApp);
         // logger service
         var logger = serviceCollection.BuildServiceProvider().GetService<ILogger<FirebaseApp>>();
         logger!.Log(LogLevel.Information, "Firebase Initialized");
-        
+
         // Add Firebase to the project
         serviceCollection.AddSingleton(defaultApp);
+        serviceCollection.AddSingleton(fbAuth);
     }
 }

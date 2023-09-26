@@ -19,6 +19,10 @@ public partial class Customer
 
     public int? Gender { get; set; }
 
+    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+
+    public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
+
     public virtual Account IdNavigation { get; set; } = null!;
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();

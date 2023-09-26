@@ -9,13 +9,11 @@ public partial class Account
 
     public string? Username { get; set; }
 
-    public string? Password { get; set; }
-
     public int? Status { get; set; }
 
     public string? RefId { get; set; }
 
-    public Guid? RoleName { get; set; }
+    public string? RoleName { get; set; }
 
     public virtual Customer? Customer { get; set; }
 

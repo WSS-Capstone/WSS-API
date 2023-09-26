@@ -16,4 +16,6 @@ public partial class PaymentHistory
     public double? TotalAmount { get; set; }
 
     public DateTime? CreateDate { get; set; }
+
+    public virtual Order? Order { get; set; }
 }

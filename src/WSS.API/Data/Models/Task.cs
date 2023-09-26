@@ -29,6 +29,8 @@ public partial class Task
 
     public virtual Owner? CreateByNavigation { get; set; }
 
+    public virtual OrderDetail? OrderDetail { get; set; }
+
     public virtual Partner? Partner { get; set; }
 
     public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();

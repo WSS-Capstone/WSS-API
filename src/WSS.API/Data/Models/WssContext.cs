@@ -74,9 +74,6 @@ public partial class WssContext : DbContext
             entity.ToTable("Account");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.Password)
-                .HasMaxLength(255)
-                .IsUnicode(false);
             entity.Property(e => e.RefId).IsUnicode(false);
             entity.Property(e => e.Username)
                 .HasMaxLength(255)
@@ -92,6 +89,10 @@ public partial class WssContext : DbContext
             entity.HasOne(d => d.Service).WithMany(p => p.Carts)
                 .HasForeignKey(d => d.ServiceId)
                 .HasConstraintName("FK_Cart_Service");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Carts)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_Cart_Customer");
         });
 
         modelBuilder.Entity<Category>(entity =>
@@ -117,6 +118,14 @@ public partial class WssContext : DbContext
         modelBuilder.Entity<ComboService>(entity =>
         {
             entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.Combo).WithMany(p => p.ComboServices)
+                .HasForeignKey(d => d.ComboId)
+                .HasConstraintName("FK_ComboServices_Combo");
+
+            entity.HasOne(d => d.Service).WithMany(p => p.ComboServices)
+                .HasForeignKey(d => d.ServiceId)
+                .HasConstraintName("FK_ComboServices_Service");
         });
 
         modelBuilder.Entity<Commission>(entity =>
@@ -166,6 +175,14 @@ public partial class WssContext : DbContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.OrderDetail).WithMany(p => p.Feedbacks)
+                .HasForeignKey(d => d.OrderDetailId)
+                .HasConstraintName("FK_Feedback_OrderDetail");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Feedbacks)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_Feedback_Customer");
         });
 
         modelBuilder.Entity<Message>(entity =>
@@ -186,6 +203,10 @@ public partial class WssContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false);
 
+            entity.HasOne(d => d.Combo).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.ComboId)
+                .HasConstraintName("FK_Order_Combo");
+
             entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.CustomerId)
                 .HasConstraintName("FK_Order_Customer");
@@ -205,6 +226,14 @@ public partial class WssContext : DbContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.StartTime).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails)
+                .HasForeignKey(d => d.OrderId)
+                .HasConstraintName("FK_OrderDetail_Order");
+
+            entity.HasOne(d => d.Service).WithMany(p => p.OrderDetails)
+                .HasForeignKey(d => d.ServiceId)
+                .HasConstraintName("FK_OrderDetail_Service");
         });
 
         modelBuilder.Entity<Owner>(entity =>
@@ -249,6 +278,10 @@ public partial class WssContext : DbContext
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
+            entity.HasOne(d => d.Order).WithMany(p => p.PartnerPaymentHistories)
+                .HasForeignKey(d => d.OrderId)
+                .HasConstraintName("FK_PartnerPaymentHistory_Order");
+
             entity.HasOne(d => d.Partner).WithMany(p => p.PartnerPaymentHistories)
                 .HasForeignKey(d => d.PartnerId)
                 .HasConstraintName("FK_PartnerPaymentHistory_Partner");
@@ -277,6 +310,10 @@ public partial class WssContext : DbContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.PaymentHistories)
+                .HasForeignKey(d => d.OrderId)
+                .HasConstraintName("FK_PaymentHistory_Order");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -306,7 +343,7 @@ public partial class WssContext : DbContext
 
         modelBuilder.Entity<ServiceImage>(entity =>
         {
-            entity.ToTable("ServiceImageRepo");
+            entity.ToTable("ServiceImage");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
 
@@ -357,6 +394,10 @@ public partial class WssContext : DbContext
                 .HasForeignKey(d => d.CreateBy)
                 .HasConstraintName("FK_Task_Owner");
 
+            entity.HasOne(d => d.OrderDetail).WithMany(p => p.Tasks)
+                .HasForeignKey(d => d.OrderDetailId)
+                .HasConstraintName("FK_Task_OrderDetail");
+
             entity.HasOne(d => d.Partner).WithOne(p => p.Task)
                 .HasForeignKey<Task>(d => d.PartnerId)
                 .HasConstraintName("FK_Task_Partner");
@@ -371,6 +412,10 @@ public partial class WssContext : DbContext
             entity.Property(e => e.EndTime).HasColumnType("datetime");
             entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.StartTime).HasColumnType("datetime");
+
+            entity.HasOne(d => d.CreateByNavigation).WithMany(p => p.Vouchers)
+                .HasForeignKey(d => d.CreateBy)
+                .HasConstraintName("FK_Voucher_Owner");
         });
 
         modelBuilder.Entity<WeddingInformation>(entity =>

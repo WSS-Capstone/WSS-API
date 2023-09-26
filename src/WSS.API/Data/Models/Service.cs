@@ -29,7 +29,11 @@ public partial class Service
 
     public virtual Category? Category { get; set; }
 
+    public virtual ICollection<ComboService> ComboServices { get; set; } = new List<ComboService>();
+
     public virtual ICollection<CurrentPrice> CurrentPrices { get; set; } = new List<CurrentPrice>();
+
+    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
     public virtual Owner? Owner { get; set; }
 

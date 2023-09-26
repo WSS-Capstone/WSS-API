@@ -19,5 +19,7 @@ public partial class PartnerPaymentHistory
 
     public DateTime? CreateDate { get; set; }
 
+    public virtual Order? Order { get; set; }
+
     public virtual Partner? Partner { get; set; }
 }

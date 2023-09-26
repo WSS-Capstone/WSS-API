@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace WSS.API.Data.Models;
 
-namespace WSS.API.Data.Models;
-
-public partial class User
+public class User
 {
     public Guid Id { get; set; }
 

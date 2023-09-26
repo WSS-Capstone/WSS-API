@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WSS.API.Data.Repositories.Account;
+using WSS.API.Infrastructure.Config;
 
 namespace WSS.API.Controllers;
 
@@ -8,13 +9,14 @@ namespace WSS.API.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
+    private static readonly string[] Summaries =
     {
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
-    private readonly ILogger<WeatherForecastController> _logger;
     private readonly IAccountRepo _accountRepo;
+
+    private readonly ILogger<WeatherForecastController> _logger;
 
     public WeatherForecastController(ILogger<WeatherForecastController> logger, IAccountRepo accountRepo)
     {
@@ -25,8 +27,15 @@ public class WeatherForecastController : ControllerBase
     [HttpGet(Name = "GetWeatherForecast")]
     public async Task<IActionResult> Get()
     {
-        var x = await  this._accountRepo.GetAccounts().ToListAsync();
-
+        var x = await _accountRepo.GetAccounts().ToListAsync();
+        // var x = await _accountRepo.CreateAccount(new Account()
+        // {
+        //     Username = "asda",
+        //     RoleName = RoleName.ADMIN,
+        //     Id = Guid.NewGuid(),
+        //     RefId = "asd",
+        //     Status = 1,
+        // });
         return Ok(x);
     }
 }

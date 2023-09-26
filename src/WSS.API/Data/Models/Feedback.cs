@@ -18,4 +18,8 @@ public partial class Feedback
     public Guid? UserId { get; set; }
 
     public int? Status { get; set; }
+
+    public virtual OrderDetail? OrderDetail { get; set; }
+
+    public virtual Customer? User { get; set; }
 }

@@ -1,64 +1,47 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="12.0.1" />
-        <PackageReference Include="FirebaseAdmin" Version="2.4.0" />
-        <PackageReference Include="MediatR" Version="12.1.1" />
-        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.ApiExplorer" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.10" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.10">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="AutoMapper" Version="12.0.1"/>
+        <PackageReference Include="FirebaseAdmin" Version="2.4.0"/>
+        <PackageReference Include="MediatR" Version="12.1.1"/>
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.22" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.ApiExplorer" Version="2.2.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
-        <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Application\DataMapping\" />
-      <Folder Include="Application\Queries\" />
-      <Folder Include="Data\Models\" />
-      <Folder Include="Data\Repositories\Cart\" />
-      <Folder Include="Data\Repositories\Category\" />
-      <Folder Include="Data\Repositories\ComboServices\" />
-      <Folder Include="Data\Repositories\Combo\" />
-      <Folder Include="Data\Repositories\Commission\" />
-      <Folder Include="Data\Repositories\Feedback\" />
-      <Folder Include="Data\Repositories\OrderDetail\" />
-      <Folder Include="Data\Repositories\Order\" />
-      <Folder Include="Data\Repositories\PartnerService\" />
-      <Folder Include="Data\Repositories\PaymentHistory\" />
-      <Folder Include="Data\Repositories\WeddingInfomation\" />
-      <Folder Include="Infrastructure\Authorization\" />
-      <Folder Include="Infrastructure\Services\" />
-      <Folder Include="Infrastructure\Utilities\" />
+        <Folder Include="Application\DataMapping\"/>
+        <Folder Include="Data\Models\"/>
+        <Folder Include="Infrastructure\Authorization\"/>
+        <Folder Include="Infrastructure\Services\"/>
+        <Folder Include="Infrastructure\Utilities\"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Properties\PublishProfiles\WSS-API.pubxml" />
+        <None Remove="Properties\PublishProfiles\WSS-API.pubxml"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\L-Core\src\L.Core\L.Core.csproj" />
+        <ProjectReference Include="..\..\..\L-Core\src\L.Core\L.Core.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Content Update="firebase.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+        <Content Update="firebase.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 </Project>

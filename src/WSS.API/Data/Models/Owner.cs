@@ -26,4 +26,6 @@ public partial class Owner
     public virtual ICollection<Service> Services { get; set; } = new List<Service>();
 
     public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+
+    public virtual ICollection<Voucher> Vouchers { get; set; } = new List<Voucher>();
 }

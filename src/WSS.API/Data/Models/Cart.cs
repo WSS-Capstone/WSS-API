@@ -12,4 +12,6 @@ public partial class Cart
     public Guid? ServiceId { get; set; }
 
     public virtual Service? Service { get; set; }
+
+    public virtual Customer? User { get; set; }
 }
