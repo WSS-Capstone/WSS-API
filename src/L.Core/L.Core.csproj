@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Cache\" />
+      <Folder Include="Constants\" />
+      <Folder Include="Data\EFCore\Models\" />
+      <Folder Include="Exceptions\" />
+      <Folder Include="Extensions\Paging\" />
+      <Folder Include="Helpers\" />
+      <Folder Include="Resource\" />
+      <Folder Include="Tests\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.22" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.22" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.22">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.22" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+      <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
+    </ItemGroup>
+
+</Project>
