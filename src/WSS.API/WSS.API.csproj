@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="12.0.1"/>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
         <PackageReference Include="FirebaseAdmin" Version="2.4.0"/>
         <PackageReference Include="MediatR" Version="12.1.1"/>
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0"/>
@@ -16,6 +17,10 @@
         <PackageReference Include="Microsoft.AspNetCore.Mvc.ApiExplorer" Version="2.2.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.22">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
@@ -23,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Application\DataMapping\"/>
+        <Folder Include="Application\Queries\Staff\" />
         <Folder Include="Data\Models\"/>
         <Folder Include="Infrastructure\Authorization\"/>
         <Folder Include="Infrastructure\Services\"/>
@@ -35,7 +40,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\L-Core\src\L.Core\L.Core.csproj"/>
+        <ProjectReference Include="..\L.Core\L.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>

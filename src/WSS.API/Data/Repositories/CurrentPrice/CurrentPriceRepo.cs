@@ -13,7 +13,7 @@ public class CurrentPriceRepo : ICurrentPriceRepo
     public CurrentPriceRepo(IDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-        _repo = _dbContextFactory.UnitOfWork<WssContext, Models.CurrentPrice>().Repository ??
+        _repo = _dbContextFactory.UnitOfWork<WSSContext, Models.CurrentPrice>().Repository ??
                 throw new InvalidOperationException();
     }
 
@@ -30,7 +30,7 @@ public class CurrentPriceRepo : ICurrentPriceRepo
         await _repo.InsertAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.CurrentPrice>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.CurrentPrice>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
@@ -42,7 +42,7 @@ public class CurrentPriceRepo : ICurrentPriceRepo
         await _repo.UpdateAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.CurrentPrice>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.CurrentPrice>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
@@ -54,7 +54,7 @@ public class CurrentPriceRepo : ICurrentPriceRepo
         await _repo.DeleteAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.CurrentPrice>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.CurrentPrice>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;

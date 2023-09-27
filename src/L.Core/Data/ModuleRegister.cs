@@ -11,6 +11,6 @@ public static class ModuleRegister
     {
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
-        services.AddScoped<IDbContextFactory, DbContextFactory>();
+        services.AddTransient<IDbContextFactory, DbContextFactory>();
     }
 }

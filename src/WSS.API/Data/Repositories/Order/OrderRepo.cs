@@ -13,7 +13,7 @@ public class OrderRepo : IOrderRepo
     public OrderRepo(IDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-        _repo = _dbContextFactory.UnitOfWork<WssContext, Models.Order>().Repository ??
+        _repo = _dbContextFactory.UnitOfWork<WSSContext, Models.Order>().Repository ??
                 throw new InvalidOperationException();
     }
 
@@ -30,7 +30,7 @@ public class OrderRepo : IOrderRepo
         await _repo.InsertAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.Order>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.Order>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
@@ -42,7 +42,7 @@ public class OrderRepo : IOrderRepo
         await _repo.UpdateAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.Order>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.Order>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
@@ -54,7 +54,7 @@ public class OrderRepo : IOrderRepo
         await _repo.DeleteAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.Order>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.Order>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;

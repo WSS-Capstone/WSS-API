@@ -13,7 +13,7 @@ public class CategoryRepo : ICategoryRepo
     public CategoryRepo(IDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-        _repo = _dbContextFactory.UnitOfWork<WssContext, Models.Category>().Repository ??
+        _repo = _dbContextFactory.UnitOfWork<WSSContext, Models.Category>().Repository ??
                 throw new InvalidOperationException();
     }
 
@@ -30,7 +30,7 @@ public class CategoryRepo : ICategoryRepo
         await _repo.InsertAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.Category>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.Category>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
@@ -42,7 +42,7 @@ public class CategoryRepo : ICategoryRepo
         await _repo.UpdateAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.Category>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.Category>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
@@ -54,7 +54,7 @@ public class CategoryRepo : ICategoryRepo
         await _repo.DeleteAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.Category>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.Category>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;

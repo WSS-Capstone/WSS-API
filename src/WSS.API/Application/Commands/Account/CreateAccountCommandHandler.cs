@@ -28,6 +28,7 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
         {
             return null;
         }
+
         var id = Guid.NewGuid();
         var uid = id.ToString();
         var userFb = this._firebaseAuth.CreateUserAsync(new UserRecordArgs()
@@ -43,19 +44,41 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
         {
             Id = id,
             RefId = uid,
-            RoleName = RoleName.CUSTOMER,
+            RoleName = request.RoleName.ToString(),
             Status = 0,
             Username = request.Email,
-            Customer = new Customer()
-            {
-                Fullname = request.Fullname,
-                Phone = request.Phone,
-                Address = request.Address,
-                Gender = request.Gender,
-            }
+            Customer = request.RoleName.ToString() == RoleName.CUSTOMER
+                ? new Customer()
+                {
+                    Fullname = request.Fullname,
+                    Phone = request.Phone,
+                    Address = request.Address,
+                    Gender = request.Gender,
+                }
+                : null,
+            staff = request.RoleName.ToString() == RoleName.STAFF
+                ? new List<staff>()
+                {
+                    new staff()
+                    {
+                        Fullname = request.Fullname,
+                        Phone = request.Phone,
+                        Address = request.Address,
+                    }
+                }
+                : null,
+            Partner = request.RoleName.ToString() == RoleName.PARTNER
+                ? new Partner()
+                {
+                    Fullname = request.Fullname,
+                    Phone = request.Phone,
+                    Address = request.Address,
+                    Gender = request.Gender,
+                }
+                : null,
         });
-        
-        await Task.WhenAll(new List<Task>(){ userFb, userDb });
+
+        await Task.WhenAll(new List<Task>() { userFb, userDb });
 
         return await this._customerRepo.GetCustomerById(id);
     }

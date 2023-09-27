@@ -18,6 +18,7 @@ using WSS.API.Data.Repositories.PaymentHistory;
 using WSS.API.Data.Repositories.Role;
 using WSS.API.Data.Repositories.Service;
 using WSS.API.Data.Repositories.ServiceImage;
+using WSS.API.Data.Repositories.staff;
 using WSS.API.Data.Repositories.Staff;
 using WSS.API.Data.Repositories.Task;
 using WSS.API.Data.Repositories.Voucher;

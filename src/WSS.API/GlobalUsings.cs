@@ -2,3 +2,8 @@ global using System.Linq.Expressions;
 global using L.Core.Data.EFCore.DbContextFactory;
 global using L.Core.Data.EFCore.Repository;
 global using WSS.API.Data.Models;
+global using MediatR;
+global using Microsoft.AspNetCore.Mvc;
+global using WSS.API.Infrastructure.Controller;
+global using L.Core.Helpers.Paging.Object;
+global using WSS.API.Application.Models.ViewModels;

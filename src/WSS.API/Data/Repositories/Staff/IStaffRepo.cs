@@ -1,12 +1,12 @@
-namespace WSS.API.Data.Repositories.Staff;
+namespace WSS.API.Data.Repositories.staff;
 
 public interface IStaffRepo
 {
-    IQueryable<Models.Staff> GetStaffs(Expression<Func<Models.Staff, bool>>? predicate = null,
-        Expression<Func<Models.Staff, object>>[]? includeProperties = null);
+    IQueryable<Models.staff> GetStaffs(Expression<Func<Models.staff, bool>>? predicate = null,
+        Expression<Func<Models.staff, object>>[]? includeProperties = null);
 
-    Task<Models.Staff?> GetStaffById(Guid id, Expression<Func<Models.Staff, object>>[]? includeProperties = null);
-    Task<Models.Staff> CreateStaff(Models.Staff user, bool tempSave = false);
-    Task<Models.Staff> UpdateStaff(Models.Staff user, bool tempSave = false);
-    Task<Models.Staff> DeleteStaff(Models.Staff user, bool tempSave = false);
+    Task<Models.staff?> GetStaffById(Guid id, Expression<Func<Models.staff, object>>[]? includeProperties = null);
+    Task<Models.staff> CreateStaff(Models.staff user, bool tempSave = false);
+    Task<Models.staff> UpdateStaff(Models.staff user, bool tempSave = false);
+    Task<Models.staff> DeleteStaff(Models.staff user, bool tempSave = false);
 }

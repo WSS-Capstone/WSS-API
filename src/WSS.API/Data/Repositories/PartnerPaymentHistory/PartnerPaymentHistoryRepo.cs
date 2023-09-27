@@ -13,7 +13,7 @@ public class PartnerPaymentHistoryRepo : IPartnerPaymentHistoryRepo
     public PartnerPaymentHistoryRepo(IDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-        _repo = _dbContextFactory.UnitOfWork<WssContext, Models.PartnerPaymentHistory>().Repository ??
+        _repo = _dbContextFactory.UnitOfWork<WSSContext, Models.PartnerPaymentHistory>().Repository ??
                 throw new InvalidOperationException();
     }
 
@@ -30,7 +30,7 @@ public class PartnerPaymentHistoryRepo : IPartnerPaymentHistoryRepo
         await _repo.InsertAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.PartnerPaymentHistory>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.PartnerPaymentHistory>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
@@ -42,7 +42,7 @@ public class PartnerPaymentHistoryRepo : IPartnerPaymentHistoryRepo
         await _repo.UpdateAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.PartnerPaymentHistory>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.PartnerPaymentHistory>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
@@ -54,7 +54,7 @@ public class PartnerPaymentHistoryRepo : IPartnerPaymentHistoryRepo
         await _repo.DeleteAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.PartnerPaymentHistory>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.PartnerPaymentHistory>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;

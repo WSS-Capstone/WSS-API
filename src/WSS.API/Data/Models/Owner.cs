@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WSS.API.Data.Models;
-
-public partial class Owner
+namespace WSS.API.Data.Models
 {
-    public Guid Id { get; set; }
+    public partial class Owner
+    {
+        public Owner()
+        {
+            Orders = new HashSet<Order>();
+            Services = new HashSet<Service>();
+            Tasks = new HashSet<Task>();
+            Vouchers = new HashSet<Voucher>();
+        }
 
-    public string? Fullname { get; set; }
+        public Guid Id { get; set; }
+        public string? Fullname { get; set; }
+        public DateTime? DataOfBirth { get; set; }
+        public string? Phone { get; set; }
+        public string? Address { get; set; }
+        public string? ImageUrl { get; set; }
+        public int? Gender { get; set; }
 
-    public DateTime? DataOfBirth { get; set; }
-
-    public string? Phone { get; set; }
-
-    public string? Address { get; set; }
-
-    public string? ImageUrl { get; set; }
-
-    public int? Gender { get; set; }
-
-    public virtual Account IdNavigation { get; set; } = null!;
-
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
-
-    public virtual ICollection<Service> Services { get; set; } = new List<Service>();
-
-    public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
-
-    public virtual ICollection<Voucher> Vouchers { get; set; } = new List<Voucher>();
+        public virtual Account IdNavigation { get; set; } = null!;
+        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Service> Services { get; set; }
+        public virtual ICollection<Task> Tasks { get; set; }
+        public virtual ICollection<Voucher> Vouchers { get; set; }
+    }
 }

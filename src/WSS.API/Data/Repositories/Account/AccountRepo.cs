@@ -16,7 +16,7 @@ public class AccountRepo : IAccountRepo
     public AccountRepo(IDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-        _repo = _dbContextFactory.UnitOfWork<WssContext, Models.Account>().Repository ??
+        _repo = _dbContextFactory.UnitOfWork<WSSContext, Models.Account>().Repository ??
                 throw new InvalidOperationException();
     }
 
@@ -33,7 +33,7 @@ public class AccountRepo : IAccountRepo
         await _repo.InsertAsync(user);
 
         var x = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.Account>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.Account>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
@@ -45,7 +45,7 @@ public class AccountRepo : IAccountRepo
         await _repo.UpdateAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.Account>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.Account>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
@@ -57,7 +57,7 @@ public class AccountRepo : IAccountRepo
         await _repo.DeleteAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, Models.Account>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.Account>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;

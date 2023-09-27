@@ -7,5 +7,13 @@ public static class RoleName
     public static readonly string STAFF = "Staff";
     public static readonly string PARTNER = "Partner";
     public static readonly string CUSTOMER = "Customer";
-    
+}
+
+public enum RoleEnum
+{
+    Admin,
+    Owner,
+    Staff,
+    Partner,
+    Customer
 }

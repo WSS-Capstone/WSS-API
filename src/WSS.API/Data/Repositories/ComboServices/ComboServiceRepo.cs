@@ -13,7 +13,7 @@ public class ComboServiceRepo : IComboServiceRepo
     public ComboServiceRepo(IDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-        _repo = _dbContextFactory.UnitOfWork<WssContext, ComboService>().Repository ??
+        _repo = _dbContextFactory.UnitOfWork<WSSContext, ComboService>().Repository ??
                 throw new InvalidOperationException();
     }
 
@@ -30,7 +30,7 @@ public class ComboServiceRepo : IComboServiceRepo
         await _repo.InsertAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, ComboService>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, ComboService>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
@@ -42,7 +42,7 @@ public class ComboServiceRepo : IComboServiceRepo
         await _repo.UpdateAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, ComboService>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, ComboService>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
@@ -54,7 +54,7 @@ public class ComboServiceRepo : IComboServiceRepo
         await _repo.DeleteAsync(user);
 
         _ = tempSave
-            ? await _dbContextFactory.UnitOfWork<WssContext, ComboService>().SaveTempChangesAsync()
+            ? await _dbContextFactory.UnitOfWork<WSSContext, ComboService>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
         return user;
