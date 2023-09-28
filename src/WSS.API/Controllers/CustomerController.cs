@@ -1,3 +1,4 @@
+using WSS.API.Application.Commands.Customer;
 using WSS.API.Application.Queries.Customer;
 
 namespace WSS.API.Controllers;
@@ -14,6 +15,23 @@ public class CustomerController : BaseController
         CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(query, cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetCustomers([FromRoute] Guid id, CancellationToken cancellationToken = default)
+    {
+        CustomerResponse? result = await this.Mediator.Send(new GetCustomerByIdQuery(id), cancellationToken);
+
+        return result != null ? Ok(result) : NotFound();
+    }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateCustomer([FromRoute] Guid id, [FromBody] UpdateCustomerRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(new UpdateCustomerCommand(id, request), cancellationToken);
 
         return Ok(result);
     }

@@ -1,3 +1,4 @@
+using WSS.API.Application.Commands.Service;
 using WSS.API.Application.Queries.Service;
 
 namespace WSS.API.Controllers;
@@ -11,11 +12,45 @@ public class ServiceController: BaseController
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetPartners([FromQuery] GetServicesQuery query,
+    public async Task<IActionResult> GetServices([FromQuery] GetServicesQuery query,
         CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(query, cancellationToken);
 
         return Ok(result);
+    }
+    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetServiceById([FromRoute] Guid id, CancellationToken cancellationToken = default)
+    {
+        ServiceResponse? result = await this.Mediator.Send(new GetServiceByIdQuery(id), cancellationToken);
+
+        return result != null ? Ok(result) : NotFound();
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateService([FromBody] CreateServiceCommand command,
+        CancellationToken cancellationToken = default)
+    {
+        ServiceResponse? result = await this.Mediator.Send(command, cancellationToken);
+
+        return result != null ? Ok(result) : BadRequest();
+    }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateService([FromRoute] Guid id, [FromBody] CreateServiceCommand command,
+        CancellationToken cancellationToken = default)
+    {
+        ServiceResponse? result = await this.Mediator.Send(new UpdateServiceCommand(id, command), cancellationToken);
+
+        return result != null ? Ok(result) : BadRequest();
+    }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeletePartner([FromRoute] Guid id, CancellationToken cancellationToken = default)
+    {
+        ServiceResponse? result = await this.Mediator.Send(new DeleteServiceCommand(id), cancellationToken);
+
+        return result != null ? Ok(result) : BadRequest();
     }
 }

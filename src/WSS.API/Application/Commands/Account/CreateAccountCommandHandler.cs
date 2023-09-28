@@ -1,6 +1,4 @@
 using FirebaseAdmin.Auth;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 using WSS.API.Data.Repositories.Account;
 using WSS.API.Data.Repositories.Customer;
 using WSS.API.Infrastructure.Config;
@@ -21,7 +19,7 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
         _customerRepo = customerRepo;
     }
 
-    public async Task<Customer?> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Data.Models.Customer?> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
     {
         var user = await this._firebaseAuth.GetUserByEmailAsync(request.Email, cancellationToken);
         if (user != null)
@@ -48,7 +46,7 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
             Status = 0,
             Username = request.Email,
             Customer = request.RoleName.ToString() == RoleName.CUSTOMER
-                ? new Customer()
+                ? new Data.Models.Customer()
                 {
                     Fullname = request.Fullname,
                     Phone = request.Phone,
@@ -68,7 +66,7 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
                 }
                 : null,
             Partner = request.RoleName.ToString() == RoleName.PARTNER
-                ? new Partner()
+                ? new Data.Models.Partner()
                 {
                     Fullname = request.Fullname,
                     Phone = request.Phone,

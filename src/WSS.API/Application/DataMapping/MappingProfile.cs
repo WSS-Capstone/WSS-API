@@ -1,5 +1,8 @@
 using AutoMapper;
 using WSS.API.Application.Commands.Category;
+using WSS.API.Application.Commands.Customer;
+using WSS.API.Application.Commands.Service;
+using WSS.API.Application.Commands.Staff;
 using Task = WSS.API.Data.Models.Task;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
@@ -61,6 +64,13 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Gender,
                 opt => opt.MapFrom(src => (Gender)src.Gender))
             .ReverseMap();
+        
+        this.CreateMap<staff, UpdateStaffRequest>()
+            .ForMember(dto => dto.Gender,
+                opt => opt.MapFrom(src => (Gender)src.Gender))
+            .ReverseMap();
+        
+        this.CreateMap<staff, UpdateStaffCommand>().ReverseMap();
     }
 
     private void PartnerProfile()
@@ -73,9 +83,16 @@ public class MappingProfile : Profile
 
     private void CustomerProfile()
     {
-        this.CreateMap<Customer, CustomerResponse>().ForMember(dto => dto.Gender,
+        this.CreateMap<Customer, CustomerResponse>()
+            .ForMember(dto => dto.Gender,
                 opt => opt.MapFrom(src => (Gender)src.Gender))
             .ReverseMap();
+
+        this.CreateMap<Customer, UpdateCustomerRequest>()
+            .ForMember(dto => dto.Gender,
+                opt => opt.MapFrom(src => (Gender)src.Gender))
+            .ReverseMap();
+        this.CreateMap<Customer, UpdateCustomerCommand>().ReverseMap();
     }
 
     private void OwnerProfile()
@@ -91,6 +108,10 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (ServiceStatus)src.Status))
             .ReverseMap();
+
+        this.CreateMap<Service, CreateServiceCommand>().ReverseMap();
+        this.CreateMap<Service, UpdateServiceCommand>().ReverseMap();
+        this.CreateMap<CreateServiceCommand, UpdateServiceCommand>().ReverseMap();
     }
 
     private void OrderProfile()
