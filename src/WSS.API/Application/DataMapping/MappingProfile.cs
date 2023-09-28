@@ -1,4 +1,5 @@
 using AutoMapper;
+using WSS.API.Application.Commands.Category;
 using Task = WSS.API.Data.Models.Task;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
@@ -36,6 +37,14 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (CategoryStatus)src.Status))
             .ReverseMap();
+
+        this.CreateMap<Category, CreateCategoryCommand>()
+            .ReverseMap();
+
+        this.CreateMap<Category, UpdateCategoryCommand>()
+            .ReverseMap();
+
+        this.CreateMap<CreateCategoryCommand, UpdateCategoryCommand>().ReverseMap();
     }
 
     private void TaskProfile()
@@ -65,7 +74,7 @@ public class MappingProfile : Profile
     private void CustomerProfile()
     {
         this.CreateMap<Customer, CustomerResponse>().ForMember(dto => dto.Gender,
-            opt => opt.MapFrom(src => (Gender)src.Gender))
+                opt => opt.MapFrom(src => (Gender)src.Gender))
             .ReverseMap();
     }
 
