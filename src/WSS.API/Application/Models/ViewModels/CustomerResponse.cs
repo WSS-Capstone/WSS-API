@@ -8,5 +8,5 @@ public class CustomerResponse
     public string? Phone { get; set; }
     public string? Address { get; set; }
     public string? ImageUrl { get; set; }
-    public int? Gender { get; set; }
+    public Gender? Gender { get; set; }
 }

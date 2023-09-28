@@ -15,6 +15,7 @@ public class MappingProfile : Profile
         this.TaskProfile();
         this.StaffProfile();
         this.PartnerProfile();
+        this.OwnerProfile();
         this.CustomerProfile();
         this.ServiceProfile();
         this.OrderProfile();
@@ -28,6 +29,7 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => (AccountStatus)src.Status))
             .ReverseMap();
     }
+
     private void CategoryProfile()
     {
         this.CreateMap<Category, CategoryResponse>()
@@ -46,17 +48,32 @@ public class MappingProfile : Profile
 
     private void StaffProfile()
     {
-        this.CreateMap<StaffResponse, staff>().ReverseMap();
+        this.CreateMap<staff, StaffResponse>()
+            .ForMember(dto => dto.Gender,
+                opt => opt.MapFrom(src => (Gender)src.Gender))
+            .ReverseMap();
     }
 
     private void PartnerProfile()
     {
-        this.CreateMap<PartnerResponse, Partner>().ReverseMap();
+        this.CreateMap<Partner, PartnerResponse>()
+            .ForMember(dto => dto.Gender,
+                opt => opt.MapFrom(src => (Gender)src.Gender))
+            .ReverseMap();
     }
-    
+
     private void CustomerProfile()
     {
-        this.CreateMap<CustomerResponse, Partner>().ReverseMap();
+        this.CreateMap<Customer, CustomerResponse>().ForMember(dto => dto.Gender,
+            opt => opt.MapFrom(src => (Gender)src.Gender))
+            .ReverseMap();
+    }
+
+    private void OwnerProfile()
+    {
+        this.CreateMap<Owner, OwnerResponse>().ForMember(dto => dto.Gender,
+                opt => opt.MapFrom(src => (Gender)src.Gender))
+            .ReverseMap();
     }
 
     private void ServiceProfile()
@@ -74,7 +91,7 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => (OrderStatus)src.Status))
             .ReverseMap();
     }
-    
+
     private void OrderDetailProfile()
     {
         this.CreateMap<OrderDetail, OrderDetailResponse>()

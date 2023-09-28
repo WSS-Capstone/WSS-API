@@ -210,25 +210,35 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     {
         if (includeProperties != null)
         {
-            includeProperties
-                .Select(ip => ip.Body)
-                .OfType<MemberExpression>()
-                .Select(m => m.Member.Name).ToList()
-                .ForEach(name => query = query.Include(name));
-            includeProperties
-                .Select(ip => ip.Body).OfType<MethodCallExpression>()
-                .SelectMany(m => m.Arguments)
-                .Select(propExpression =>
-                {
-                    string prop = propExpression.ToString()
-                        .Substring(propExpression.ToString().LastIndexOf(".", StringComparison.Ordinal) + 1);
-                    return prop;
-                })
-                .Aggregate(new StringBuilder(), (sb, prop) => sb.Append($".{prop}"))
-                .ToString()[1..]
-                .Split(' ')
-                .ToList()
-                .ForEach(name => query = query.Include(name));
+            
+            try
+            {
+                includeProperties
+                    .Select(ip => ip.Body)
+                    .OfType<MemberExpression>()
+                    .Select(m => m.Member.Name).ToList()
+                    .ForEach(name => query = query.Include(name));
+
+                includeProperties
+                    .Select(ip => ip.Body).OfType<MethodCallExpression>()
+                    .Where(m => m.Arguments.Count == 2)
+                    .SelectMany(m => m.Arguments)
+                    .Select(propExpression =>
+                    {
+                        string prop = propExpression.ToString()
+                            .Substring(propExpression.ToString().LastIndexOf(".", StringComparison.Ordinal) + 1);
+                        return prop;
+                    })
+                    .Aggregate(new StringBuilder(), (sb, prop) => sb.Append($".{prop}"))
+                    .ToString()[1..]
+                    .Split(' ')
+                    .ToList()
+                    .ForEach(name => query = query.Include(name));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Ignore : {e.Message}");
+            }
         }
 
         return query;
