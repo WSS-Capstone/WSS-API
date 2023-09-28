@@ -35,7 +35,7 @@ builder.Services.AddControllers(config =>
     o.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
     o.SerializerSettings.ContractResolver = new DefaultContractResolver()
     {
-        NamingStrategy = new SnakeCaseNamingStrategy()
+        NamingStrategy = new CamelCaseNamingStrategy()
     };
                 
     o.SerializerSettings.Converters.Add(new StringEnumConverter()
