@@ -7,6 +7,7 @@ using WSS.API.Infrastructure.Config;
 using WSS.API.Infrastructure.Middleware;
 
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -15,7 +16,15 @@ using WSS.API.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://*;https://*");
 // Add services to the container.
-
+builder.Services.AddCors(o =>
+{
+    o.AddPolicy("CorsPolicy", corsPolicyBuilder => corsPolicyBuilder
+        .SetIsOriginAllowedToAllowWildcardSubdomains()
+        .SetIsOriginAllowed(_ => true)
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
+});
 builder.Services.AddControllers(config =>
 {
     config.Filters.Add<UserFireFilter>();
@@ -48,11 +57,26 @@ builder.Services.RegisterLogging();
 builder.Services.AddFireBaseAsync();
 var app = builder.Build();
 
-app
-    .UseCors(x => x
-        .AllowAnyOrigin()
+Directory.CreateDirectory("upload");
+app.UseFileServer(new FileServerOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "upload")),
+    RequestPath = "/upload",
+    EnableDirectoryBrowsing = true,
+    StaticFileOptions = { OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+        ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    }}
+});
+
+// Configure the HTTP request pipeline.
+app.UseCors(cor => cor
+        .SetIsOriginAllowedToAllowWildcardSubdomains()
+        .SetIsOriginAllowed(_ => true)
         .AllowAnyMethod()
-        .AllowAnyHeader())
+        .AllowAnyHeader()
+        .AllowCredentials())
     .UseDeveloperExceptionPage()
     .UseApplicationSwagger()
     .UseHttpsRedirection();

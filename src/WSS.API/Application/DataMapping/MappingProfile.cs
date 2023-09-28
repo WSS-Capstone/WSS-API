@@ -10,6 +10,7 @@ public class MappingProfile : Profile
     /// <inheritdoc />
     public MappingProfile()
     {
+        this.AccountProfile();
         this.CategoryProfile();
         this.TaskProfile();
         this.StaffProfile();
@@ -20,7 +21,13 @@ public class MappingProfile : Profile
         this.OrderDetailProfile();
     }
 
-
+    private void AccountProfile()
+    {
+        this.CreateMap<Account, AccountResponse>()
+            .ForMember(dto => dto.Status,
+                opt => opt.MapFrom(src => (AccountStatus)src.Status))
+            .ReverseMap();
+    }
     private void CategoryProfile()
     {
         this.CreateMap<Category, CategoryResponse>()

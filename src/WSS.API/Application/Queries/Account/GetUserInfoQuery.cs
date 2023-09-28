@@ -2,7 +2,7 @@ using MediatR;
 
 namespace WSS.API.Application.Queries.Account;
 
-public class GetUserInfoQuery : IRequest<Data.Models.Account?>
+public class GetUserInfoQuery : IRequest<AccountResponse>
 {
     
 }
