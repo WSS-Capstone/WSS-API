@@ -18,6 +18,7 @@ public static class FirebaseConfig
         var currentDirectory = Directory.GetCurrentDirectory();
         // Path of firebase.json
         var jsonFirebasePath = Path.Combine(currentDirectory, "firebase.json");
+        Console.WriteLine(jsonFirebasePath);
         // Initialize the default app
         var defaultApp = FirebaseApp.Create(new AppOptions
         {

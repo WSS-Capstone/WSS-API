@@ -19,4 +19,12 @@ public class CategoryController : BaseController
 
         return Ok(result);
     }
+    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetCategories([FromRoute] Guid id, CancellationToken cancellationToken = default)
+    {
+        CategoryResponse? result = await this.Mediator.Send(new GetCategoryByIdQuery(id), cancellationToken);
+
+        return result != null ? Ok(result) : NotFound();
+    }
 }
