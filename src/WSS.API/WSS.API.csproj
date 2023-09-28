@@ -28,7 +28,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Application\Queries\Staff\" />
         <Folder Include="Data\Models\"/>
         <Folder Include="Infrastructure\Authorization\"/>
         <Folder Include="Infrastructure\Services\"/>
