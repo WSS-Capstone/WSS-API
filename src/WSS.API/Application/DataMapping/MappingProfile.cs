@@ -1,4 +1,5 @@
 using AutoMapper;
+using WSS.API.Application.Commands.Account;
 using WSS.API.Application.Commands.Category;
 using WSS.API.Application.Commands.Customer;
 using WSS.API.Application.Commands.Service;
@@ -15,6 +16,7 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         this.AccountProfile();
+        this.CartProfile();
         this.CategoryProfile();
         this.TaskProfile();
         this.StaffProfile();
@@ -32,6 +34,13 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (AccountStatus)src.Status))
             .ReverseMap();
+        
+        this.CreateMap<Account, CreateAccountCommand>().ReverseMap();
+    }
+
+    private void CartProfile()
+    {
+        this.CreateMap<Cart, CartResponse>().ReverseMap();
     }
 
     private void CategoryProfile()
@@ -60,6 +69,10 @@ public class MappingProfile : Profile
 
     private void StaffProfile()
     {
+        this.CreateMap<StaffResponse, Customer>().ReverseMap();
+        this.CreateMap<StaffResponse, Owner>().ReverseMap();
+        this.CreateMap<StaffResponse, Partner>().ReverseMap();
+        
         this.CreateMap<staff, StaffResponse>()
             .ForMember(dto => dto.Gender,
                 opt => opt.MapFrom(src => (Gender)src.Gender))
@@ -75,6 +88,10 @@ public class MappingProfile : Profile
 
     private void PartnerProfile()
     {
+        this.CreateMap<PartnerResponse, staff>().ReverseMap();
+        this.CreateMap<PartnerResponse, Customer>().ReverseMap();
+        this.CreateMap<PartnerResponse, Owner>().ReverseMap();
+        
         this.CreateMap<Partner, PartnerResponse>()
             .ForMember(dto => dto.Gender,
                 opt => opt.MapFrom(src => (Gender)src.Gender))
@@ -83,6 +100,11 @@ public class MappingProfile : Profile
 
     private void CustomerProfile()
     {
+        this.CreateMap<CustomerResponse, staff>().ReverseMap();
+        this.CreateMap<CustomerResponse, Owner>().ReverseMap();
+        this.CreateMap<CustomerResponse, Partner>().ReverseMap();
+        
+        
         this.CreateMap<Customer, CustomerResponse>()
             .ForMember(dto => dto.Gender,
                 opt => opt.MapFrom(src => (Gender)src.Gender))
@@ -97,6 +119,9 @@ public class MappingProfile : Profile
 
     private void OwnerProfile()
     {
+        this.CreateMap<OwnerResponse, staff>();
+        this.CreateMap<OwnerResponse, Customer>();
+        this.CreateMap<OwnerResponse, Partner>();
         this.CreateMap<Owner, OwnerResponse>().ForMember(dto => dto.Gender,
                 opt => opt.MapFrom(src => (Gender)src.Gender))
             .ReverseMap();

@@ -5,7 +5,9 @@
 /// </summary>
 public interface IIdentitySvc
 {
-    public string? GetUserId();
+    public string? GetUserRefId();
+    
+    public Task<Guid> GetUserId();
 
     public string? GetEmail();
 

@@ -25,9 +25,21 @@ public class IdentitySvc : IIdentitySvc
         this.userRepo = userRepo;
     }
 
-    public string? GetUserId()
+    public string? GetUserRefId()
     {
         return this.context.HttpContext.User.FindFirst(UserIdClaim)?.Value;
+    }
+
+    public async Task<Guid> GetUserId()
+    {
+        var user = await this.userRepo.GetAccounts(a => a.RefId == this.GetUserRefId()).FirstOrDefaultAsync();
+        
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+        
+        return user.Id;
     }
 
     public string? GetEmail()

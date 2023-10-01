@@ -1,6 +1,3 @@
-using AutoMapper;
-using L.Core.Helpers.Paging;
-using Microsoft.EntityFrameworkCore;
 using WSS.API.Data.Repositories.Category;
 
 namespace WSS.API.Application.Queries.Category;

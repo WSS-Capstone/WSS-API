@@ -25,7 +25,7 @@ public class UserFireFilter : IAsyncActionFilter
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        var userId = _identitySvc.GetUserId();
+        var userId = _identitySvc.GetUserRefId();
        
         if (userId != null)
         {
