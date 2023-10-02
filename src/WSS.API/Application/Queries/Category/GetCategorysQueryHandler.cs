@@ -17,6 +17,17 @@ public class GetCategorysQueryHandler : IRequestHandler<GetCategorysQuery, Pagin
     public async Task<PagingResponseQuery<CategoryResponse, CategorySortCriteria>> Handle(GetCategorysQuery request, CancellationToken cancellationToken)
     {
         var query = _categoryRepo.GetCategorys();
+
+        if (!string.IsNullOrEmpty(request.Name))
+        {
+            query = query.Where(c => c.Name.Contains(request.Name));
+        }
+        
+        if(request.Status != null)
+        {
+            query = query.Where(c => c.Status == (int)request.Status);
+        }
+        
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
