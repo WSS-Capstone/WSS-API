@@ -2,6 +2,7 @@ using AutoMapper;
 using WSS.API.Application.Commands.Account;
 using WSS.API.Application.Commands.Category;
 using WSS.API.Application.Commands.Combo;
+using WSS.API.Application.Commands.Commission;
 using WSS.API.Application.Commands.Customer;
 using WSS.API.Application.Commands.Service;
 using WSS.API.Application.Commands.Staff;
@@ -103,6 +104,12 @@ public class MappingProfile : Profile
         this.CreateMap<Commission, CommissionResponse>()
             .ForMember(dto => dto.Category, opt => opt.MapFrom(src => src.Category))
             .ReverseMap();
+
+        this.CreateMap<Commission, CreateCommissionCommand>().ReverseMap();
+        this.CreateMap<Commission, UpdateCategoryCommand>().ReverseMap();
+        this.CreateMap<CreateCommissionCommand, UpdateCategoryCommand>().ReverseMap();
+        
+        
     }
 
     private void CurrentPriceProfile()
