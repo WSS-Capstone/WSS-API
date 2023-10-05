@@ -9,7 +9,6 @@ public class FileSvc : IFileSvc
     private readonly IHttpContextAccessor _contextAccessor;
     private readonly IHostEnvironment _hostEnvironment;
     private readonly IConfiguration _configuration;
-    private const string DIRECTORY = "upload";
 
     public FileSvc(IHttpContextAccessor contextAccessor, IHostEnvironment hostEnvironment, IConfiguration configuration)
     {
@@ -18,14 +17,15 @@ public class FileSvc : IFileSvc
         _configuration = configuration;
     }
 
-    public string RootDirectory => this._configuration.GetSection(FileServerConfig.DIRECTORY_SECTION).Value ?? throw new Exception("No Root Directory");
+    private string RootDirectory => this._configuration.GetSection(FileServerConfig.DIRECTORY_SECTION).Value ??
+                                    throw new Exception("No Root Directory");
 
+    private string UploadDirectory => Path.Combine(_hostEnvironment.ContentRootPath, RootDirectory);
 
     public async Task<List<FileInfo>> UploadFile(List<IFormFile> files)
     {
-        var uploadDirectory = Path.Combine(_hostEnvironment.ContentRootPath, RootDirectory);
-        Directory.CreateDirectory(uploadDirectory);
-        var tasks = files.Select(iFormFile => UploadTask(iFormFile, uploadDirectory)).ToList();
+        Directory.CreateDirectory(UploadDirectory);
+        var tasks = files.Select(iFormFile => UploadTask(iFormFile, UploadDirectory)).ToList();
         await Task.WhenAll(tasks);
         return tasks.Select(t => t.Result).ToList();
     }
@@ -45,17 +45,37 @@ public class FileSvc : IFileSvc
             Filename = filename,
             Size = SizeConverter(file.Length),
             Type = file.ContentType,
-            Link = $"{this._contextAccessor.HttpContext.Request.Host.Value}/{DIRECTORY}/{filename}"
+            Link = $"{this._contextAccessor.HttpContext.Request.Host.Value}/{RootDirectory}/{filename}"
         };
     }
 
     public void DeleteFile(List<string> listFilename)
     {
-        throw new NotImplementedException();
+        foreach (var path in listFilename.Select(filename => UploadDirectory + "/" + filename))
+        {
+            System.IO.File.Delete(path);
+        }
     }
 
     public string SizeConverter(long bytes)
     {
-        throw new NotImplementedException();
+        var fileSize = new decimal(bytes);
+        var kilobyte = new decimal(1024);
+        var megabyte = new decimal(1024 * 1024);
+        var gigabyte = new decimal(1024 * 1024 * 1024);
+
+        switch (fileSize)
+        {
+            case var _ when fileSize < kilobyte:
+                return $"Less then 1KB";
+            case var _ when fileSize < megabyte:
+                return $"{Math.Round(fileSize / kilobyte, 0, MidpointRounding.AwayFromZero):##,###.##}KB";
+            case var _ when fileSize < gigabyte:
+                return $"{Math.Round(fileSize / megabyte, 2, MidpointRounding.AwayFromZero):##,###.##}MB";
+            case var _ when fileSize >= gigabyte:
+                return $"{Math.Round(fileSize / gigabyte, 2, MidpointRounding.AwayFromZero):##,###.##}GB";
+            default:
+                return "n/a";
+        }
     }
 }
