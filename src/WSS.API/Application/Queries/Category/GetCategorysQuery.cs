@@ -10,4 +10,5 @@ public enum CategorySortCriteria
 {
     Id,
     Name,
+    Description,
 }

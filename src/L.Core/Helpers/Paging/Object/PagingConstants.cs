@@ -2,7 +2,7 @@ namespace L.Core.Helpers.Paging.Object;
 
 public static class PagingConstants
 {
-    public const int DefaultPage = 1;
+    public const int DefaultPage = 0;
     public const int DefaultPageSize = 50;
     public const string DefaultSort = "id_asc";
     public const int MinPage = 0;

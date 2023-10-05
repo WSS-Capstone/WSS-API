@@ -43,10 +43,10 @@ public static class PagingHelper
         }
 
         pageSize = pageSize < 1 ? 1 : pageSize;
-        page = page < 1 ? 1 : page;
+        page = page < 0 ? 0 : page;
 
         source = source
-            .Skip(page == 1 ? 0 : pageSize * (page - 1)) // Paging
+            .Skip(page == 0 ? 0 : pageSize * (page)) // Paging
             .Take(pageSize); // Take only a number of items
 
         return source;
