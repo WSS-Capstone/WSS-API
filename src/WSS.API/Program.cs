@@ -57,18 +57,7 @@ builder.Services.RegisterLogging();
 builder.Services.AddFireBaseAsync();
 var app = builder.Build();
 
-Directory.CreateDirectory("upload");
-app.UseFileServer(new FileServerOptions()
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "upload")),
-    RequestPath = "/upload",
-    EnableDirectoryBrowsing = true,
-    StaticFileOptions = { OnPrepareResponse = ctx =>
-    {
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    }}
-});
+app.RegisterFileServer(builder.Environment, builder.Configuration);
 
 // Configure the HTTP request pipeline.
 app.UseCors(cor => cor

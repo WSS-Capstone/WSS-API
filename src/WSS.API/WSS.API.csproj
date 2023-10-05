@@ -32,7 +32,6 @@
         <Folder Include="Application\Models\Request\" />
         <Folder Include="Data\Models\"/>
         <Folder Include="Infrastructure\Authorization\"/>
-        <Folder Include="Infrastructure\Services\"/>
         <Folder Include="Infrastructure\Utilities\"/>
     </ItemGroup>
 
