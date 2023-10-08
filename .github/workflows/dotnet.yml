@@ -18,7 +18,7 @@ jobs:
         run: dotnet publish -p:PublishProfile=FolderProfile --output ./publish --force
       - name: Deploy to IIS
         run: |
-          C:\Windows\System32\inetsrv\appcmd start site BE
+          C:\Windows\System32\inetsrv\appcmd stop site BE
           Copy-Item ./publish/* C:/inetpub/BE/ -Recurse -Force
           C:\Windows\System32\inetsrv\appcmd start site BE
       
