@@ -38,8 +38,10 @@ public class FileSvc : IFileSvc
         var filename = Guid.NewGuid() + extension;
         var filePath = Path.Combine(uploadDirectory, filename);
 
-        await using FileStream fs = System.IO.File.Create(filePath);
-        await fs.CopyToAsync(fs);
+        using (FileStream fs = System.IO.File.Create(filePath))
+        {
+            await file.CopyToAsync(fs);
+        }
         return new FileInfo()
         {
             Filename = filename,

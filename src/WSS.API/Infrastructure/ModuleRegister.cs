@@ -1,4 +1,5 @@
-﻿using WSS.API.Infrastructure.Services.Identity;
+﻿using WSS.API.Infrastructure.Services.File;
+using WSS.API.Infrastructure.Services.Identity;
 
 namespace WSS.API.Infrastructure;
 
@@ -14,5 +15,6 @@ public static class ModuleRegister
     public static void RegisterServiceModule(this IServiceCollection services)
     {
         services.AddTransient<IIdentitySvc, IdentitySvc>();
+        services.AddScoped<IFileSvc, FileSvc>();
     }
 }
