@@ -44,7 +44,18 @@ public class UpdateServiceCommandHandler : IRequestHandler<UpdateServiceCommand,
     /// <returns></returns>
     public async Task<ServiceResponse> Handle(UpdateServiceCommand request, CancellationToken cancellationToken)
     {
-        var service = _mapper.Map<Data.Models.Service>(request);
+        var service = await this._serviceRepo.GetServiceById(request.Id, new Expression<Func<Data.Models.Service, object>>[]
+        {
+            s => s.Category,
+            s => s.CurrentPrices
+        });
+        
+        if (service == null)
+        {
+            throw new Exception("service not found");
+        }
+        
+        service = _mapper.Map(request, service);
         service.UpdateDate = DateTime.Now;
         var query = await _serviceRepo.UpdateService(service);
         

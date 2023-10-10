@@ -36,7 +36,12 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
         service.CreateDate = DateTime.Now;
         service.Status = (int?)ServiceStatus.ACTIVE;
         var query = await _serviceRepo.CreateService(service);
-        
+        query = await this._serviceRepo.GetServiceById(query.Id, new Expression<Func<Data.Models.Service, object>>[]
+        {
+            s => s.Category,
+            s => s.CurrentPrices
+        });
+
         var result = this._mapper.Map<ServiceResponse>(query);
         
         return result;

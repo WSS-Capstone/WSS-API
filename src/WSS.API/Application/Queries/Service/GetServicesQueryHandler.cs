@@ -20,7 +20,11 @@ public class
     public async Task<PagingResponseQuery<ServiceResponse, ServiceSortCriteria>> Handle(GetServicesQuery request,
         CancellationToken cancellationToken)
     {
-        var query = _repo.GetServices();
+        var query = _repo.GetServices(null, new Expression<Func<Data.Models.Service, object>>[]
+        {
+            s => s.Category,
+            s => s.CurrentPrices
+        });
         var total = await query.CountAsync(cancellationToken: cancellationToken);
 
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);

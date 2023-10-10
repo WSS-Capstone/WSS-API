@@ -33,6 +33,7 @@ builder.Services.AddControllers(config =>
     o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
     o.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
     o.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+    o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
     o.SerializerSettings.ContractResolver = new DefaultContractResolver()
     {
         NamingStrategy = new CamelCaseNamingStrategy()

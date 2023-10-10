@@ -223,6 +223,11 @@ public class MappingProfile : Profile
         this.CreateMap<Service, ServiceResponse>()
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (ServiceStatus)src.Status))
+            .ForMember(dto => dto.Category,
+                opt => opt.MapFrom(src => src.Category))
+            .ForMember(dto => dto.CurrentPrices,
+                opt => opt.MapFrom(src => src.CurrentPrices.FirstOrDefault()))
+
             .ReverseMap();
 
         this.CreateMap<Service, CreateServiceCommand>().ReverseMap();
