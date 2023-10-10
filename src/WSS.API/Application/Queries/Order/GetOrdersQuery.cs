@@ -10,5 +10,6 @@ public enum OrderSortCriteria
     Id,
     Fullname,
     Address,
-    Phone
+    Phone,
+    CreateDate
 }

@@ -18,6 +18,10 @@ namespace WSS.API.Data.Models
         public string? ImageUrl { get; set; }
         public int? Gender { get; set; }
         public Guid? RoleId { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public Guid? CreateBy { get; set; }
+        public DateTime? UpdateDate { get; set; }
+        public Guid? UpdateBy { get; set; }
 
         public virtual Account IdNavigation { get; set; } = null!;
         public virtual Role? Role { get; set; }

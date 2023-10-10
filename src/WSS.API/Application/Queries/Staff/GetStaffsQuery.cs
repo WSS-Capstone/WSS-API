@@ -9,5 +9,6 @@ public enum StaffSortCriteria
 {
     Id,
     Fullname,
-    RoleId
+    RoleId,
+    CreateDate
 }

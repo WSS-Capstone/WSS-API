@@ -10,5 +10,6 @@ public enum ServiceSortCriteria
     Id,
     Name,
     Quantity,
-    Status
+    Status,
+    CreateDate
 }

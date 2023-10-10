@@ -12,6 +12,7 @@ public enum ComboSortCriteria
 {
     Id,
     Name,
+    CreateDate
 }
 
 public class

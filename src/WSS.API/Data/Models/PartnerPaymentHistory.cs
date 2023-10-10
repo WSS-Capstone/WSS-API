@@ -12,6 +12,7 @@ namespace WSS.API.Data.Models
         public double? Total { get; set; }
         public string? ImageUrl { get; set; }
         public DateTime? CreateDate { get; set; }
+        public Guid? CreateBy { get; set; }
 
         public virtual Order? Order { get; set; }
         public virtual Partner? Partner { get; set; }

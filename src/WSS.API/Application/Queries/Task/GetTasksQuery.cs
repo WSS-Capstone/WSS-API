@@ -11,5 +11,6 @@ public enum TaskSortCriteria
     TaskName,
     Content,
     StartDate,
-    EndDate
+    EndDate,
+    CreateDate
 }

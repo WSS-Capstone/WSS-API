@@ -45,8 +45,8 @@ namespace WSS.API.Data.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-// #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//                 optionsBuilder.UseSqlServer("Server=20.189.117.242;Database=WSS;User Id=sa;Password=29327Cab@456789;TrustServerCertificate=True;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=20.189.117.242;Database=WSS;User Id=sa;Password=29327Cab@456789;TrustServerCertificate=True;");
             }
         }
 
@@ -58,7 +58,11 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
                 entity.Property(e => e.RefId).IsUnicode(false);
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Username)
                     .HasMaxLength(255)
@@ -70,6 +74,10 @@ namespace WSS.API.Data.Models
                 entity.ToTable("Cart");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.Carts)
@@ -103,11 +111,19 @@ namespace WSS.API.Data.Models
                 entity.ToTable("Combo");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<ComboService>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Combo)
                     .WithMany(p => p.ComboServices)
@@ -126,7 +142,11 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
                 entity.Property(e => e.DateOfApply).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Commissions)
@@ -140,7 +160,11 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
                 entity.Property(e => e.DateOfApply).HasColumnType("date");
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.CurrentPrices)
@@ -154,6 +178,8 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
                 entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
 
                 entity.Property(e => e.Fullname).IsUnicode(false);
@@ -161,6 +187,8 @@ namespace WSS.API.Data.Models
                 entity.Property(e => e.Phone)
                     .HasMaxLength(255)
                     .IsUnicode(false);
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Customer)
@@ -176,6 +204,8 @@ namespace WSS.API.Data.Models
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.OrderDetail)
                     .WithMany(p => p.Feedbacks)
@@ -208,6 +238,8 @@ namespace WSS.API.Data.Models
                 entity.Property(e => e.Phone)
                     .HasMaxLength(255)
                     .IsUnicode(false);
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Combo)
                     .WithMany(p => p.Orders)
@@ -255,11 +287,15 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
                 entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
 
                 entity.Property(e => e.Phone)
                     .HasMaxLength(255)
                     .IsUnicode(false);
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Owner)
@@ -274,11 +310,15 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
                 entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
 
                 entity.Property(e => e.Fullname).IsUnicode(false);
 
                 entity.Property(e => e.Phone).IsUnicode(false);
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Partner)
@@ -352,6 +392,10 @@ namespace WSS.API.Data.Models
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Code).HasMaxLength(255);
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<Service>(entity =>
@@ -399,11 +443,15 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
                 entity.Property(e => e.EndDate).HasColumnType("datetime");
 
                 entity.Property(e => e.StaffId).IsRequired();
 
                 entity.Property(e => e.StartDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.CreateByNavigation)
                     .WithMany(p => p.Tasks)
@@ -435,6 +483,8 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.StartTime).HasColumnType("datetime");
 
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+
                 entity.HasOne(d => d.CreateByNavigation)
                     .WithMany(p => p.Vouchers)
                     .HasForeignKey(d => d.CreateBy)
@@ -456,11 +506,15 @@ namespace WSS.API.Data.Models
 
                 entity.ToTable("Staff");
 
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
                 entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
 
                 entity.Property(e => e.ImageUrl).IsUnicode(false);
 
                 entity.Property(e => e.Phone).IsUnicode(false);
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithMany(p => p.staff)

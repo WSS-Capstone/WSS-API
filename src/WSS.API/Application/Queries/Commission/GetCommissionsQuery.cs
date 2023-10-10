@@ -11,6 +11,7 @@ public enum CommissionSortCriteria
 {
     Id,
     Name,
+    CreateDate
 }
 
 public class GetCommissionsQueryHandler : IRequestHandler<GetCommissionsQuery,

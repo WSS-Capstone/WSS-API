@@ -10,5 +10,6 @@ namespace WSS.API.Data.Models
         public Guid? FromId { get; set; }
         public string? Content { get; set; }
         public DateTime? CreateDate { get; set; }
+        public Guid? CreateBy { get; set; }
     }
 }

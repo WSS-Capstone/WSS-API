@@ -21,6 +21,12 @@ namespace WSS.API.Data.Models
         public string? ImageEvidence { get; set; }
         public int? Status { get; set; }
         public Guid? CreateBy { get; set; }
+        public int? QuantityService { get; set; }
+        public double? CommissionValue { get; set; }
+        public double? TotalPrice { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
+        public Guid? UpdateBy { get; set; }
 
         public virtual Owner? CreateByNavigation { get; set; }
         public virtual OrderDetail? OrderDetail { get; set; }

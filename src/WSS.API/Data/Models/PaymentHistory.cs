@@ -11,6 +11,7 @@ namespace WSS.API.Data.Models
         public Guid? RequestUserid { get; set; }
         public double? TotalAmount { get; set; }
         public DateTime? CreateDate { get; set; }
+        public Guid? CreateBy { get; set; }
 
         public virtual Order? Order { get; set; }
     }

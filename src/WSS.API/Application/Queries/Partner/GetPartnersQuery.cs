@@ -9,5 +9,6 @@ public enum PartnerSortCriteria
 {
     Id,
     Fullname,
-    RoleId
+    RoleId,
+    CreateDate
 }

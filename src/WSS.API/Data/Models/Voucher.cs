@@ -14,6 +14,8 @@ namespace WSS.API.Data.Models
         public DateTime? EndTime { get; set; }
         public DateTime? StartTime { get; set; }
         public Guid? CreateBy { get; set; }
+        public Guid? UpdateBy { get; set; }
+        public DateTime? UpdateDate { get; set; }
 
         public virtual Owner? CreateByNavigation { get; set; }
     }

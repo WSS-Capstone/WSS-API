@@ -12,6 +12,9 @@ namespace WSS.API.Data.Models
         public Guid? OrderDetailId { get; set; }
         public Guid? UserId { get; set; }
         public int? Status { get; set; }
+        public Guid? CreateBy { get; set; }
+        public DateTime? UpdateDate { get; set; }
+        public Guid? UpdateBy { get; set; }
 
         public virtual OrderDetail? OrderDetail { get; set; }
         public virtual Customer? User { get; set; }
