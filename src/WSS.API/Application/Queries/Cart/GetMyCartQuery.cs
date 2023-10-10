@@ -2,7 +2,8 @@ using WSS.API.Data.Repositories.Cart;
 
 namespace WSS.API.Application.Queries.Cart;
 
-public class GetMyCartQuery :  PagingParam<CartSortCriteria>, IRequest<PagingResponseQuery<CartResponse, CartSortCriteria>>
+public class GetMyCartQuery : PagingParam<CartSortCriteria>,
+    IRequest<PagingResponseQuery<CartResponse, CartSortCriteria>>
 {
     public Guid UserId { get; set; }
 }
@@ -24,13 +25,19 @@ public class GetMyCartQueryHandler : IRequestHandler<GetMyCartQuery, PagingRespo
         _cartRepo = cartRepo;
     }
 
-    public async Task<PagingResponseQuery<CartResponse, CartSortCriteria>> Handle(GetMyCartQuery request, CancellationToken cancellationToken)
+    public async Task<PagingResponseQuery<CartResponse, CartSortCriteria>> Handle(GetMyCartQuery request,
+        CancellationToken cancellationToken)
     {
-        var query = this._cartRepo.GetCarts(c => c.UserId == request.UserId);
+        var query = this._cartRepo.GetCarts(c => c.UserId == request.UserId,
+            new Expression<Func<Data.Models.Cart, object>>[]
+            {
+                s => s.Service,
+                s => s.User
+            });
         var total = await query.CountAsync(cancellationToken: cancellationToken);
-        
+
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
-        
+
         query = query.GetWithPaging(request.Page, request.PageSize);
 
         var result = this._mapper.ProjectTo<CartResponse>(query);

@@ -16,6 +16,13 @@ public class OrderResponse
     public string? Description { get; set; }
     public DateTime? CreateDate { get; set; }
     public OrderStatus? Status { get; set; }
+    public ComboResponse? Combo { get; set; }
+    public CustomerResponse? Customer { get; set; }
+    public OwnerResponse? Owner { get; set; }
+    public WeddingInformationResponse? WeddingInformation { get; set; }
+    public ICollection<OrderDetailResponse> OrderDetails { get; set; }
+    public ICollection<PartnerPaymentHistoryResponse> PartnerPaymentHistories { get; set; }
+    public ICollection<PartnerPaymentHistoryResponse> PaymentHistories { get; set; }
 }
 
 public enum OrderStatus

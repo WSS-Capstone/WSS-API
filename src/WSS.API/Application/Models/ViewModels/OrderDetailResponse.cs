@@ -13,6 +13,10 @@ public class OrderDetailResponse
     public double? Total { get; set; }
     public string? Description { get; set; }
     public OrderDetailStatus? Status { get; set; }
+    public OrderResponse? Order { get; set; }
+    public ServiceResponse? Service { get; set; }
+    public ICollection<FeedbackResponse> Feedbacks { get; set; }
+    public ICollection<TaskResponse> Tasks { get; set; }
 }
 
 public enum OrderDetailStatus

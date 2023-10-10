@@ -2,7 +2,8 @@ using WSS.API.Data.Repositories.Category;
 
 namespace WSS.API.Application.Queries.Category;
 
-public class GetCategorysQueryHandler : IRequestHandler<GetCategorysQuery, PagingResponseQuery<CategoryResponse, CategorySortCriteria>>
+public class GetCategorysQueryHandler : IRequestHandler<GetCategorysQuery,
+    PagingResponseQuery<CategoryResponse, CategorySortCriteria>>
 {
     private IMapper _mapper;
     private ICategoryRepo _categoryRepo;
@@ -14,24 +15,31 @@ public class GetCategorysQueryHandler : IRequestHandler<GetCategorysQuery, Pagin
     }
 
     /// <inheritdoc />
-    public async Task<PagingResponseQuery<CategoryResponse, CategorySortCriteria>> Handle(GetCategorysQuery request, CancellationToken cancellationToken)
+    public async Task<PagingResponseQuery<CategoryResponse, CategorySortCriteria>> Handle(GetCategorysQuery request,
+        CancellationToken cancellationToken)
     {
-        var query = _categoryRepo.GetCategorys();
+        var query = _categoryRepo.GetCategorys(null, new Expression<Func<Data.Models.Category, object>>[]
+        {
+            s => s.Commissions,
+            s => s.CategoryNavigation,
+            s => s.Services,
+            s => s.InverseCategoryNavigation
+        });
 
         if (!string.IsNullOrEmpty(request.Name))
         {
             query = query.Where(c => c.Name.Contains(request.Name));
         }
-        
-        if(request.Status != null)
+
+        if (request.Status != null)
         {
             query = query.Where(c => c.Status == (int)request.Status);
         }
-        
+
         var total = await query.CountAsync(cancellationToken: cancellationToken);
-        
+
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
-        
+
         query = query.GetWithPaging(request.Page, request.PageSize);
 
         var result = this._mapper.ProjectTo<CategoryResponse>(query);

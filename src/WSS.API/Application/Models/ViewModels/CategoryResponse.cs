@@ -8,6 +8,10 @@ public class CategoryResponse
     public string? ImageUrl { get; set; }
     public string? Description { get; set; }
     public CategoryStatus Status { get; set; }
+    public virtual CategoryResponse? CategoryNavigation { get; set; }
+    public virtual ICollection<CommissionResponse> Commissions { get; set; }
+    public virtual ICollection<CategoryResponse> InverseCategoryNavigation { get; set; }
+    public virtual ICollection<ServiceResponse> Services { get; set; }
 }
 
 public enum CategoryStatus

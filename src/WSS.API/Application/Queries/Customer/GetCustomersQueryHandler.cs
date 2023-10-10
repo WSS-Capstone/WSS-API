@@ -15,7 +15,13 @@ public class GetCustomersQueryHandler : IRequestHandler<GetCustomersQuery, Pagin
 
     public async Task<PagingResponseQuery<CustomerResponse, CustomerSortCriteria>> Handle(GetCustomersQuery request, CancellationToken cancellationToken)
     {
-        var query = _repo.GetCustomers();
+        var query = _repo.GetCustomers(null, new Expression<Func<Data.Models.Customer, object>>[]
+        {
+            c => c.Feedbacks,
+            c => c.Carts,
+            c => c.Orders,
+            c => c.IdNavigation
+        });
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);

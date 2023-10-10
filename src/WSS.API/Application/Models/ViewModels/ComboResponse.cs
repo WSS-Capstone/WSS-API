@@ -10,6 +10,7 @@ public class ComboResponse
     public ComboStatus? Status { get; set; }
     
     public List<ComboServicesResponse>? ComboServices { get; set; }
+    public virtual ICollection<OrderResponse> Orders { get; set; }
 }
 
 public enum ComboStatus

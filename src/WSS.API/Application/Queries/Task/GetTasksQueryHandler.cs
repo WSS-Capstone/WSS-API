@@ -19,7 +19,13 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
 
     public async Task<PagingResponseQuery<TaskResponse, TaskSortCriteria>> Handle(GetTasksQuery request, CancellationToken cancellationToken)
     {
-        var query = _categoryRepo.GetTasks();
+        var query = _categoryRepo.GetTasks(null, new Expression<Func<Data.Models.Task, object>>[]
+        {
+            t => t.CreateByNavigation,
+            t => t.OrderDetail,
+            t => t.Partner,
+            t => t.staff
+        });
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);

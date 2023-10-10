@@ -14,10 +14,18 @@ public class GetOrderDetailByIdQueryHandler : IRequestHandler<GetOrderDetailById
     }
 
     /// <inheritdoc />
-    public async Task<IList<OrderDetailResponse>> Handle(GetOrderDetailByIdQuery request, CancellationToken cancellationToken)
+    public async Task<IList<OrderDetailResponse>> Handle(GetOrderDetailByIdQuery request,
+        CancellationToken cancellationToken)
     {
-        var query = _repo.GetOrderDetails(od => od.OrderId == request.OrderId);
-        
+        var query = _repo.GetOrderDetails(od => od.OrderId == request.OrderId,
+            new Expression<Func<Data.Models.OrderDetail, object>>[]
+            {
+                o => o.Feedbacks,
+                o => o.Order,
+                o => o.Tasks,
+                o => o.Service
+            });
+
         var result = this._mapper.ProjectTo<OrderDetailResponse>(query);
 
         return await result.ToArrayAsync(cancellationToken: cancellationToken);
