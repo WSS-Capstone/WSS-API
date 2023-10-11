@@ -33,8 +33,7 @@ public class
     {
         var query = _comboRepo.GetCombos(null, new Expression<Func<Data.Models.Combo, object>>[]
         {
-            c => c.ComboServices,
-            c => c.Orders
+            c => c.ComboServices
         });
 
         if (!string.IsNullOrEmpty(request.Name))
