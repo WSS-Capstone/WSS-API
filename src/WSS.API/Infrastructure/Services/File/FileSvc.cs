@@ -47,7 +47,7 @@ public class FileSvc : IFileSvc
             Filename = filename,
             Size = SizeConverter(file.Length),
             Type = file.ContentType,
-            Link = $"{this._contextAccessor.HttpContext.Request.Host.Value}/{RootDirectory}/{filename}"
+            Link = $"https://{this._contextAccessor.HttpContext.Request.Host.Value}/{RootDirectory}/{filename}"
         };
     }
 
