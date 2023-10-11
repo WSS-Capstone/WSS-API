@@ -21,13 +21,12 @@ namespace WSS.API.Data.Models
         public int? Status { get; set; }
         public string? CoverUrl { get; set; }
         public Guid? Categoryid { get; set; }
-        public Guid? OwnerId { get; set; }
         public string? Description { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
+        public string? Unit { get; set; }
 
         public virtual Category? Category { get; set; }
-        public virtual Owner? Owner { get; set; }
         public virtual ICollection<Cart> Carts { get; set; }
         public virtual ICollection<ComboService> ComboServices { get; set; }
         public virtual ICollection<CurrentPrice> CurrentPrices { get; set; }

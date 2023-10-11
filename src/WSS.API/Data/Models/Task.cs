@@ -5,11 +5,6 @@ namespace WSS.API.Data.Models
 {
     public partial class Task
     {
-        public Task()
-        {
-            staff = new HashSet<staff>();
-        }
-
         public Guid Id { get; set; }
         public Guid? StaffId { get; set; }
         public Guid? PartnerId { get; set; }
@@ -31,6 +26,6 @@ namespace WSS.API.Data.Models
         public virtual Owner? CreateByNavigation { get; set; }
         public virtual OrderDetail? OrderDetail { get; set; }
         public virtual Partner? Partner { get; set; }
-        public virtual ICollection<staff> staff { get; set; }
+        public virtual staff? staff { get; set; }
     }
 }

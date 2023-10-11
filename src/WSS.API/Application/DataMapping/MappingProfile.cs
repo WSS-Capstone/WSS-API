@@ -87,14 +87,16 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.ComboServices))
             .ReverseMap();
 
+        this.CreateMap<Combo, ComboService>()
+            .ReverseMap();
+
         this.CreateMap<AddNewComboCommand, UpdateComboCommand>().ReverseMap();
     }
 
     private void ComboServiceProfile()
     {
         this.CreateMap<ComboService, ComboServicesResponse>()
-            .ForMember(dto => dto.Combo,
-                opt => opt.MapFrom(src => src.Combo))
+            
             .ForMember(dto => dto.Service, opt => opt.MapFrom(src => src.Service))
             .ReverseMap();
     }
@@ -102,14 +104,12 @@ public class MappingProfile : Profile
     private void CommissionProfile()
     {
         this.CreateMap<Commission, CommissionResponse>()
-            .ForMember(dto => dto.Category, opt => opt.MapFrom(src => src.Category))
+            .ForMember(dto => dto.Partner, opt => opt.MapFrom(src => src.Partner))
             .ReverseMap();
 
         this.CreateMap<Commission, CreateCommissionCommand>().ReverseMap();
         this.CreateMap<Commission, UpdateCategoryCommand>().ReverseMap();
         this.CreateMap<CreateCommissionCommand, UpdateCategoryCommand>().ReverseMap();
-        
-        
     }
 
     private void CurrentPriceProfile()
@@ -210,6 +210,8 @@ public class MappingProfile : Profile
     {
         this.CreateMap<PaymentHistory, PaymentHistoryResponse>()
             .ReverseMap();
+
+        this.CreateMap<PaymentHistory, PartnerPaymentHistoryResponse>().ReverseMap();
     }
 
     private void RoleProfile()
@@ -227,7 +229,6 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.Category))
             .ForMember(dto => dto.CurrentPrices,
                 opt => opt.MapFrom(src => src.CurrentPrices.FirstOrDefault()))
-
             .ReverseMap();
 
         this.CreateMap<Service, CreateServiceCommand>().ReverseMap();

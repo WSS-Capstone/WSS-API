@@ -9,9 +9,9 @@ public class PartnerResponse
     public string? Address { get; set; }
     public string? ImageUrl { get; set; }
     public Gender? Gender { get; set; }
-    public Guid? RoleId { get; set; }
+    public CommissionResponse? Commission { get; set; }
     public AccountResponse IdNavigation { get; set; } = null!;
-    public RoleResponse? Role { get; set; }
+    public CategoryResponse? Category { get; set; }
     public PartnerServiceResponse? PartnerService { get; set; }
     public TaskResponse? Task { get; set; }
     public ICollection<PartnerPaymentHistoryResponse> PartnerPaymentHistories { get; set; }

@@ -25,7 +25,8 @@ public class
     {
         var query = _repo.GetPartners(null, new Expression<Func<Data.Models.Partner, object>>[]
         {
-            p => p.Role,
+            p => p.Category,
+            p => p.Commissions,
             p => p.IdNavigation,
             p => p.PartnerService,
             p => p.Task,

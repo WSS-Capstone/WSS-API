@@ -5,11 +5,6 @@ namespace WSS.API.Data.Models
 {
     public partial class Account
     {
-        public Account()
-        {
-            staff = new HashSet<staff>();
-        }
-
         public Guid Id { get; set; }
         public string? Username { get; set; }
         public int? Status { get; set; }
@@ -23,6 +18,6 @@ namespace WSS.API.Data.Models
         public virtual Customer? Customer { get; set; }
         public virtual Owner? Owner { get; set; }
         public virtual Partner? Partner { get; set; }
-        public virtual ICollection<staff> staff { get; set; }
+        public virtual staff? staff { get; set; }
     }
 }

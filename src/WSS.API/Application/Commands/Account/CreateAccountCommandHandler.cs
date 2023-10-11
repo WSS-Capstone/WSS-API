@@ -55,15 +55,13 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
                 }
                 : null,
             staff = request.RoleName.ToString() == RoleName.STAFF
-                ? new List<staff>()
-                {
+                ? 
                     new staff()
                     {
                         Fullname = request.Fullname,
                         Phone = request.Phone,
                         Address = request.Address,
                     }
-                }
                 : null,
             Partner = request.RoleName.ToString() == RoleName.PARTNER
                 ? new Data.Models.Partner()

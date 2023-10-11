@@ -7,9 +7,10 @@ namespace WSS.API.Data.Models
     {
         public Category()
         {
-            Commissions = new HashSet<Commission>();
             InverseCategoryNavigation = new HashSet<Category>();
+            Partners = new HashSet<Partner>();
             Services = new HashSet<Service>();
+            staff = new HashSet<staff>();
         }
 
         public Guid Id { get; set; }
@@ -24,8 +25,9 @@ namespace WSS.API.Data.Models
         public Guid? UpdateBy { get; set; }
 
         public virtual Category? CategoryNavigation { get; set; }
-        public virtual ICollection<Commission> Commissions { get; set; }
         public virtual ICollection<Category> InverseCategoryNavigation { get; set; }
+        public virtual ICollection<Partner> Partners { get; set; }
         public virtual ICollection<Service> Services { get; set; }
+        public virtual ICollection<staff> staff { get; set; }
     }
 }

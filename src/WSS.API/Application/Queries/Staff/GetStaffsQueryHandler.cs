@@ -23,7 +23,7 @@ public class GetStaffsQueryHandler : IRequestHandler<GetStaffsQuery, PagingRespo
         {
             s => s.Id1,
             s => s.IdNavigation,
-            s => s.Role
+            s => s.Category
         });
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         

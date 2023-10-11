@@ -8,7 +8,6 @@ namespace WSS.API.Data.Models
         public Owner()
         {
             Orders = new HashSet<Order>();
-            Services = new HashSet<Service>();
             Tasks = new HashSet<Task>();
             Vouchers = new HashSet<Voucher>();
         }
@@ -27,7 +26,6 @@ namespace WSS.API.Data.Models
 
         public virtual Account IdNavigation { get; set; } = null!;
         public virtual ICollection<Order> Orders { get; set; }
-        public virtual ICollection<Service> Services { get; set; }
         public virtual ICollection<Task> Tasks { get; set; }
         public virtual ICollection<Voucher> Vouchers { get; set; }
     }

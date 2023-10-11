@@ -33,7 +33,6 @@ namespace WSS.API.Data.Models
         public virtual DbSet<PartnerPaymentHistory> PartnerPaymentHistories { get; set; } = null!;
         public virtual DbSet<PartnerService> PartnerServices { get; set; } = null!;
         public virtual DbSet<PaymentHistory> PaymentHistories { get; set; } = null!;
-        public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Service> Services { get; set; } = null!;
         public virtual DbSet<ServiceImage> ServiceImages { get; set; } = null!;
         public virtual DbSet<Task> Tasks { get; set; } = null!;
@@ -148,10 +147,10 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-                entity.HasOne(d => d.Category)
+                entity.HasOne(d => d.Partner)
                     .WithMany(p => p.Commissions)
-                    .HasForeignKey(d => d.CategoryId)
-                    .HasConstraintName("FK_Commission_Category");
+                    .HasForeignKey(d => d.PartnerId)
+                    .HasConstraintName("FK_Commission_Partner");
             });
 
             modelBuilder.Entity<CurrentPrice>(entity =>
@@ -308,6 +307,8 @@ namespace WSS.API.Data.Models
             {
                 entity.ToTable("Partner");
 
+                entity.HasIndex(e => e.CategoryId, "IX_Partner");
+
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
@@ -320,16 +321,16 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.Partners)
+                    .HasForeignKey(d => d.CategoryId)
+                    .HasConstraintName("FK_Partner_Category");
+
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Partner)
                     .HasForeignKey<Partner>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Partner_Account");
-
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.Partners)
-                    .HasForeignKey(d => d.RoleId)
-                    .HasConstraintName("FK_Partner_Role");
             });
 
             modelBuilder.Entity<PartnerPaymentHistory>(entity =>
@@ -385,19 +386,6 @@ namespace WSS.API.Data.Models
                     .HasConstraintName("FK_PaymentHistory_Order");
             });
 
-            modelBuilder.Entity<Role>(entity =>
-            {
-                entity.ToTable("Role");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Code).HasMaxLength(255);
-
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
-
-                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
-            });
-
             modelBuilder.Entity<Service>(entity =>
             {
                 entity.ToTable("Service");
@@ -412,11 +400,6 @@ namespace WSS.API.Data.Models
                     .WithMany(p => p.Services)
                     .HasForeignKey(d => d.Categoryid)
                     .HasConstraintName("FK_Service_Category");
-
-                entity.HasOne(d => d.Owner)
-                    .WithMany(p => p.Services)
-                    .HasForeignKey(d => d.OwnerId)
-                    .HasConstraintName("FK_Service_Owner");
             });
 
             modelBuilder.Entity<ServiceImage>(entity =>
@@ -502,9 +485,9 @@ namespace WSS.API.Data.Models
 
             modelBuilder.Entity<staff>(entity =>
             {
-                entity.HasKey(e => new { e.Id, e.RoleId });
-
                 entity.ToTable("Staff");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
@@ -516,24 +499,24 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-                entity.HasOne(d => d.IdNavigation)
+                entity.HasOne(d => d.Category)
                     .WithMany(p => p.staff)
-                    .HasForeignKey(d => d.Id)
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Staff_Category");
+
+                entity.HasOne(d => d.IdNavigation)
+                    .WithOne(p => p.staff)
+                    .HasForeignKey<staff>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Staff_Account");
 
                 entity.HasOne(d => d.Id1)
-                    .WithMany(p => p.staff)
-                    .HasPrincipalKey(p => p.StaffId)
-                    .HasForeignKey(d => d.Id)
+                    .WithOne(p => p.staff)
+                    .HasPrincipalKey<Task>(p => p.StaffId)
+                    .HasForeignKey<staff>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Staff_Task");
-
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.staff)
-                    .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Staff_Role");
             });
 
             OnModelCreatingPartial(modelBuilder);

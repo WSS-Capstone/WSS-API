@@ -33,12 +33,12 @@ public class UserFireFilter : IAsyncActionFilter
             var userInFb = this._firebaseAuth.GetUserAsync(userId);
             await Task.WhenAll(new List<Task>(){ user, userInFb });
 
-            if (user?.Result.Status == (int)AccountStatus.InActive)
-            {
-                context.HttpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
-                await context.HttpContext.Response.WriteAsync("Account is not active");
-                return;
-            }
+            // if (user?.Result.Status == (int)AccountStatus.InActive)
+            // {
+            //     context.HttpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
+            //     await context.HttpContext.Response.WriteAsync("Account is not active");
+            //     return;
+            // }
             // if (!userInFb.Result.EmailVerified)
             // {
             //     context.HttpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
