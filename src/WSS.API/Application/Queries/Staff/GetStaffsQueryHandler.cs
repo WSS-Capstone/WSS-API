@@ -19,10 +19,8 @@ public class GetStaffsQueryHandler : IRequestHandler<GetStaffsQuery, PagingRespo
 
     public async Task<PagingResponseQuery<StaffResponse, StaffSortCriteria>> Handle(GetStaffsQuery request, CancellationToken cancellationToken)
     {
-        var query = _staffRepo.GetStaffs(null, new Expression<Func<staff, object>>[]
+        var query = _staffRepo.GetStaffs(null, new Expression<Func<Data.Models.staff, object>>[]
         {
-            s => s.Id1,
-            s => s.IdNavigation,
             s => s.Category
         });
         var total = await query.CountAsync(cancellationToken: cancellationToken);

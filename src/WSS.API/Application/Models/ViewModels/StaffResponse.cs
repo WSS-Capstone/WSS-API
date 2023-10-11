@@ -10,7 +10,4 @@ public class StaffResponse
     public string? ImageUrl { get; set; }
     public Gender? Gender { get; set; }
     public CategoryResponse Category { get; set; }
-    public TaskResponse Id1 { get; set; } = null!;
-    public AccountResponse IdNavigation { get; set; } = null!;
-    public RoleResponse Role { get; set; } = null!;
 }
