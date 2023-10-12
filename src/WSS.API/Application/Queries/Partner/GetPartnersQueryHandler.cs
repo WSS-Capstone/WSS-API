@@ -26,11 +26,7 @@ public class
         var query = _repo.GetPartners(null, new Expression<Func<Data.Models.Partner, object>>[]
         {
             p => p.Category,
-            p => p.Commissions,
-            p => p.IdNavigation,
-            p => p.PartnerService,
-            p => p.Task,
-            p => p.PartnerPaymentHistories
+            p => p.Commissions
         });
         var total = await query.CountAsync(cancellationToken: cancellationToken);
 

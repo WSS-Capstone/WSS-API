@@ -17,10 +17,6 @@ public class TaskResponse
     public string? ImageEvidence { get; set; }
 
     public TaskStatus? Status { get; set; }
-    public OwnerResponse? CreateByNavigation { get; set; }
-    public OrderDetailResponse? OrderDetail { get; set; }
-    public PartnerResponse? Partner { get; set; }
-    public ICollection<StaffResponse> Staff { get; set; }
 }
 
 public enum TaskStatus

@@ -10,9 +10,5 @@ public class PartnerResponse
     public string? ImageUrl { get; set; }
     public Gender? Gender { get; set; }
     public CommissionResponse? Commission { get; set; }
-    public AccountResponse IdNavigation { get; set; } = null!;
     public CategoryResponse? Category { get; set; }
-    public PartnerServiceResponse? PartnerService { get; set; }
-    public TaskResponse? Task { get; set; }
-    public ICollection<PartnerPaymentHistoryResponse> PartnerPaymentHistories { get; set; }
 }

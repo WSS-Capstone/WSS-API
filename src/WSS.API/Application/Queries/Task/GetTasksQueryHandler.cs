@@ -21,10 +21,6 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
     {
         var query = _categoryRepo.GetTasks(null, new Expression<Func<Data.Models.Task, object>>[]
         {
-            t => t.CreateByNavigation,
-            t => t.OrderDetail,
-            t => t.Partner,
-            t => t.staff
         });
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         
