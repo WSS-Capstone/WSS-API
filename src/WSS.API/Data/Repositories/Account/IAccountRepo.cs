@@ -6,6 +6,7 @@ public interface IAccountRepo
         Expression<Func<Models.Account, object>>[]? includeProperties = null);
 
     Task<Models.Account?> GetAccountById(Guid id, Expression<Func<Models.Account, object>>[]? includeProperties = null);
+    Task<Models.Account?> GetAccountByMail(string email, Expression<Func<Models.Account, object>>[]? includeProperties = null);
     Task<Models.Account> CreateAccount(Models.Account user, bool tempSave = false);
     Task<Models.Account> UpdateAccount(Models.Account user, bool tempSave = false);
     Task<Models.Account> DeleteAccount(Models.Account user, bool tempSave = false);

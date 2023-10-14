@@ -130,6 +130,10 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Gender,
                 opt => opt.MapFrom(src => (Gender)src.Gender))
             .ReverseMap();
+        this.CreateMap<Customer, CreateCustomerCommand>()
+            .ForMember(dto => dto.Gender,
+                opt => opt.MapFrom(src => (Gender)src.Gender))
+            .ReverseMap();
 
         this.CreateMap<Customer, UpdateCustomerRequest>()
             .ForMember(dto => dto.Gender,

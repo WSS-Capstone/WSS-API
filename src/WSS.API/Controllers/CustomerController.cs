@@ -26,6 +26,12 @@ public class CustomerController : BaseController
 
         return result != null ? Ok(result) : NotFound();
     }
+    [HttpPost]
+    public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerCommand request, CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(request, cancellationToken);
+        return Ok(result);
+    }
     
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateCustomer([FromRoute] Guid id, [FromBody] UpdateCustomerRequest request,

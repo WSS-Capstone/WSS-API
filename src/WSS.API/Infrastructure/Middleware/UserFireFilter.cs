@@ -26,7 +26,13 @@ public class UserFireFilter : IAsyncActionFilter
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var userId = _identitySvc.GetUserRefId();
-       
+
+        if (context.ActionDescriptor.DisplayName.Contains("CreateAccountForAdmin"))
+        {
+            await next();
+            return;
+        }
+        
         if (userId != null)
         {
             var user = _accountRepo.GetAccounts(account => account.RefId == userId).FirstOrDefaultAsync();

@@ -70,4 +70,10 @@ public class AccountRepo : IAccountRepo
         var user = await _repo.GetByIdAsync(id, includeProperties);
         return user;
     }
+    public async Task<Models.Account?> GetAccountByMail(string mail,
+        Expression<Func<Models.Account, object>>[]? includeProperties = null)
+    {
+        var user = await _repo.GetFirstOrDefaultAsync(a => a.Username == mail, includeProperties);
+        return user;
+    }
 }

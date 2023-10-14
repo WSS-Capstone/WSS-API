@@ -27,6 +27,12 @@ public class AccountController : BaseController
         var result = await this.Mediator.Send(request, cancellationToken);
         return Ok(result);
     }
+    [HttpPost("admin")]
+    public async Task<IActionResult> CreateAccountForAdmin([FromBody]CreateAccountForAdminCommand request, CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(request, cancellationToken);
+        return Ok(result);
+    }
     
     [HttpPatch("{email}/password")]
     public async Task<IActionResult> UpdateAccountPassword([FromBody] UpdatePasswordRequest request, CancellationToken cancellationToken = default)
