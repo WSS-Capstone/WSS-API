@@ -3,6 +3,7 @@ using WSS.API.Application.Commands.Account;
 using WSS.API.Application.Commands.Category;
 using WSS.API.Application.Commands.Combo;
 using WSS.API.Application.Commands.Commission;
+using WSS.API.Application.Commands.CurrentPrice;
 using WSS.API.Application.Commands.Customer;
 using WSS.API.Application.Commands.Service;
 using WSS.API.Application.Commands.Staff;
@@ -117,6 +118,8 @@ public class MappingProfile : Profile
         this.CreateMap<CurrentPrice, CurrentPriceResponse>()
             .ForMember(dto => dto.Service, opt => opt.MapFrom(src => src.Service))
             .ReverseMap();
+        this.CreateMap<CurrentPrice, CreateCurrentPriceCommand>().ReverseMap();
+        this.CreateMap<CurrentPrice, UpdateCurrentPriceCommand>().ReverseMap();
     }
 
     private void CustomerProfile()
