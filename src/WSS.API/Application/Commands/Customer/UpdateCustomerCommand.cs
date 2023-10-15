@@ -14,8 +14,7 @@ public class UpdateCustomerCommand : IRequest<CustomerResponse>
         ImageUrl = request.ImageUrl;
         Gender = (int?)request.Gender;
     }
-
-
+    
     public Guid Id { get; set; }
     public string? Fullname { get; set; }
     public DateTime? DateOfBirth { get; set; }

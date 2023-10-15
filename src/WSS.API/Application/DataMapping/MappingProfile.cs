@@ -147,7 +147,7 @@ public class MappingProfile : Profile
 
     private void FeedbackProfile()
     {
-        this.CreateMap<Feedback, FeedbackResponse>()
+        this.CreateMap<Data.Models.Feedback, FeedbackResponse>()
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (FeedbackStatus)src.Status))
             .ReverseMap();
