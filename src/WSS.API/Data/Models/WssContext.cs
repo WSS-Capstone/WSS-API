@@ -20,6 +20,7 @@ namespace WSS.API.Data.Models
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Combo> Combos { get; set; } = null!;
         public virtual DbSet<ComboService> ComboServices { get; set; } = null!;
+        public virtual DbSet<Comment> Comments { get; set; } = null!;
         public virtual DbSet<Commission> Commissions { get; set; } = null!;
         public virtual DbSet<CurrentPrice> CurrentPrices { get; set; } = null!;
         public virtual DbSet<DayOff> DayOffs { get; set; } = null!;
@@ -41,7 +42,7 @@ namespace WSS.API.Data.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=20.189.117.242;Database=WSS;User Id=sa;Password=29327Cab@456789;TrustServerCertificate=True;");
+                optionsBuilder.UseSqlServer("Server=20.189.117.242;Database=WSS;User Id=sa;Password=29327Cab@456789;TrustServerCertificate=True;Connect Timeout=120");
             }
         }
 
@@ -120,6 +121,22 @@ namespace WSS.API.Data.Models
                     .WithMany(p => p.ComboServices)
                     .HasForeignKey(d => d.ServiceId)
                     .HasConstraintName("FK_ComboServices_Service");
+            });
+
+            modelBuilder.Entity<Comment>(entity =>
+            {
+                entity.ToTable("Comment");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Content).IsUnicode(false);
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Task)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.TaskId)
+                    .HasConstraintName("FK_Comment_Task");
             });
 
             modelBuilder.Entity<Commission>(entity =>
@@ -245,6 +262,11 @@ namespace WSS.API.Data.Models
                     .HasForeignKey(d => d.OwnerId)
                     .HasConstraintName("FK_Order_User1");
 
+                entity.HasOne(d => d.Voucher)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.VoucherId)
+                    .HasConstraintName("FK_Order_Voucher");
+
                 entity.HasOne(d => d.WeddingInformation)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.WeddingInformationId)
@@ -349,7 +371,7 @@ namespace WSS.API.Data.Models
             {
                 entity.ToTable("Task");
 
-                entity.HasIndex(e => e.UserId, "IX_Task")
+                entity.HasIndex(e => e.PartnerId, "IX_Task")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
@@ -365,10 +387,6 @@ namespace WSS.API.Data.Models
                 entity.Property(e => e.StartDate).HasColumnType("datetime");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
-
-                entity.Property(e => e.UserId)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
 
                 entity.HasOne(d => d.CreateByNavigation)
                     .WithMany(p => p.Tasks)

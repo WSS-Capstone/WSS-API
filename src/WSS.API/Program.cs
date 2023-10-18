@@ -14,7 +14,7 @@ using Newtonsoft.Json.Serialization;
 using WSS.API.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseUrls("http://*;https://*");
+// builder.WebHost.UseUrls("http://*;https://*");
 // Add services to the container.
 builder.Services.AddCors(o =>
 {

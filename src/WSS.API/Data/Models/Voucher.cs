@@ -5,6 +5,11 @@ namespace WSS.API.Data.Models
 {
     public partial class Voucher
     {
+        public Voucher()
+        {
+            Orders = new HashSet<Order>();
+        }
+
         public Guid Id { get; set; }
         public string? Code { get; set; }
         public string? Name { get; set; }
@@ -19,5 +24,6 @@ namespace WSS.API.Data.Models
         public DateTime? UpdateDate { get; set; }
 
         public virtual User? CreateByNavigation { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }
