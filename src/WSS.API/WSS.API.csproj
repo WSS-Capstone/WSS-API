@@ -32,7 +32,7 @@
         <Folder Include="Application\Models\Request\" />
         <Folder Include="Data\Models\"/>
         <Folder Include="Infrastructure\Authorization\"/>
-        <Folder Include="Infrastructure\Utilities\"/>
+        <Folder Include="Infrastructure\Utilities\" />
     </ItemGroup>
 
     <ItemGroup>

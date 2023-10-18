@@ -1,11 +1,7 @@
 using FirebaseAdmin.Auth;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using WSS.API.Data.Repositories.Account;
-using WSS.API.Data.Repositories.Customer;
-using WSS.API.Data.Repositories.Partner;
-using WSS.API.Data.Repositories.staff;
+using WSS.API.Data.Repositories.User;
 using WSS.API.Infrastructure.Config;
-using Task = System.Threading.Tasks.Task;
 
 namespace WSS.API.Application.Commands.Account;
 
@@ -27,16 +23,13 @@ public class CreateAccountForAdminHandler : IRequestHandler<CreateAccountForAdmi
 {
     private IAccountRepo _accountRepo;
     private FirebaseAuth _firebaseAuth;
-    private IPartnerRepo _partnerRepo;
-    private IStaffRepo _staffRepo;
+    private IUserRepo _userRepo;
 
-    public CreateAccountForAdminHandler(IAccountRepo accountRepo, FirebaseAuth firebaseAuth,
-        IPartnerRepo partnerRepo, IStaffRepo staffRepo)
+    public CreateAccountForAdminHandler(IAccountRepo accountRepo, FirebaseAuth firebaseAuth, IUserRepo userRepo)
     {
         _accountRepo = accountRepo;
         _firebaseAuth = firebaseAuth;
-        _partnerRepo = partnerRepo;
-        _staffRepo = staffRepo;
+        _userRepo = userRepo;
     }
 
     public async Task<Data.Models.Account> Handle(CreateAccountForAdminCommand request,
@@ -74,37 +67,18 @@ public class CreateAccountForAdminHandler : IRequestHandler<CreateAccountForAdmi
             Username = request.Email,
             CreateDate = DateTime.Now
         });
-
-        if (request.RoleName == RoleEnum.Partner)
+        await this._userRepo.CreateUser(new Data.Models.User()
         {
-            await this._partnerRepo.CreatePartner(new Data.Models.Partner()
-            {
-                Id = id,
-                Fullname = request.Fullname,
-                DateOfBirth = request.DateOfBirth,
-                Phone = request.Phone,
-                Address = request.Address,
-                Gender = request.Gender,
-                ImageUrl = request.ImageUrl,
-                CategoryId = request.CategoryId,
-                CreateDate = DateTime.Now
-            });
-        }
-        else
-        {
-            await _staffRepo.CreateStaff(new staff()
-            {
-                Id = id,
-                Fullname = request.Fullname,
-                DateOfBirth = request.DateOfBirth,
-                Phone = request.Phone,
-                Address = request.Address,
-                Gender = request.Gender,
-                ImageUrl = request.ImageUrl,
-                CategoryId = (Guid)request.CategoryId,
-                CreateDate = DateTime.Now
-            });
-        }
+            Id = id,
+            Fullname = request.Fullname,
+            DateOfBirth = request.DateOfBirth,
+            Phone = request.Phone,
+            Address = request.Address,
+            Gender = request.Gender,
+            ImageUrl = request.ImageUrl,
+            CategoryId = request.CategoryId,
+            CreateDate = DateTime.Now
+        });
 
         var response = await _accountRepo.GetAccountById(id);
         return response;

@@ -3,7 +3,7 @@ using WSS.API.Infrastructure.Config;
 
 namespace WSS.API.Application.Commands.Account;
 
-public class CreateAccountCommand : IRequest<Data.Models.Customer?>
+public class CreateAccountCommand : IRequest<Data.Models.Account?>
 {
     public string Email { get; set; }
     public string Password { get; set; }

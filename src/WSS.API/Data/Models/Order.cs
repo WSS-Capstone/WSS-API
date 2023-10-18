@@ -12,6 +12,7 @@ namespace WSS.API.Data.Models
             PaymentHistories = new HashSet<PaymentHistory>();
         }
 
+        public string? Code { get; set; }
         public Guid Id { get; set; }
         public Guid? CustomerId { get; set; }
         public Guid? OwnerId { get; set; }
@@ -20,7 +21,7 @@ namespace WSS.API.Data.Models
         public string? Address { get; set; }
         public string? Phone { get; set; }
         public Guid? VoucherId { get; set; }
-        public Guid? ComboId { get; set; }
+        public string? ComboId { get; set; }
         public double? TotalAmount { get; set; }
         public double? TotalAmountRequest { get; set; }
         public string? Description { get; set; }
@@ -30,9 +31,8 @@ namespace WSS.API.Data.Models
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
 
-        public virtual Combo? Combo { get; set; }
-        public virtual Customer? Customer { get; set; }
-        public virtual Owner? Owner { get; set; }
+        public virtual User? Customer { get; set; }
+        public virtual User? Owner { get; set; }
         public virtual WeddingInformation? WeddingInformation { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<PartnerPaymentHistory> PartnerPaymentHistories { get; set; }

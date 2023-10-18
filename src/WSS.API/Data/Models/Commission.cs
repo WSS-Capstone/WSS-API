@@ -5,8 +5,12 @@ namespace WSS.API.Data.Models
 {
     public partial class Commission
     {
+        public Commission()
+        {
+            Categories = new HashSet<Category>();
+        }
+
         public Guid Id { get; set; }
-        public Guid? PartnerId { get; set; }
         public DateTime? DateOfApply { get; set; }
         public double? CommisionValue { get; set; }
         public DateTime? CreateDate { get; set; }
@@ -14,6 +18,6 @@ namespace WSS.API.Data.Models
         public Guid? CreateBy { get; set; }
         public Guid? UpdateBy { get; set; }
 
-        public virtual Partner? Partner { get; set; }
+        public virtual ICollection<Category> Categories { get; set; }
     }
 }

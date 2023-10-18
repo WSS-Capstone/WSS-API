@@ -17,9 +17,6 @@ public class GetAccountDetailQueryHandler : IRequestHandler<GetAccountDetailQuer
     {
         var query = await _accountRepo.GetAccountById(request.Id, new Expression<Func<Data.Models.Account, object>>[]
         {
-            account => account.Customer,
-            a => a.Partner,
-            a => a.Owner,
         });
         
         var result = this._mapper.Map<AccountResponse>(query);

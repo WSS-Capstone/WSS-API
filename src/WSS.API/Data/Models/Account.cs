@@ -5,6 +5,7 @@ namespace WSS.API.Data.Models
 {
     public partial class Account
     {
+        public string? Code { get; set; }
         public Guid Id { get; set; }
         public string? Username { get; set; }
         public int? Status { get; set; }
@@ -15,9 +16,6 @@ namespace WSS.API.Data.Models
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
 
-        public virtual Customer? Customer { get; set; }
-        public virtual Owner? Owner { get; set; }
-        public virtual Partner? Partner { get; set; }
-        public virtual staff? staff { get; set; }
+        public virtual User? User { get; set; }
     }
 }

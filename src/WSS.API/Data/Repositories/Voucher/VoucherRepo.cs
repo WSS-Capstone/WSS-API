@@ -2,7 +2,7 @@ namespace WSS.API.Data.Repositories.Voucher;
 
 public class VoucherRepo : IVoucherRepo
 {
-     private readonly IDbContextFactory _dbContextFactory;
+    private readonly IDbContextFactory _dbContextFactory;
     private readonly IGenericRepository<Models.Voucher> _repo;
 
     /// <summary>

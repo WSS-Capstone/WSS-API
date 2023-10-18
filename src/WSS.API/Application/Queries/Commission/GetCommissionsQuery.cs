@@ -31,7 +31,6 @@ public class GetCommissionsQueryHandler : IRequestHandler<GetCommissionsQuery,
     {
         var query = _commissionRepo.GetCommissions(null, new Expression<Func<Data.Models.Commission, object>>[]
         {
-            c => c.Partner
         });
 
         var total = await query.CountAsync(cancellationToken: cancellationToken);

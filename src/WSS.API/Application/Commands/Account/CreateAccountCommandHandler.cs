@@ -1,25 +1,25 @@
 using FirebaseAdmin.Auth;
 using WSS.API.Data.Repositories.Account;
-using WSS.API.Data.Repositories.Customer;
+using WSS.API.Data.Repositories.User;
 using WSS.API.Infrastructure.Config;
 using Task = System.Threading.Tasks.Task;
 
 namespace WSS.API.Application.Commands.Account;
 
-public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, Data.Models.Customer?>
+public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, Data.Models.Account?>
 {
     private IAccountRepo _accountRepo;
     private FirebaseAuth _firebaseAuth;
-    private ICustomerRepo _customerRepo;
+    private IUserRepo _userRepo;
 
-    public CreateAccountCommandHandler(IAccountRepo accountRepo, FirebaseAuth firebaseAuth, ICustomerRepo customerRepo)
+    public CreateAccountCommandHandler(IAccountRepo accountRepo, FirebaseAuth firebaseAuth, IUserRepo userRepo)
     {
         _accountRepo = accountRepo;
         _firebaseAuth = firebaseAuth;
-        _customerRepo = customerRepo;
+        _userRepo = userRepo;
     }
 
-    public async Task<Data.Models.Customer?> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Data.Models.Account?> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
     {
         var user = await this._firebaseAuth.GetUserByEmailAsync(request.Email, cancellationToken);
         if (user != null)
@@ -45,26 +45,8 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
             RoleName = request.RoleName.ToString(),
             Status = 0,
             Username = request.Email,
-            Customer = request.RoleName.ToString() == RoleName.CUSTOMER
-                ? new Data.Models.Customer()
-                {
-                    Fullname = request.Fullname,
-                    Phone = request.Phone,
-                    Address = request.Address,
-                    Gender = request.Gender,
-                }
-                : null,
-            staff = request.RoleName.ToString() == RoleName.STAFF
-                ? 
-                    new staff()
-                    {
-                        Fullname = request.Fullname,
-                        Phone = request.Phone,
-                        Address = request.Address,
-                    }
-                : null,
-            Partner = request.RoleName.ToString() == RoleName.PARTNER
-                ? new Data.Models.Partner()
+            User = request.RoleName.ToString() == RoleName.CUSTOMER
+                ? new Data.Models.User()
                 {
                     Fullname = request.Fullname,
                     Phone = request.Phone,
@@ -76,6 +58,6 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
 
         await Task.WhenAll(new List<Task>() { userFb, userDb });
 
-        return await this._customerRepo.GetCustomerById(id);
+        return await this._accountRepo.GetAccountById(id);
     }
 }

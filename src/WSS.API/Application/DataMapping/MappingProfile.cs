@@ -1,12 +1,9 @@
-using AutoMapper;
 using WSS.API.Application.Commands.Account;
 using WSS.API.Application.Commands.Category;
 using WSS.API.Application.Commands.Combo;
 using WSS.API.Application.Commands.Commission;
 using WSS.API.Application.Commands.CurrentPrice;
-using WSS.API.Application.Commands.Customer;
 using WSS.API.Application.Commands.Service;
-using WSS.API.Application.Commands.Staff;
 using Task = WSS.API.Data.Models.Task;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
@@ -19,26 +16,19 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         this.AccountProfile();
-        this.CartProfile();
         this.CategoryProfile();
         this.ComboProfile();
         this.ComboServiceProfile();
         this.CommissionProfile();
         this.CurrentPriceProfile();
-        this.CustomerProfile();
         this.FeedbackProfile();
         this.MessageProfile();
         this.OrderProfile();
         this.OrderDetailProfile();
-        this.OwnerProfile();
-        this.PartnerProfile();
         this.PartnerPaymentHistoryProfile();
-        this.PartnerServiceProfile();
         this.PaymentHistoryProfile();
-        this.RoleProfile();
         this.ServiceProfile();
         this.ServiceImageProfile();
-        this.StaffProfile();
         this.TaskProfile();
         this.VoucherProfile();
         this.WeddingInformationProfile();
@@ -52,11 +42,6 @@ public class MappingProfile : Profile
             .ReverseMap();
 
         this.CreateMap<Account, CreateAccountCommand>().ReverseMap();
-    }
-
-    private void CartProfile()
-    {
-        this.CreateMap<Cart, CartResponse>().ReverseMap();
     }
 
     private void CategoryProfile()
@@ -97,17 +82,13 @@ public class MappingProfile : Profile
     private void ComboServiceProfile()
     {
         this.CreateMap<ComboService, ComboServicesResponse>()
-            
             .ForMember(dto => dto.Service, opt => opt.MapFrom(src => src.Service))
             .ReverseMap();
     }
 
     private void CommissionProfile()
     {
-        this.CreateMap<Commission, CommissionResponse>()
-            .ForMember(dto => dto.Partner, opt => opt.MapFrom(src => src.Partner))
-            .ReverseMap();
-
+        this.CreateMap<Commission, CommissionResponse>().ReverseMap();
         this.CreateMap<Commission, CreateCommissionCommand>().ReverseMap();
         this.CreateMap<Commission, UpdateCategoryCommand>().ReverseMap();
         this.CreateMap<CreateCommissionCommand, UpdateCategoryCommand>().ReverseMap();
@@ -120,29 +101,6 @@ public class MappingProfile : Profile
             .ReverseMap();
         this.CreateMap<CurrentPrice, CreateCurrentPriceCommand>().ReverseMap();
         this.CreateMap<CurrentPrice, UpdateCurrentPriceCommand>().ReverseMap();
-    }
-
-    private void CustomerProfile()
-    {
-        this.CreateMap<CustomerResponse, staff>().ReverseMap();
-        this.CreateMap<CustomerResponse, Owner>().ReverseMap();
-        this.CreateMap<CustomerResponse, Partner>().ReverseMap();
-
-
-        this.CreateMap<Customer, CustomerResponse>()
-            .ForMember(dto => dto.Gender,
-                opt => opt.MapFrom(src => (Gender)src.Gender))
-            .ReverseMap();
-        this.CreateMap<Customer, CreateCustomerCommand>()
-            .ForMember(dto => dto.Gender,
-                opt => opt.MapFrom(src => (Gender)src.Gender))
-            .ReverseMap();
-
-        this.CreateMap<Customer, UpdateCustomerRequest>()
-            .ForMember(dto => dto.Gender,
-                opt => opt.MapFrom(src => (Gender)src.Gender))
-            .ReverseMap();
-        this.CreateMap<Customer, UpdateCustomerCommand>().ReverseMap();
     }
 
     private void FeedbackProfile()
@@ -175,41 +133,11 @@ public class MappingProfile : Profile
             .ReverseMap();
     }
 
-    private void OwnerProfile()
-    {
-        this.CreateMap<OwnerResponse, staff>();
-        this.CreateMap<OwnerResponse, Customer>();
-        this.CreateMap<OwnerResponse, Partner>();
-        this.CreateMap<Owner, OwnerResponse>().ForMember(dto => dto.Gender,
-                opt => opt.MapFrom(src => (Gender)src.Gender))
-            .ReverseMap();
-    }
-
-    private void PartnerProfile()
-    {
-        this.CreateMap<PartnerResponse, staff>().ReverseMap();
-        this.CreateMap<PartnerResponse, Customer>().ReverseMap();
-        this.CreateMap<PartnerResponse, Owner>().ReverseMap();
-
-        this.CreateMap<Partner, PartnerResponse>()
-            .ForMember(dto => dto.Gender,
-                opt => opt.MapFrom(src => (Gender)src.Gender))
-            .ReverseMap();
-    }
-
     private void PartnerPaymentHistoryProfile()
     {
         this.CreateMap<PartnerPaymentHistory, PartnerPaymentHistoryResponse>()
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (PartnerPaymentHistoryStatus)src.Status))
-            .ReverseMap();
-    }
-
-    private void PartnerServiceProfile()
-    {
-        this.CreateMap<PartnerService, PartnerServiceResponse>()
-            .ForMember(dto => dto.Status,
-                opt => opt.MapFrom(src => (PartnerServiceStatus)src.Status))
             .ReverseMap();
     }
 
@@ -219,12 +147,6 @@ public class MappingProfile : Profile
             .ReverseMap();
 
         this.CreateMap<PaymentHistory, PartnerPaymentHistoryResponse>().ReverseMap();
-    }
-
-    private void RoleProfile()
-    {
-        this.CreateMap<Role, RoleResponse>()
-            .ReverseMap();
     }
 
     private void ServiceProfile()
@@ -247,25 +169,6 @@ public class MappingProfile : Profile
     {
         this.CreateMap<ServiceImage, ServiceImageResponse>()
             .ReverseMap();
-    }
-
-    private void StaffProfile()
-    {
-        this.CreateMap<StaffResponse, Customer>().ReverseMap();
-        this.CreateMap<StaffResponse, Owner>().ReverseMap();
-        this.CreateMap<StaffResponse, Partner>().ReverseMap();
-
-        this.CreateMap<staff, StaffResponse>()
-            .ForMember(dto => dto.Gender,
-                opt => opt.MapFrom(src => (Gender)src.Gender))
-            .ReverseMap();
-
-        this.CreateMap<staff, UpdateStaffRequest>()
-            .ForMember(dto => dto.Gender,
-                opt => opt.MapFrom(src => (Gender)src.Gender))
-            .ReverseMap();
-
-        this.CreateMap<staff, UpdateStaffCommand>().ReverseMap();
     }
 
     private void TaskProfile()

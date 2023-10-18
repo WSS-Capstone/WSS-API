@@ -7,31 +7,31 @@ namespace WSS.API.Data.Models
     {
         public Service()
         {
-            Carts = new HashSet<Cart>();
             ComboServices = new HashSet<ComboService>();
             CurrentPrices = new HashSet<CurrentPrice>();
+            DayOffs = new HashSet<DayOff>();
             OrderDetails = new HashSet<OrderDetail>();
-            PartnerServices = new HashSet<PartnerService>();
             ServiceImages = new HashSet<ServiceImage>();
         }
 
         public Guid Id { get; set; }
+        public string? Code { get; set; }
         public string? Name { get; set; }
         public int? Quantity { get; set; }
         public int? Status { get; set; }
         public string? CoverUrl { get; set; }
-        public Guid? Categoryid { get; set; }
+        public Guid? CategoryId { get; set; }
         public string? Description { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public string? Unit { get; set; }
+        public string? Reason { get; set; }
 
         public virtual Category? Category { get; set; }
-        public virtual ICollection<Cart> Carts { get; set; }
         public virtual ICollection<ComboService> ComboServices { get; set; }
         public virtual ICollection<CurrentPrice> CurrentPrices { get; set; }
+        public virtual ICollection<DayOff> DayOffs { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-        public virtual ICollection<PartnerService> PartnerServices { get; set; }
         public virtual ICollection<ServiceImage> ServiceImages { get; set; }
     }
 }

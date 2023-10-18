@@ -17,28 +17,24 @@ namespace WSS.API.Data.Models
         }
 
         public virtual DbSet<Account> Accounts { get; set; } = null!;
-        public virtual DbSet<Cart> Carts { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Combo> Combos { get; set; } = null!;
         public virtual DbSet<ComboService> ComboServices { get; set; } = null!;
         public virtual DbSet<Commission> Commissions { get; set; } = null!;
         public virtual DbSet<CurrentPrice> CurrentPrices { get; set; } = null!;
-        public virtual DbSet<Customer> Customers { get; set; } = null!;
+        public virtual DbSet<DayOff> DayOffs { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Message> Messages { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
-        public virtual DbSet<Owner> Owners { get; set; } = null!;
-        public virtual DbSet<Partner> Partners { get; set; } = null!;
         public virtual DbSet<PartnerPaymentHistory> PartnerPaymentHistories { get; set; } = null!;
-        public virtual DbSet<PartnerService> PartnerServices { get; set; } = null!;
         public virtual DbSet<PaymentHistory> PaymentHistories { get; set; } = null!;
         public virtual DbSet<Service> Services { get; set; } = null!;
         public virtual DbSet<ServiceImage> ServiceImages { get; set; } = null!;
         public virtual DbSet<Task> Tasks { get; set; } = null!;
+        public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
         public virtual DbSet<WeddingInformation> WeddingInformations { get; set; } = null!;
-        public virtual DbSet<staff> staff { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -57,6 +53,10 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.RefId).IsUnicode(false);
@@ -68,41 +68,24 @@ namespace WSS.API.Data.Models
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<Cart>(entity =>
-            {
-                entity.ToTable("Cart");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
-
-                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
-
-                entity.HasOne(d => d.Service)
-                    .WithMany(p => p.Carts)
-                    .HasForeignKey(d => d.ServiceId)
-                    .HasConstraintName("FK_Cart_Service");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Carts)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_Cart_Customer");
-            });
-
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.ToTable("Category");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-                entity.HasOne(d => d.CategoryNavigation)
-                    .WithMany(p => p.InverseCategoryNavigation)
-                    .HasForeignKey(d => d.CategoryId)
-                    .HasConstraintName("FK_Category_Category");
+                entity.HasOne(d => d.Commision)
+                    .WithMany(p => p.Categories)
+                    .HasForeignKey(d => d.CommisionId)
+                    .HasConstraintName("FK_Category_Commission");
             });
 
             modelBuilder.Entity<Combo>(entity =>
@@ -110,6 +93,10 @@ namespace WSS.API.Data.Models
                 entity.ToTable("Combo");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
@@ -146,11 +133,6 @@ namespace WSS.API.Data.Models
                 entity.Property(e => e.DateOfApply).HasColumnType("datetime");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
-
-                entity.HasOne(d => d.Partner)
-                    .WithMany(p => p.Commissions)
-                    .HasForeignKey(d => d.PartnerId)
-                    .HasConstraintName("FK_Commission_Partner");
             });
 
             modelBuilder.Entity<CurrentPrice>(entity =>
@@ -171,29 +153,30 @@ namespace WSS.API.Data.Models
                     .HasConstraintName("FK_CurrentPrice_Service");
             });
 
-            modelBuilder.Entity<Customer>(entity =>
+            modelBuilder.Entity<DayOff>(entity =>
             {
-                entity.ToTable("Customer");
+                entity.ToTable("DayOff");
+
+                entity.HasIndex(e => e.PartnerId, "IX_PartnerService")
+                    .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
-
-                entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
-
-                entity.Property(e => e.Fullname).IsUnicode(false);
-
-                entity.Property(e => e.Phone)
-                    .HasMaxLength(255)
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+                entity.Property(e => e.DayOff1).HasColumnName("DayOff");
 
-                entity.HasOne(d => d.IdNavigation)
-                    .WithOne(p => p.Customer)
-                    .HasForeignKey<Customer>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Customer_Account");
+                entity.HasOne(d => d.DayOff1Navigation)
+                    .WithMany(p => p.DayOffs)
+                    .HasForeignKey(d => d.DayOff1)
+                    .HasConstraintName("FK_PartnerService_Service");
+
+                entity.HasOne(d => d.Partner)
+                    .WithOne(p => p.DayOff)
+                    .HasForeignKey<DayOff>(d => d.PartnerId)
+                    .HasConstraintName("FK_DayOff_User");
             });
 
             modelBuilder.Entity<Feedback>(entity =>
@@ -202,19 +185,23 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.CreateByNavigation)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.CreateBy)
+                    .HasConstraintName("FK_Feedback_User");
 
                 entity.HasOne(d => d.OrderDetail)
                     .WithMany(p => p.Feedbacks)
                     .HasForeignKey(d => d.OrderDetailId)
                     .HasConstraintName("FK_Feedback_OrderDetail");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Feedbacks)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_Feedback_Customer");
             });
 
             modelBuilder.Entity<Message>(entity =>
@@ -232,6 +219,14 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ComboId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Phone)
@@ -240,20 +235,15 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
-                entity.HasOne(d => d.Combo)
-                    .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.ComboId)
-                    .HasConstraintName("FK_Order_Combo");
-
                 entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.Orders)
+                    .WithMany(p => p.OrderCustomers)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK_Order_Customer");
+                    .HasConstraintName("FK_Order_User");
 
                 entity.HasOne(d => d.Owner)
-                    .WithMany(p => p.Orders)
+                    .WithMany(p => p.OrderOwners)
                     .HasForeignKey(d => d.OwnerId)
-                    .HasConstraintName("FK_Order_Owner");
+                    .HasConstraintName("FK_Order_User1");
 
                 entity.HasOne(d => d.WeddingInformation)
                     .WithMany(p => p.Orders)
@@ -266,6 +256,8 @@ namespace WSS.API.Data.Models
                 entity.ToTable("OrderDetail");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.EndTime).HasColumnType("datetime");
 
                 entity.Property(e => e.StartTime).HasColumnType("datetime");
 
@@ -280,64 +272,15 @@ namespace WSS.API.Data.Models
                     .HasConstraintName("FK_OrderDetail_Service");
             });
 
-            modelBuilder.Entity<Owner>(entity =>
-            {
-                entity.ToTable("Owner");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
-
-                entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
-
-                entity.Property(e => e.Phone)
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
-
-                entity.HasOne(d => d.IdNavigation)
-                    .WithOne(p => p.Owner)
-                    .HasForeignKey<Owner>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Owner_Account");
-            });
-
-            modelBuilder.Entity<Partner>(entity =>
-            {
-                entity.ToTable("Partner");
-
-                entity.HasIndex(e => e.CategoryId, "IX_Partner");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
-
-                entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
-
-                entity.Property(e => e.Fullname).IsUnicode(false);
-
-                entity.Property(e => e.Phone).IsUnicode(false);
-
-                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
-
-                entity.HasOne(d => d.Category)
-                    .WithMany(p => p.Partners)
-                    .HasForeignKey(d => d.CategoryId)
-                    .HasConstraintName("FK_Partner_Category");
-
-                entity.HasOne(d => d.IdNavigation)
-                    .WithOne(p => p.Partner)
-                    .HasForeignKey<Partner>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Partner_Account");
-            });
-
             modelBuilder.Entity<PartnerPaymentHistory>(entity =>
             {
                 entity.ToTable("PartnerPaymentHistory");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
@@ -349,27 +292,7 @@ namespace WSS.API.Data.Models
                 entity.HasOne(d => d.Partner)
                     .WithMany(p => p.PartnerPaymentHistories)
                     .HasForeignKey(d => d.PartnerId)
-                    .HasConstraintName("FK_PartnerPaymentHistory_Partner");
-            });
-
-            modelBuilder.Entity<PartnerService>(entity =>
-            {
-                entity.ToTable("PartnerService");
-
-                entity.HasIndex(e => e.PartnerId, "IX_PartnerService")
-                    .IsUnique();
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.HasOne(d => d.Partner)
-                    .WithOne(p => p.PartnerService)
-                    .HasForeignKey<PartnerService>(d => d.PartnerId)
-                    .HasConstraintName("FK_PartnerService_Partner");
-
-                entity.HasOne(d => d.Service)
-                    .WithMany(p => p.PartnerServices)
-                    .HasForeignKey(d => d.ServiceId)
-                    .HasConstraintName("FK_PartnerService_Service");
+                    .HasConstraintName("FK_PartnerPaymentHistory_User");
             });
 
             modelBuilder.Entity<PaymentHistory>(entity =>
@@ -377,6 +300,10 @@ namespace WSS.API.Data.Models
                 entity.ToTable("PaymentHistory");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
@@ -392,13 +319,17 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Services)
-                    .HasForeignKey(d => d.Categoryid)
+                    .HasForeignKey(d => d.CategoryId)
                     .HasConstraintName("FK_Service_Category");
             });
 
@@ -418,23 +349,26 @@ namespace WSS.API.Data.Models
             {
                 entity.ToTable("Task");
 
-                entity.HasIndex(e => e.StaffId, "IX_Task")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.PartnerId, "IX_Task_1")
+                entity.HasIndex(e => e.UserId, "IX_Task")
                     .IsUnique();
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.EndDate).HasColumnType("datetime");
 
-                entity.Property(e => e.StaffId).IsRequired();
-
                 entity.Property(e => e.StartDate).HasColumnType("datetime");
 
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UserId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.CreateByNavigation)
                     .WithMany(p => p.Tasks)
@@ -445,11 +379,38 @@ namespace WSS.API.Data.Models
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(d => d.OrderDetailId)
                     .HasConstraintName("FK_Task_OrderDetail");
+            });
 
-                entity.HasOne(d => d.Partner)
-                    .WithOne(p => p.Task)
-                    .HasForeignKey<Task>(d => d.PartnerId)
-                    .HasConstraintName("FK_Task_Partner");
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("User");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.CreateBy)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
+
+                entity.Property(e => e.Phone)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.CategoryId)
+                    .HasConstraintName("FK_User_Category");
+
+                entity.HasOne(d => d.IdNavigation)
+                    .WithOne(p => p.User)
+                    .HasForeignKey<User>(d => d.Id)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Owner_Account");
             });
 
             modelBuilder.Entity<Voucher>(entity =>
@@ -458,11 +419,13 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.Code)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.EndTime).HasColumnType("datetime");
-
-                entity.Property(e => e.Name).HasColumnName("name");
 
                 entity.Property(e => e.StartTime).HasColumnType("datetime");
 
@@ -481,42 +444,6 @@ namespace WSS.API.Data.Models
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.WeddingDay).HasColumnType("datetime");
-            });
-
-            modelBuilder.Entity<staff>(entity =>
-            {
-                entity.ToTable("Staff");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
-
-                entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
-
-                entity.Property(e => e.ImageUrl).IsUnicode(false);
-
-                entity.Property(e => e.Phone).IsUnicode(false);
-
-                entity.Property(e => e.UpdateDate).HasColumnType("datetime");
-
-                entity.HasOne(d => d.Category)
-                    .WithMany(p => p.staff)
-                    .HasForeignKey(d => d.CategoryId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Staff_Category");
-
-                entity.HasOne(d => d.IdNavigation)
-                    .WithOne(p => p.staff)
-                    .HasForeignKey<staff>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Staff_Account");
-
-                entity.HasOne(d => d.Id1)
-                    .WithOne(p => p.staff)
-                    .HasPrincipalKey<Task>(p => p.StaffId)
-                    .HasForeignKey<staff>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Staff_Task");
             });
 
             OnModelCreatingPartial(modelBuilder);

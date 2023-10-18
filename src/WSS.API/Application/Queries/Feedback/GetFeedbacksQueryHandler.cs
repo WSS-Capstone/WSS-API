@@ -17,7 +17,6 @@ public class GetFeedbacksQueryHandler :  IRequestHandler<GetFeedbacksQuery, Pagi
     {
         var query = _repo.GetFeedbacks(null, new Expression<Func<Data.Models.Feedback, object>>[]
         {
-            o => o.User
         });
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         

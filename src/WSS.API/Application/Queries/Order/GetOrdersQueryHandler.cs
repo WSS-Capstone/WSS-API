@@ -17,7 +17,7 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
     {
         var query = _repo.GetOrders(null, new Expression<Func<Data.Models.Order, object>>[]
         {
-            o => o.Combo
+            o => o.Owner
         });
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         

@@ -23,9 +23,6 @@ public class GetUserInfoQueryHandler : IRequestHandler<GetUserInfoQuery, Account
         var userId = _identitySvc.GetUserRefId();
         var result = await this._accountRepo.GetAccounts(a => a.RefId == userId, new Expression<Func<Data.Models.Account, object>>[]
         {
-            account => account.Customer,
-            a => a.Partner,
-            a => a.Owner,
         }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
         return this._mapper.Map<AccountResponse>(result);
     }
