@@ -10,14 +10,14 @@ public class UpdateCategoryCommand : IRequest<CategoryResponse>
         Name = command.Name;
         ImageUrl = command.ImageUrl;
         Description = command.Description;
-        CategoryId = command.CategoryId;
+        CommissionValue = command.CommissionValue;
     }
 
     public Guid Id { get; set; }
     public string? Name { get; set; }
     public string? ImageUrl { get; set; }
     public string? Description { get; set; }
-    public Guid? CategoryId { get; set; }
+    public float? CommissionValue { get; set; }
 }
 
 
@@ -35,7 +35,7 @@ public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryComman
     public async Task<CategoryResponse> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
     {
         var category = await this._categoryRepo.GetCategoryById(request.Id);
-        
+        var commissionId = Guid.NewGuid();
         if (category == null)
         {
             throw new Exception("Category not found");
@@ -43,6 +43,14 @@ public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryComman
         
         category = _mapper.Map(request, category);
         category.UpdateDate = DateTime.Now;
+        category.CommisionId = commissionId;
+        category.Commision = new Data.Models.Commission()
+        {
+            DateOfApply = DateTime.Today,
+            CommisionValue = request.CommissionValue,
+            Id = commissionId
+        };
+        
         var query = await _categoryRepo.UpdateCategory(category);
         
         var result = this._mapper.Map<CategoryResponse>(query);
