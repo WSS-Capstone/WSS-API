@@ -1,5 +1,6 @@
 ﻿using WSS.API.Infrastructure.Services.File;
 using WSS.API.Infrastructure.Services.Identity;
+using WSS.API.Infrastructure.Services.VnPay;
 
 namespace WSS.API.Infrastructure;
 
@@ -16,5 +17,6 @@ public static class ModuleRegister
     {
         services.AddTransient<IIdentitySvc, IdentitySvc>();
         services.AddScoped<IFileSvc, FileSvc>();
+        services.AddScoped<VnPayService>();
     }
 }
