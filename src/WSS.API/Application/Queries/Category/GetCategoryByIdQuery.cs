@@ -26,7 +26,11 @@ public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery,
     /// <inheritdoc />
     public async Task<CategoryResponse> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        var result = await this._categoryRepo.GetCategoryById(request.Id);
+        var result = await this._categoryRepo.GetCategoryById(request.Id, new Expression<Func<Data.Models.Category, object>>[]
+        {
+            c => c.Commision,
+            c => c.Services
+        });
 
         return this._mapper.Map<CategoryResponse>(result);
     }

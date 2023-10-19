@@ -7,7 +7,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace WSS.API.Application.Commands.Account;
 
-public class CreateAccountCommand : IRequest<Data.Models.Account?>
+public class CreateAccountForCustomerCommand : IRequest<Data.Models.Account?>
 {
     public string Email { get; set; }
     public string Password { get; set; }
@@ -15,10 +15,9 @@ public class CreateAccountCommand : IRequest<Data.Models.Account?>
     public string Phone { get; set; }
     public string Address { get; set; }
     public int Gender { get; set; }
-    public RoleEnum RoleName { get; set; }
 }
 
-public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, Data.Models.Account?>
+public class CreateAccountCommandHandler : IRequestHandler<CreateAccountForCustomerCommand, Data.Models.Account?>
 {
     private IAccountRepo _accountRepo;
     private FirebaseAuth _firebaseAuth;
@@ -31,7 +30,8 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
         _userRepo = userRepo;
     }
 
-    public async Task<Data.Models.Account?> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Data.Models.Account?> Handle(CreateAccountForCustomerCommand request,
+        CancellationToken cancellationToken)
     {
         var user = await this._firebaseAuth.GetUserByEmailAsync(request.Email, cancellationToken);
         if (user != null)
@@ -54,21 +54,19 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
         {
             Id = id,
             RefId = uid,
-            RoleName = request.RoleName.ToString(),
+            RoleName = RoleName.CUSTOMER,
             Status = 0,
             Username = request.Email,
-            User = request.RoleName.ToString() == RoleName.CUSTOMER
-                ? new Data.Models.User()
-                {
-                    Fullname = request.Fullname,
-                    Phone = request.Phone,
-                    Address = request.Address,
-                    Gender = request.Gender,
-                }
-                : null,
+            User = new Data.Models.User()
+            {
+                Fullname = request.Fullname,
+                Phone = request.Phone,
+                Address = request.Address,
+                Gender = request.Gender,
+            }
         });
 
-        await Task.WhenAll(new List<Task>() { userFb, userDb });
+        await Task.WhenAll(new List<Task> { userFb, userDb });
 
         return await this._accountRepo.GetAccountById(id);
     }

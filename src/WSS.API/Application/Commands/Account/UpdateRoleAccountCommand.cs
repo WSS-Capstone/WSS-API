@@ -9,11 +9,6 @@ public class UpdateRoleAccountCommand : IRequest<AccountResponse>
     public RoleEnum RoleName { get; set; }
 }
 
-public class UpdateRoleAccountRequest
-{
-    public RoleEnum RoleName { get; set; }
-}
-
 public class UpdateRoleAccountCommandHandler : IRequestHandler<UpdateRoleAccountCommand, AccountResponse>
 {
     private IMapper _mapper;

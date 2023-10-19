@@ -41,7 +41,7 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => (AccountStatus)src.Status))
             .ReverseMap();
 
-        this.CreateMap<Account, CreateAccountCommand>().ReverseMap();
+        this.CreateMap<Account, CreateAccountForCustomerCommand>().ReverseMap();
     }
 
     private void CategoryProfile()
@@ -49,6 +49,7 @@ public class MappingProfile : Profile
         this.CreateMap<Category, CategoryResponse>()
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (CategoryStatus)src.Status))
+            .ForMember(dto => dto.Commission, opt => opt.MapFrom(src => src.Commision))
             .ReverseMap();
 
         this.CreateMap<Category, CreateCategoryCommand>()

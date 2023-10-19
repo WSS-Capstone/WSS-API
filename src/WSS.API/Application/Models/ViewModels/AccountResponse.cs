@@ -7,9 +7,7 @@ public class AccountResponse
     public AccountStatus? Status { get; set; }
     public string? RefId { get; set; }
     public string? RoleName { get; set; }
-    public virtual CustomerResponse? Customer { get; set; }
-    public virtual OwnerResponse? Owner { get; set; }
-    public virtual PartnerResponse? Partner { get; set; }
+    public virtual User? User { get; set; }
 }
 
 public enum AccountStatus
