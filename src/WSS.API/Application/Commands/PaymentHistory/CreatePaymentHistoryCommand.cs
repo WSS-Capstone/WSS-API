@@ -1,4 +1,5 @@
 using WSS.API.Data.Repositories.PaymentHistory;
+using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Commands.PaymentHistory;
 
@@ -23,8 +24,11 @@ public class CreatePaymentHistoryCommandHandler : IRequestHandler<CreatePaymentH
 
     public async Task<PaymentHistoryResponse> Handle(CreatePaymentHistoryCommand request, CancellationToken cancellationToken)
     {
+        var code = await _repo.GetPaymentHistorys().OrderByDescending(x => x.Code).Select(x => x.Code)
+            .FirstOrDefaultAsync(cancellationToken);
         var feedback = _mapper.Map<Data.Models.PaymentHistory>(request);
         feedback.Id = Guid.NewGuid();
+        feedback.Code = GenCode.NextId(code);
         feedback.CreateDate = DateTime.UtcNow;
         
         feedback = await _repo.CreatePaymentHistory(feedback);

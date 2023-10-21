@@ -1,4 +1,5 @@
 using WSS.API.Data.Repositories.Task;
+using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Commands.Task;
 
@@ -14,22 +15,25 @@ public class CreateTaskCommand : IRequest<TaskResponse>
 public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskResponse>
 {
     private readonly IMapper _mapper;
-    private readonly ITaskRepo _feedbackRepo;
+    private readonly ITaskRepo _taskRepo;
 
-    public CreateTaskCommandHandler(IMapper mapper, ITaskRepo feedbackRepo)
+    public CreateTaskCommandHandler(IMapper mapper, ITaskRepo taskRepo)
     {
         _mapper = mapper;
-        _feedbackRepo = feedbackRepo;
+        _taskRepo = taskRepo;
     }
 
     public async Task<TaskResponse> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
     {
-        var feedback = _mapper.Map<Data.Models.Task>(request);
-        feedback.Id = Guid.NewGuid();
-        feedback.CreateDate = DateTime.UtcNow;
+        var code = await _taskRepo.GetTasks().OrderByDescending(x => x.Code).Select(x => x.Code)
+            .FirstOrDefaultAsync(cancellationToken);
+        var task = _mapper.Map<Data.Models.Task>(request);
+        task.Id = Guid.NewGuid();
+        task.Code = GenCode.NextId(code);
+        task.CreateDate = DateTime.UtcNow;
         
-        feedback = await _feedbackRepo.CreateTask(feedback);
+        task = await _taskRepo.CreateTask(task);
         
-        return _mapper.Map<TaskResponse>(feedback);
+        return _mapper.Map<TaskResponse>(task);
     }
 }

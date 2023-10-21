@@ -4,7 +4,7 @@ namespace WSS.API.Application.Queries.Order;
 
 public class GetOrdersQuery : PagingParam<OrderSortCriteria>, IRequest<PagingResponseQuery<OrderResponse, OrderSortCriteria>>
 {
-    
+    public OrderStatus? Status { get; set; }
 }
 
 public enum OrderSortCriteria
@@ -18,8 +18,8 @@ public enum OrderSortCriteria
 
 public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResponseQuery<OrderResponse, OrderSortCriteria>>
 {
-    private IMapper _mapper;
-    private IOrderRepo _repo;
+    private readonly IMapper _mapper;
+    private readonly IOrderRepo _repo;
 
     public GetOrdersQueryHandler(IMapper mapper, IOrderRepo repo)
     {
