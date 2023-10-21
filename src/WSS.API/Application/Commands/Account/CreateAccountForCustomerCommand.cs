@@ -1,9 +1,7 @@
 using FirebaseAdmin.Auth;
-using MediatR;
 using WSS.API.Data.Repositories.Account;
 using WSS.API.Data.Repositories.User;
 using WSS.API.Infrastructure.Config;
-using Task = System.Threading.Tasks.Task;
 
 namespace WSS.API.Application.Commands.Account;
 
@@ -66,7 +64,7 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountForCusto
             }
         });
 
-        await Task.WhenAll(new List<Task> { userFb, userDb });
+        await System.Threading.Tasks.Task.WhenAll(new List<System.Threading.Tasks.Task> { userFb, userDb });
 
         return await this._accountRepo.GetAccountById(id);
     }

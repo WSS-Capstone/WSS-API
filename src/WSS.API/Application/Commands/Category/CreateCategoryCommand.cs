@@ -1,5 +1,7 @@
+using System.Security.Cryptography;
 using WSS.API.Data.Repositories.Category;
 using WSS.API.Infrastructure.Services.Identity;
+using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Commands.Category;
 
@@ -26,9 +28,12 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
 
     public async Task<CategoryResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
+        var cateInDb = await _categoryRepo.GetCategorys().OrderByDescending(x => x.Code).Select(x => x.Code)
+            .FirstOrDefaultAsync(cancellationToken);
         var commissionId = Guid.NewGuid();
         var category = _mapper.Map<Data.Models.Category>(request);
         category.Id = Guid.NewGuid();
+        category.Code = GenCode.NextId(cateInDb);
         category.CreateDate = DateTime.Now;
         category.Status = (int?)CategoryStatus.Active;
         category.CommisionId = commissionId;
@@ -39,9 +44,9 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
             CommisionValue = request.CommissionValue,
         };
         var query = await _categoryRepo.CreateCategory(category);
-        
+
         var result = this._mapper.Map<CategoryResponse>(query);
-        
+
         return result;
     }
 }

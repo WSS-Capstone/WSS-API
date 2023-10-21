@@ -25,7 +25,10 @@ public class GetServiceByIdQueryHandler : IRequestHandler<GetServiceByIdQuery, S
 
     public async Task<ServiceResponse> Handle(GetServiceByIdQuery request, CancellationToken cancellationToken)
     {
-        var query = await _repo.GetServiceById(request.Id);
+        var query = await _repo.GetServiceById(request.Id, new Expression<Func<Data.Models.Service, object>>[]
+        {
+            s => s.CurrentPrices
+        });
 
         if (query == null)
         {

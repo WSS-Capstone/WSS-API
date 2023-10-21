@@ -3,6 +3,7 @@ using WSS.API.Application.Commands.Category;
 using WSS.API.Application.Commands.Combo;
 using WSS.API.Application.Commands.Commission;
 using WSS.API.Application.Commands.CurrentPrice;
+using WSS.API.Application.Commands.DayOff;
 using WSS.API.Application.Commands.Service;
 using Task = WSS.API.Data.Models.Task;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
@@ -32,6 +33,7 @@ public class MappingProfile : Profile
         this.TaskProfile();
         this.VoucherProfile();
         this.WeddingInformationProfile();
+        this.DayOffProfile();
     }
 
     private void AccountProfile()
@@ -93,6 +95,13 @@ public class MappingProfile : Profile
         this.CreateMap<Commission, CreateCommissionCommand>().ReverseMap();
         this.CreateMap<Commission, UpdateCategoryCommand>().ReverseMap();
         this.CreateMap<CreateCommissionCommand, UpdateCategoryCommand>().ReverseMap();
+    }
+    private void DayOffProfile()
+    {
+        this.CreateMap<DayOff, DayOffResponse>().ReverseMap();
+        this.CreateMap<DayOff, CreateDayOffCommand>().ReverseMap();
+        this.CreateMap<DayOff, UpdateCategoryCommand>().ReverseMap();
+        this.CreateMap<CreateDayOffCommand, UpdateCategoryCommand>().ReverseMap();
     }
 
     private void CurrentPriceProfile()

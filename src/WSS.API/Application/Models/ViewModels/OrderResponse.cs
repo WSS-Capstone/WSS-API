@@ -2,6 +2,7 @@ namespace WSS.API.Application.Models.ViewModels;
 
 public class OrderResponse
 {
+    public string? Code { get; set; }
     public Guid Id { get; set; }
     public Guid? CustomerId { get; set; }
     public Guid? OwnerId { get; set; }
@@ -14,9 +15,9 @@ public class OrderResponse
     public double? TotalAmount { get; set; }
     public double? TotalAmountRequest { get; set; }
     public string? Description { get; set; }
+    public int? StatusPayment { get; set; }
     public DateTime? CreateDate { get; set; }
     public OrderStatus? Status { get; set; }
-    public ComboResponse? Combo { get; set; }
 }
 
 public enum OrderStatus

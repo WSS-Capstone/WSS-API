@@ -30,11 +30,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Application\Commands\Task\" />
-        <Folder Include="Application\Models\Request\" />
         <Folder Include="Data\Models\"/>
         <Folder Include="Infrastructure\Authorization\"/>
-        <Folder Include="Infrastructure\Utilities\" />
     </ItemGroup>
 
     <ItemGroup>

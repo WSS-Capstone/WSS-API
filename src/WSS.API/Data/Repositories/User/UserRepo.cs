@@ -1,5 +1,6 @@
 namespace WSS.API.Data.Repositories.User;
 
+/// <inheritdoc />
 public class UserRepo : IUserRepo
 {
     private readonly IDbContextFactory _dbContextFactory;

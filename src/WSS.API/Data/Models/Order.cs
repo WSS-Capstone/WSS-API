@@ -21,17 +21,17 @@ namespace WSS.API.Data.Models
         public string? Address { get; set; }
         public string? Phone { get; set; }
         public Guid? VoucherId { get; set; }
-        public string? ComboId { get; set; }
+        public Guid? ComboId { get; set; }
         public double? TotalAmount { get; set; }
         public double? TotalAmountRequest { get; set; }
         public string? Description { get; set; }
-        public DateTime? CreateDate { get; set; }
         public int? Status { get; set; }
+        public int? StatusPayment { get; set; }
+        public DateTime? CreateDate { get; set; }
         public Guid? CreateBy { get; set; }
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
-        public int? StatusPayment { get; set; }
-
+        public virtual Combo? Combo { get; set; }
         public virtual User? Customer { get; set; }
         public virtual User? Owner { get; set; }
         public virtual Voucher? Voucher { get; set; }

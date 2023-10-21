@@ -4,6 +4,7 @@ using WSS.API.Data.Repositories.Combo;
 using WSS.API.Data.Repositories.ComboServices;
 using WSS.API.Data.Repositories.Commission;
 using WSS.API.Data.Repositories.CurrentPrice;
+using WSS.API.Data.Repositories.DayOff;
 using WSS.API.Data.Repositories.Feedback;
 using WSS.API.Data.Repositories.Message;
 using WSS.API.Data.Repositories.Order;
@@ -19,8 +20,15 @@ using WSS.API.Data.Repositories.WeddingInformation;
 
 namespace WSS.API.Data.Repositories;
 
+/// <summary>
+/// 
+/// </summary>
 public static class ModuleRegister
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="services"></param>
     public static void RegisterDataRepositories(this IServiceCollection services)
     {
         services.AddScoped<IAccountRepo, AccountRepo>();
@@ -41,5 +49,6 @@ public static class ModuleRegister
         services.AddScoped<IVoucherRepo, VoucherRepo>();
         services.AddScoped<IWeddingInformationRepo, WeddingInformationRepo>();
         services.AddScoped<IUserRepo, UserRepo>();
+        services.AddScoped<IDayOffRepo, DayOffRepo>();
     }
 }

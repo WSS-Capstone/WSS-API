@@ -34,7 +34,7 @@ public class GetCategorysQueryHandler : IRequestHandler<GetCategorysQuery,
     {
         var query = _categoryRepo.GetCategorys(null, new Expression<Func<Data.Models.Category, object>>[]
         {
-            s => s.Services,
+            c => c.Services,
             c => c.Commision
         });
 

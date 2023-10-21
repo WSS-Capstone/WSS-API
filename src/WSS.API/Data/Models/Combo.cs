@@ -8,6 +8,7 @@ namespace WSS.API.Data.Models
         public Combo()
         {
             ComboServices = new HashSet<ComboService>();
+            Orders = new HashSet<Order>();
         }
 
         public Guid Id { get; set; }
@@ -23,5 +24,6 @@ namespace WSS.API.Data.Models
         public Guid? UpdateBy { get; set; }
 
         public virtual ICollection<ComboService> ComboServices { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }
