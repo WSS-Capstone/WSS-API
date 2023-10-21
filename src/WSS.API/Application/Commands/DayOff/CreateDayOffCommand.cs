@@ -1,4 +1,5 @@
 using WSS.API.Data.Repositories.DayOff;
+using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Commands.DayOff;
 
@@ -23,9 +24,11 @@ public class CreateDayOffCommandHandler : IRequestHandler<CreateDayOffCommand, D
 
     public async Task<DayOffResponse> Handle(CreateDayOffCommand request, CancellationToken cancellationToken)
     {
+        var code = await _dayOffRepo.GetDayOffs().OrderByDescending(x => x.Code).Select(x => x.Code)
+            .FirstOrDefaultAsync(cancellationToken);
         var dayOff = _mapper.Map<Data.Models.DayOff>(request);
         dayOff.Id = Guid.NewGuid();
-        
+        dayOff.Code = GenCode.NextId(code);
         dayOff = await _dayOffRepo.CreateDayOff(dayOff);
         
         return _mapper.Map<DayOffResponse>(dayOff);

@@ -15,25 +15,23 @@ public class CreateCategoryCommand : IRequest<CategoryResponse>
 
 public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CategoryResponse>
 {
-    private IMapper _mapper;
-    private ICategoryRepo _categoryRepo;
-    private IIdentitySvc _identitySvc;
+    private readonly IMapper _mapper;
+    private readonly ICategoryRepo _categoryRepo;
 
-    public CreateCategoryCommandHandler(IMapper mapper, ICategoryRepo categoryRepo, IIdentitySvc identitySvc)
+    public CreateCategoryCommandHandler(IMapper mapper, ICategoryRepo categoryRepo)
     {
         _mapper = mapper;
         _categoryRepo = categoryRepo;
-        _identitySvc = identitySvc;
     }
 
     public async Task<CategoryResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        var cateInDb = await _categoryRepo.GetCategorys().OrderByDescending(x => x.Code).Select(x => x.Code)
+        var code = await _categoryRepo.GetCategorys().OrderByDescending(x => x.Code).Select(x => x.Code)
             .FirstOrDefaultAsync(cancellationToken);
         var commissionId = Guid.NewGuid();
         var category = _mapper.Map<Data.Models.Category>(request);
         category.Id = Guid.NewGuid();
-        category.Code = GenCode.NextId(cateInDb);
+        category.Code = GenCode.NextId(code);
         category.CreateDate = DateTime.Now;
         category.Status = (int?)CategoryStatus.Active;
         category.CommisionId = commissionId;

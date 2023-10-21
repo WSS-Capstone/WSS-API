@@ -1,5 +1,6 @@
 using WSS.API.Application.Models.Requests;
 using WSS.API.Data.Repositories.Order;
+using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Commands.Order;
 
@@ -67,8 +68,11 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
 
     public async Task<OrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
+        var code = await _orderRepo.GetOrders().OrderByDescending(x => x.Code).Select(x => x.Code)
+            .FirstOrDefaultAsync(cancellationToken);
         var order = _mapper.Map<Data.Models.Order>(request);
         order.Id = Guid.NewGuid();
+        order.Code = GenCode.NextId(code);
         order.CreateDate = DateTime.UtcNow;
         
         order = await _orderRepo.CreateOrder(order);

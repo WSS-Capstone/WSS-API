@@ -1,4 +1,5 @@
 using WSS.API.Data.Repositories.Voucher;
+using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Commands.Voucher;
 
@@ -24,11 +25,13 @@ public class CreateVoucherCommandHandler : IRequestHandler<CreateVoucherCommand,
 
     public async Task<VoucherResponse> Handle(CreateVoucherCommand request, CancellationToken cancellationToken)
     {
-        var weddingInformation = _mapper.Map<Data.Models.Voucher>(request);
-        weddingInformation.Id = Guid.NewGuid();
+        var code = await _repo.GetVouchers().OrderByDescending(x => x.Code).Select(x => x.Code)
+            .FirstOrDefaultAsync(cancellationToken);
+        var voucher = _mapper.Map<Data.Models.Voucher>(request);
+        voucher.Id = Guid.NewGuid();
+        voucher.Code = GenCode.NextId(code);
+        voucher = await _repo.CreateVoucher(voucher);
         
-        weddingInformation = await _repo.CreateVoucher(weddingInformation);
-        
-        return _mapper.Map<VoucherResponse>(weddingInformation);
+        return _mapper.Map<VoucherResponse>(voucher);
     }
 }

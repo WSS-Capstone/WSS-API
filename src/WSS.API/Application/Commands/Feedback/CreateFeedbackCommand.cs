@@ -1,4 +1,5 @@
 using WSS.API.Data.Repositories.Feedback;
+using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Feedback;
 
@@ -24,8 +25,11 @@ public class CreateFeedbackCommandHandler : IRequestHandler<CreateFeedbackComman
 
     public async Task<FeedbackResponse> Handle(CreateFeedbackCommand request, CancellationToken cancellationToken)
     {
+        var code = await _feedbackRepo.GetFeedbacks().OrderByDescending(x => x.Code).Select(x => x.Code)
+            .FirstOrDefaultAsync(cancellationToken);
         var feedback = _mapper.Map<Data.Models.Feedback>(request);
         feedback.Id = Guid.NewGuid();
+        feedback.Code = GenCode.NextId(code);
         feedback.CreateDate = DateTime.UtcNow;
         
         feedback = await _feedbackRepo.CreateFeedback(feedback);

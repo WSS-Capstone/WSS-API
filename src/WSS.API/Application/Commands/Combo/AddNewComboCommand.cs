@@ -1,4 +1,5 @@
 using WSS.API.Data.Repositories.Combo;
+using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Commands.Combo;
 
@@ -24,8 +25,11 @@ public class AddNewComboCommandHandler : IRequestHandler<AddNewComboCommand, Com
 
     public async Task<ComboService> Handle(AddNewComboCommand request, CancellationToken cancellationToken)
     {
+        var code = await _comboRepo.GetCombos().OrderByDescending(x => x.Code).Select(x => x.Code)
+            .FirstOrDefaultAsync(cancellationToken);
         var combo = _mapper.Map<Data.Models.Combo>(request);
         combo.Id = Guid.NewGuid();
+        combo.Code = GenCode.NextId(code);
         combo.Status = (int?)CategoryStatus.Active;
         var query = await _comboRepo.CreateCombo(combo);
         
