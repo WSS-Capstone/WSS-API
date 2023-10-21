@@ -37,22 +37,13 @@ public class UpdateOrderCommand : IRequest<OrderResponse>
     public int? StatusPayment { get; set; }
 }
 
-public class UpdateOrderRequest
+public class UpdateOrderRequest : UpdateOrderCommand
 {
-    public Guid Id { get; set; }
-    public Guid? CustomerId { get; set; }
-    public Guid? OwnerId { get; set; }
-    public Guid? WeddingInformationId { get; set; }
-    public string? Fullname { get; set; }
-    public string? Address { get; set; }
-    public string? Phone { get; set; }
-    public Guid? VoucherId { get; set; }
-    public Guid? ComboId { get; set; }
-    public double? TotalAmount { get; set; }
-    public double? TotalAmountRequest { get; set; }
-    public string? Description { get; set; }
-    public int? Status { get; set; }
-    public int? StatusPayment { get; set; }
+    public UpdateOrderRequest(Guid id, UpdateOrderRequest request) : base(id, request)
+    {
+    }
+    
+    private Guid Id { get => base.Id; set => base.Id = value; }
 }
 
 public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, OrderResponse>
@@ -68,7 +59,11 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, Ord
 
     public async Task<OrderResponse> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
     {
-        var feedback = await _repo.GetOrderById(request.Id);
+        var feedback = await _repo.GetOrderById(request.Id, new Expression<Func<Data.Models.Order, object>>[]
+        {
+            order => order.WeddingInformation, 
+            order => order.OrderDetails, 
+        });
         if (feedback == null)
         {
             throw new Exception("Order not found");

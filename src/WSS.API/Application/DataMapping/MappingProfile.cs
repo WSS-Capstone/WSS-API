@@ -4,6 +4,7 @@ using WSS.API.Application.Commands.Combo;
 using WSS.API.Application.Commands.Commission;
 using WSS.API.Application.Commands.CurrentPrice;
 using WSS.API.Application.Commands.DayOff;
+using WSS.API.Application.Commands.Order;
 using WSS.API.Application.Commands.Service;
 using Task = WSS.API.Data.Models.Task;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
@@ -141,6 +142,8 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (OrderDetailStatus)src.Status))
             .ReverseMap();
+
+        this.CreateMap<OrderDetail, OrderDetailRequest>().ReverseMap();
     }
 
     private void PartnerPaymentHistoryProfile()
@@ -199,5 +202,7 @@ public class MappingProfile : Profile
     {
         this.CreateMap<WeddingInformation, WeddingInformationResponse>()
             .ReverseMap();
+
+        this.CreateMap<WeddingInformation, WeddingInformationRequest>().ReverseMap();
     }
 }
