@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using WSS.API.Data.Repositories.Account;
 using WSS.API.Infrastructure.Config;
 
@@ -5,12 +6,12 @@ namespace WSS.API.Application.Queries.Account;
 
 public class GetAccountsByRoleNameQuery : PagingParam<AccountSortCriteria>, IRequest<PagingResponseQuery<AccountResponse, AccountSortCriteria>>
 {
-    public GetAccountsByRoleNameQuery(RoleEnum roleName)
+    public GetAccountsByRoleNameQuery(List<RoleEnum> roleNames)
     {
-        RoleName = roleName;
+        RoleNames = roleNames;
     }
 
-    public RoleEnum RoleName { get; set; }
+    public List<RoleEnum> RoleNames { get; set; }
 }
 
 public enum AccountSortCriteria
@@ -36,7 +37,8 @@ public class GetAccountByRoleNameQueryHandler :  IRequestHandler<GetAccountsByRo
     /// <inheritdoc />
     public async Task<PagingResponseQuery<AccountResponse, AccountSortCriteria>> Handle(GetAccountsByRoleNameQuery request, CancellationToken cancellationToken)
     {
-        var query = _accountRepo.GetAccounts(a => a.RoleName == request.RoleName.ToString());
+        var roleNames = request.RoleNames.Select(role => role.ToString()).ToList();
+        var query = _accountRepo.GetAccounts(a => roleNames.Contains(a.RoleName));
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);

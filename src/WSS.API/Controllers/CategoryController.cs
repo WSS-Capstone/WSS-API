@@ -39,7 +39,7 @@ public class CategoryController : BaseController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, [FromBody] CreateCategoryCommand command,
+    public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, [FromBody] UpdateCategoryRequest command,
         CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(new UpdateCategoryCommand(id, command), cancellationToken);

@@ -48,4 +48,11 @@
         </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Application\Models\ViewModels\PartnerServiceResponse.cs" />
+      <Compile Remove="Application\Models\ViewModels\OwnerResponse.cs" />
+      <Compile Remove="Application\Models\ViewModels\CartResponse.cs" />
+      <Compile Remove="Application\Models\ViewModels\CustomerResponse.cs" />
+    </ItemGroup>
+
 </Project>
