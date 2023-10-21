@@ -22,6 +22,7 @@ namespace WSS.API.Data.Models
         public Guid? CreateBy { get; set; }
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
+        public bool? IsOrderLimit { get; set; }
 
         public virtual Commission? Commision { get; set; }
         public virtual ICollection<Service> Services { get; set; }

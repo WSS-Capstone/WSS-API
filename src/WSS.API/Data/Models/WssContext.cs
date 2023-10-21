@@ -81,6 +81,8 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
+                entity.Property(e => e.IsOrderLimit).HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Commision)
