@@ -16,7 +16,7 @@ public class AccountController : BaseController
         _identitySvc = identitySvc;
     }
 
-    [HttpGet("roles")]
+    [HttpGet]
     public async Task<IActionResult> GetAccountByRoleName([FromQuery] List<RoleEnum> roleNames,
         CancellationToken cancellationToken = default)
     {
