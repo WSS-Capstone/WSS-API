@@ -5,7 +5,7 @@ using WSS.API.Infrastructure.Config;
 
 namespace WSS.API.Application.Commands.Account;
 
-public class CreateAccountForAdminCommand : IRequest<Data.Models.Account?>
+public class CreateAccountForAdminCommand : IRequest<AccountResponse>
 {
     public string Email { get; set; }
     public string Password { get; set; }
@@ -13,26 +13,28 @@ public class CreateAccountForAdminCommand : IRequest<Data.Models.Account?>
     public DateTime? DateOfBirth { get; set; }
     public string Phone { get; set; }
     public string Address { get; set; }
-    public int Gender { get; set; }
+    public Gender Gender { get; set; }
     public string? ImageUrl { get; set; }
     public Guid? CategoryId { get; set; }
     public RoleEnum RoleName { get; set; }
 }
 
-public class CreateAccountForAdminHandler : IRequestHandler<CreateAccountForAdminCommand, Data.Models.Account?>
+public class CreateAccountForAdminHandler : IRequestHandler<CreateAccountForAdminCommand, AccountResponse>
 {
     private IAccountRepo _accountRepo;
     private FirebaseAuth _firebaseAuth;
     private IUserRepo _userRepo;
+    private IMapper _mapper;
 
-    public CreateAccountForAdminHandler(IAccountRepo accountRepo, FirebaseAuth firebaseAuth, IUserRepo userRepo)
+    public CreateAccountForAdminHandler(IAccountRepo accountRepo, FirebaseAuth firebaseAuth, IUserRepo userRepo, IMapper mapper)
     {
         _accountRepo = accountRepo;
         _firebaseAuth = firebaseAuth;
         _userRepo = userRepo;
+        _mapper = mapper;
     }
 
-    public async Task<Data.Models.Account> Handle(CreateAccountForAdminCommand request,
+    public async Task<AccountResponse> Handle(CreateAccountForAdminCommand request,
         CancellationToken cancellationToken)
     {
         // var user = await this._firebaseAuth.GetUserByEmailAsync(request.Email, cancellationToken);
@@ -63,7 +65,7 @@ public class CreateAccountForAdminHandler : IRequestHandler<CreateAccountForAdmi
             Id = id,
             RefId = uid,
             RoleName = request.RoleName.ToString(),
-            Status = 0,
+            Status = 1,
             Username = request.Email,
             CreateDate = DateTime.Now
         });
@@ -74,13 +76,14 @@ public class CreateAccountForAdminHandler : IRequestHandler<CreateAccountForAdmi
             DateOfBirth = request.DateOfBirth,
             Phone = request.Phone,
             Address = request.Address,
-            Gender = request.Gender,
+            Gender = (int?)request.Gender,
             ImageUrl = request.ImageUrl,
             CategoryId = request.CategoryId,
             CreateDate = DateTime.Now
         });
 
         var response = await _accountRepo.GetAccountById(id);
-        return response;
+        var result = this._mapper.Map<AccountResponse>(response);
+        return result;
     }
 }

@@ -66,7 +66,7 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountForCusto
             Id = id,
             RefId = uid,
             RoleName = RoleName.CUSTOMER,
-            Status = 0,
+            Status = 1,
             Username = request.Email,
             User = new Data.Models.User()
             {
