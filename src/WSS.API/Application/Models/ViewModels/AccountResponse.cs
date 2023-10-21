@@ -5,9 +5,8 @@ public class AccountResponse
     public Guid Id { get; set; }
     public string? Username { get; set; }
     public AccountStatus? Status { get; set; }
-    public string? RefId { get; set; }
     public string? RoleName { get; set; }
-    public virtual User? User { get; set; }
+    public virtual UserResponse? User { get; set; }
 }
 
 public enum AccountStatus

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using WSS.API.Application.Commands.Account;
 using WSS.API.Application.Queries.Account;
 using WSS.API.Infrastructure.Config;
@@ -22,9 +23,11 @@ public class AccountController : BaseController
     }
 
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<IActionResult> RegisterAccount([FromBody]CreateAccountForCustomerCommand request, CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(request, cancellationToken);
+        
         return Ok(result);
     }
     

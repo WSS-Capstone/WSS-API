@@ -45,6 +45,11 @@ public class MappingProfile : Profile
             .ReverseMap();
 
         this.CreateMap<Account, CreateAccountForCustomerCommand>().ReverseMap();
+
+        this.CreateMap<User, UserResponse>()
+            .ForMember(dto => dto.Gender,
+                opt => opt.MapFrom(src => (Gender)src.Gender))
+            .ReverseMap();
     }
 
     private void CategoryProfile()
