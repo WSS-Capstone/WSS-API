@@ -11,6 +11,7 @@ public class UpdateCategoryCommand : IRequest<CategoryResponse>
         ImageUrl = command.ImageUrl;
         Description = command.Description;
         CommissionValue = command.CommissionValue;
+        IsOrderLimit = command.IsOrderLimit;
         Status = command.Status;
     }
 
@@ -30,6 +31,7 @@ public class UpdateCategoryRequest
     public string? ImageUrl { get; set; }
     public string? Description { get; set; }
     public float? CommissionValue { get; set; }
+    public bool? IsOrderLimit { get; set; }
     public CategoryStatus? Status { get; set; }
 }
 

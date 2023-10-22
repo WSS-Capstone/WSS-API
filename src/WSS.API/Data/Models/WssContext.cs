@@ -356,6 +356,11 @@ namespace WSS.API.Data.Models
                     .WithMany(p => p.Services)
                     .HasForeignKey(d => d.CategoryId)
                     .HasConstraintName("FK_Service_Category");
+
+                entity.HasOne(d => d.CreateByNavigation)
+                    .WithMany(p => p.Services)
+                    .HasForeignKey(d => d.CreateBy)
+                    .HasConstraintName("Service_Account_Id_fk");
             });
 
             modelBuilder.Entity<ServiceImage>(entity =>

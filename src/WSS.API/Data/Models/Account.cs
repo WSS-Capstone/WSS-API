@@ -5,6 +5,11 @@ namespace WSS.API.Data.Models
 {
     public partial class Account
     {
+        public Account()
+        {
+            Services = new HashSet<Service>();
+        }
+
         public string? Code { get; set; }
         public Guid Id { get; set; }
         public string? Username { get; set; }
@@ -18,5 +23,6 @@ namespace WSS.API.Data.Models
         public string? Reason { get; set; }
 
         public virtual User? User { get; set; }
+        public virtual ICollection<Service> Services { get; set; }
     }
 }

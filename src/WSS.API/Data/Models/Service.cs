@@ -26,8 +26,10 @@ namespace WSS.API.Data.Models
         public DateTime? UpdateDate { get; set; }
         public string? Unit { get; set; }
         public string? Reason { get; set; }
+        public Guid? CreateBy { get; set; }
 
         public virtual Category? Category { get; set; }
+        public virtual Account? CreateByNavigation { get; set; }
         public virtual ICollection<ComboService> ComboServices { get; set; }
         public virtual ICollection<CurrentPrice> CurrentPrices { get; set; }
         public virtual ICollection<DayOff> DayOffs { get; set; }
