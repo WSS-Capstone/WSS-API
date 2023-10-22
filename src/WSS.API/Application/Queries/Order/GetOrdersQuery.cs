@@ -33,6 +33,10 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
         {
             o => o.Owner
         });
+        if(request.Status != null)
+        {
+            query = query.Where(s => s.Status == (int)request.Status);
+        }
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
