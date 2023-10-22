@@ -22,7 +22,9 @@ public class OrderResponse
 
 public enum OrderStatus
 {
-    ACTIVE = 1,
-    INACTIVE = 2,
-    DELETED = 3,
+    PENDING = 1,
+    CONFIRM = 2,
+    DOING = 3,
+    DONE = 4,
+    CANCEL = 5,
 }
