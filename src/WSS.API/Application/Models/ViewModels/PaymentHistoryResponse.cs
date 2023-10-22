@@ -12,7 +12,9 @@ public class PaymentHistoryResponse
 
 public enum PaymentHistoryStatus
 {
-    ACTIVE = 1,
-    INACTIVE = 2,
-    DELETED = 3,
+    PENDING = 1,
+    DEPOSITING = 2,
+    DEPOSITED = 3,
+    DONE = 4,
+    CANCEL = 5,
 }

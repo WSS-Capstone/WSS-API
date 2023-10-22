@@ -25,46 +25,57 @@ public class OrderDetailRepo : IOrderDetailRepo
     }
 
     /// <inheritdoc />
-    public async Task<Models.OrderDetail> CreateOrderDetail(Models.OrderDetail user, bool tempSave = false)
+    public async Task<Models.OrderDetail> CreateOrderDetail(Models.OrderDetail order, bool tempSave = false)
     {
-        await _repo.InsertAsync(user);
+        await _repo.InsertAsync(order);
 
         _ = tempSave
             ? await _dbContextFactory.UnitOfWork<WSSContext, Models.OrderDetail>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
-        return user;
+        return order;
+    }
+    /// <inheritdoc />
+    public async Task<List<Models.OrderDetail>> CreateOrderDetails(List<Models.OrderDetail> orderDetails, bool tempSave = false)
+    {
+        await _repo.InsertAsync(orderDetails);
+
+        _ = tempSave
+            ? await _dbContextFactory.UnitOfWork<WSSContext, Models.OrderDetail>().SaveTempChangesAsync()
+            : await _dbContextFactory.SaveAllAsync();
+
+        return orderDetails;
     }
 
     /// <inheritdoc />
-    public async Task<Models.OrderDetail> UpdateOrderDetail(Models.OrderDetail user, bool tempSave = false)
+    public async Task<Models.OrderDetail> UpdateOrderDetail(Models.OrderDetail order, bool tempSave = false)
     {
-        await _repo.UpdateAsync(user);
+        await _repo.UpdateAsync(order);
 
         _ = tempSave
             ? await _dbContextFactory.UnitOfWork<WSSContext, Models.OrderDetail>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
-        return user;
+        return order;
     }
 
     /// <inheritdoc />
-    public async Task<Models.OrderDetail> DeleteOrderDetail(Models.OrderDetail user, bool tempSave = false)
+    public async Task<Models.OrderDetail> DeleteOrderDetail(Models.OrderDetail order, bool tempSave = false)
     {
-        await _repo.DeleteAsync(user);
+        await _repo.DeleteAsync(order);
 
         _ = tempSave
             ? await _dbContextFactory.UnitOfWork<WSSContext, Models.OrderDetail>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
-        return user;
+        return order;
     }
 
     /// <inheritdoc />
     public async Task<Models.OrderDetail?> GetOrderDetailById(Guid id,
         Expression<Func<Models.OrderDetail, object>>[]? includeProperties = null)
     {
-        var user = await _repo.GetByIdAsync(id, includeProperties);
-        return user;
+        var order = await _repo.GetByIdAsync(id, includeProperties);
+        return order;
     }
 }

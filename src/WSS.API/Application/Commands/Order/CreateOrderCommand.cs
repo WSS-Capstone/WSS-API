@@ -1,5 +1,7 @@
 using WSS.API.Application.Models.Requests;
 using WSS.API.Data.Repositories.Order;
+using WSS.API.Data.Repositories.OrderDetail;
+using WSS.API.Data.Repositories.WeddingInformation;
 using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Commands.Order;
@@ -59,24 +61,43 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
 {
     private readonly IMapper _mapper;
     private readonly IOrderRepo _orderRepo;
+    private readonly IOrderDetailRepo _orderDetailRepo;
+    private readonly IWeddingInformationRepo _weddingInformationRepo;
 
-    public CreateOrderCommandHandler(IMapper mapper, IOrderRepo orderRepo)
+    public CreateOrderCommandHandler(IMapper mapper, IOrderRepo orderRepo, IWeddingInformationRepo weddingInformationRepo, IOrderDetailRepo orderDetailRepo)
     {
         _mapper = mapper;
         _orderRepo = orderRepo;
+        _weddingInformationRepo = weddingInformationRepo;
+        _orderDetailRepo = orderDetailRepo;
     }
 
     public async Task<OrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
+        // Create Order
         var code = await _orderRepo.GetOrders().OrderByDescending(x => x.Code).Select(x => x.Code)
             .FirstOrDefaultAsync(cancellationToken);
         var order = _mapper.Map<Data.Models.Order>(request);
+        order.Status = (int)OrderStatus.PENDING;
         order.Id = Guid.NewGuid();
         order.Code = GenCode.NextId(code);
         order.CreateDate = DateTime.UtcNow;
         
-        order = await _orderRepo.CreateOrder(order);
+        var weddingInformation = _mapper.Map<Data.Models.WeddingInformation>(request.WeddingInformation);
+        weddingInformation.Id = Guid.NewGuid();
         
+        var orderDetails = _mapper.Map<List<OrderDetail>>(request.OrderDetails);
+        foreach (var orderDetail in orderDetails)
+        {
+            orderDetail.OrderId = order.Id;
+            orderDetail.Id = Guid.NewGuid();
+        }
+        await _weddingInformationRepo.CreateWeddingInformation(weddingInformation);
+        await _orderDetailRepo.CreateOrderDetails(orderDetails);
+        
+        order.WeddingInformationId = weddingInformation.Id;
+        order = await _orderRepo.CreateOrder(order);
+
         return _mapper.Map<OrderResponse>(order);
     }
 }
