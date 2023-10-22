@@ -7,20 +7,20 @@ namespace WSS.API.Application.Commands.Account;
 /// <inheritdoc />
 public class UpdateAccountProfileCommand : IRequest<AccountResponse>
 {
-    public UpdateAccountProfileCommand(string email, UpdateMyAccountProfileCommand command)
+    public UpdateAccountProfileCommand(string email, UpdateMyAccountProfileCommand? command)
     {
         Email = email;
-        Password = command.Password;
-        Fullname = command.Fullname;
-        DateOfBirth = command.DateOfBirth;
-        Phone = command.Phone;
-        Address = command.Address;
-        Gender = command.Gender;
-        CategoryId = command.CategoryId;
-        RoleName = command.RoleName;
-        Status = command.Status;
-        ImageUrl = command.ImageUrl;
-        Reason = command.Reason;
+        Password = command?.Password;
+        Fullname = command?.Fullname;
+        DateOfBirth = command?.DateOfBirth;
+        Phone = command?.Phone;
+        Address = command?.Address;
+        Gender = command?.Gender;
+        CategoryId = command?.CategoryId;
+        RoleName = command?.RoleName;
+        Status = command?.Status;
+        ImageUrl = command?.ImageUrl;
+        Reason = command?.Reason;
     }
 
     public string Email { get; set; }
