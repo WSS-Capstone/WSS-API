@@ -15,6 +15,7 @@ namespace WSS.API.Data.Models
         public Guid? CreateBy { get; set; }
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
+        public string? Reason { get; set; }
 
         public virtual User? User { get; set; }
     }

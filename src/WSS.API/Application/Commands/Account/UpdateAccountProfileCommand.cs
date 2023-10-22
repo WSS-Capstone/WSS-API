@@ -20,6 +20,7 @@ public class UpdateAccountProfileCommand : IRequest<AccountResponse>
         RoleName = command.RoleName;
         Status = command.Status;
         ImageUrl = command.ImageUrl;
+        Reason = command.Reason;
     }
 
     public string Email { get; set; }
@@ -31,6 +32,7 @@ public class UpdateAccountProfileCommand : IRequest<AccountResponse>
     public int? Gender { get; set; }
     public string? ImageUrl { get; set; }
     public Guid? CategoryId { get; set; }
+    public string? Reason { get; set; }
     public RoleEnum? RoleName { get; set; }
     public AccountStatus? Status { get; set; }
 }
@@ -47,6 +49,7 @@ public class UpdateMyAccountProfileCommand
     public Guid? CategoryId { get; set; }
     public RoleEnum? RoleName { get; set; }
     public AccountStatus? Status { get; set; }
+    public string? Reason { get; set; }
 }
 
 
@@ -95,6 +98,7 @@ public class UpdateAccountPasswordCommandHandler : IRequestHandler<UpdateAccount
         account.User.DateOfBirth = request.DateOfBirth ?? account?.User?.DateOfBirth;
         account.RoleName = request.RoleName == null ? account.RoleName : request.RoleName.ToString();
         account.Status = request.Status == null ? account.Status : (int?)request.Status;
+        account.Reason = string.IsNullOrEmpty(request.Reason) ? account.Reason : request.Reason;
         
         userInFb = await this._firebaseAuth.UpdateUserAsync(new UserRecordArgs()
         {
