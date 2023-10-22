@@ -27,7 +27,7 @@ public class UserFireFilter : IAsyncActionFilter
     {
         var userId = _identitySvc.GetUserRefId();
 
-        if (context.ActionDescriptor.DisplayName.Contains("CreateAccountForAdmin"))
+        if (!context.ActionDescriptor.DisplayName.Contains("Login"))
         {
             await next();
             return;
