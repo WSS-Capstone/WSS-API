@@ -20,8 +20,8 @@ public class
     GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
         PagingResponseQuery<ServiceResponse, ServiceSortCriteria>>
 {
-    private IMapper _mapper;
-    private IServiceRepo _repo;
+    private readonly IMapper _mapper;
+    private readonly IServiceRepo _repo;
 
     public GetServicesQueryHandler(IMapper mapper, IServiceRepo repo)
     {
@@ -35,7 +35,7 @@ public class
         var query = _repo.GetServices(null, new Expression<Func<Data.Models.Service, object>>[]
         {
             s => s.Category,
-            s => s.CurrentPrices
+            s => s.CurrentPrices.OrderByDescending(x => x.CreateDate).FirstOrDefault()
         });
         
         if(request.Status != null)
