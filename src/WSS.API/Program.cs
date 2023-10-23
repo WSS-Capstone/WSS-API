@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using L.Core.Config;
 using L.Core.Data;
 using L.Core.Logging;
@@ -44,6 +45,9 @@ builder.Services.AddControllers(config =>
         AllowIntegerValues = true
     });
 });
+
+builder.Services.AddMvc()
+    .AddJsonOptions(o => o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddEndpointsApiExplorer();

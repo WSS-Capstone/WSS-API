@@ -17,7 +17,6 @@ namespace WSS.API.Data.Models
         public Guid Id { get; set; }
         public string? Code { get; set; }
         public string? Name { get; set; }
-        public int? Quantity { get; set; }
         public int? Status { get; set; }
         public string? CoverUrl { get; set; }
         public Guid? CategoryId { get; set; }

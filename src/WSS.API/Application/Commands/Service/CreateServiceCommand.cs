@@ -38,7 +38,7 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
         service.Id = Guid.NewGuid();
         service.Code = GenCode.NextId(code);
         service.CreateDate = DateTime.Now;
-        service.Status = (int?)ServiceStatus.ACTIVE;
+        service.Status = (int?)ServiceStatus.Active;
         var query = await _serviceRepo.CreateService(service);
         query = await this._serviceRepo.GetServiceById(query.Id, new Expression<Func<Data.Models.Service, object>>[]
         {

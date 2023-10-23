@@ -35,7 +35,8 @@ public class
         var query = _repo.GetServices(null, new Expression<Func<Data.Models.Service, object>>[]
         {
             s => s.Category,
-            s => s.CurrentPrices.OrderByDescending(x => x.CreateDate).FirstOrDefault()
+            s => s.CurrentPrices.OrderByDescending(x => x.CreateDate).FirstOrDefault(),
+            s => s.ServiceImages
         });
         
         if(request.Status != null)
@@ -49,7 +50,10 @@ public class
 
         query = query.GetWithPaging(request.Page, request.PageSize);
 
-        var result = this._mapper.ProjectTo<ServiceResponse>(query);
+        var list = await query.ToListAsync(cancellationToken: cancellationToken);
+        list.ForEach(s => s.Category.Services.Clear());
+        
+        var result = this._mapper.ProjectTo<ServiceResponse>(list.AsQueryable());
 
         return new PagingResponseQuery<ServiceResponse, ServiceSortCriteria>(request, result, total);
     }
