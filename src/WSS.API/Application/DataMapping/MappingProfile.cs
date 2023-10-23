@@ -6,6 +6,7 @@ using WSS.API.Application.Commands.CurrentPrice;
 using WSS.API.Application.Commands.DayOff;
 using WSS.API.Application.Commands.Order;
 using WSS.API.Application.Commands.Service;
+using WSS.API.Application.Commands.Voucher;
 using Task = WSS.API.Data.Models.Task;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
@@ -201,6 +202,9 @@ public class MappingProfile : Profile
     {
         this.CreateMap<Voucher, VoucherResponse>()
             .ReverseMap();
+        this.CreateMap<Voucher, CreateVoucherCommand>().ReverseMap();
+        this.CreateMap<Voucher, UpdateVoucherCommand>().ReverseMap();
+        this.CreateMap<CreateVoucherCommand, UpdateVoucherCommand>().ReverseMap();
     }
 
     private void WeddingInformationProfile()
