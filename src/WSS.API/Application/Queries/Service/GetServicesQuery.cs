@@ -5,7 +5,7 @@ namespace WSS.API.Application.Queries.Service;
 
 public class GetServicesQuery : PagingParam<ServiceSortCriteria>, IRequest<PagingResponseQuery<ServiceResponse, ServiceSortCriteria>>
 {
-    public ServiceStatus? Status { get; set; }
+    public ServiceStatus[]? Status { get; set; } = new[] { ServiceStatus.Active };
     public DateTime? CheckDate { get; set; }
 }
 
@@ -43,9 +43,9 @@ public class
             s => s.ServiceImages
         });
         
-        if(request.Status != null)
+        if(request.Status != null || request.Status?.Length > 0)
         {
-            query = query.Where(s => s.Status == (int)request.Status);
+            query = query.Where(s => request.Status.Contains((ServiceStatus)s.Status));
         }
         
         var total = await query.CountAsync(cancellationToken: cancellationToken);
