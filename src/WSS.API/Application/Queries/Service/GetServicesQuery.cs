@@ -1,3 +1,4 @@
+using WSS.API.Data.Repositories.OrderDetail;
 using WSS.API.Data.Repositories.Service;
 
 namespace WSS.API.Application.Queries.Service;
@@ -5,6 +6,7 @@ namespace WSS.API.Application.Queries.Service;
 public class GetServicesQuery : PagingParam<ServiceSortCriteria>, IRequest<PagingResponseQuery<ServiceResponse, ServiceSortCriteria>>
 {
     public ServiceStatus? Status { get; set; }
+    public DateTime? CheckDate { get; set; }
 }
 
 public enum ServiceSortCriteria
@@ -22,11 +24,13 @@ public class
 {
     private readonly IMapper _mapper;
     private readonly IServiceRepo _repo;
+    private readonly IOrderDetailRepo _orderDetailRepo;
 
-    public GetServicesQueryHandler(IMapper mapper, IServiceRepo repo)
+    public GetServicesQueryHandler(IMapper mapper, IServiceRepo repo, IOrderDetailRepo orderDetailRepo)
     {
         _mapper = mapper;
         _repo = repo;
+        _orderDetailRepo = orderDetailRepo;
     }
 
     public async Task<PagingResponseQuery<ServiceResponse, ServiceSortCriteria>> Handle(GetServicesQuery request,
@@ -50,7 +54,24 @@ public class
 
         query = query.GetWithPaging(request.Page, request.PageSize);
 
+        
         var list = await query.ToListAsync(cancellationToken: cancellationToken);
+
+        if (request.CheckDate != null)
+        {
+            var listServiceId = list.Select(s => s.Id);
+            var orderDetails = await _orderDetailRepo
+                .GetOrderDetails(o => 
+                    listServiceId.Contains(o.Id) 
+                    && o.StartTime >= request.CheckDate 
+                    && o.EndTime <= request.CheckDate)
+                .ToListAsync(cancellationToken: cancellationToken);
+            list.ForEach(s =>
+            {
+               s.Quantity -= orderDetails.Count(o => o.ServiceId == s.Id);
+            });
+        }
+        
         list.ForEach(s => s.Category.Services.Clear());
         
         var result = this._mapper.ProjectTo<ServiceResponse>(list.AsQueryable());

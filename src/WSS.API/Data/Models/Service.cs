@@ -26,6 +26,7 @@ namespace WSS.API.Data.Models
         public string? Unit { get; set; }
         public string? Reason { get; set; }
         public Guid? CreateBy { get; set; }
+        public int? Quantity { get; set; }
 
         public virtual Category? Category { get; set; }
         public virtual Account? CreateByNavigation { get; set; }
