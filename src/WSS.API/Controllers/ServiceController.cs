@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using WSS.API.Application.Commands.Service;
 using WSS.API.Application.Queries.Service;
 
@@ -12,6 +13,7 @@ public class ServiceController: BaseController
     }
     
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetServices([FromQuery] GetServicesQuery query,
         CancellationToken cancellationToken = default)
     {
@@ -21,6 +23,7 @@ public class ServiceController: BaseController
     }
     
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetServiceById([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         ServiceResponse? result = await this.Mediator.Send(new GetServiceByIdQuery(id), cancellationToken);
@@ -29,6 +32,7 @@ public class ServiceController: BaseController
     }
     
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> CreateService([FromBody] CreateServiceCommand command,
         CancellationToken cancellationToken = default)
     {
@@ -38,6 +42,7 @@ public class ServiceController: BaseController
     }
     
     [HttpPut("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> UpdateService([FromRoute] Guid id, [FromBody] CreateServiceCommand command,
         CancellationToken cancellationToken = default)
     {

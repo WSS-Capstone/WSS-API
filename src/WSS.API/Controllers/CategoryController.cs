@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using WSS.API.Application.Commands.Category;
 using WSS.API.Application.Queries.Category;
 
@@ -13,6 +14,7 @@ public class CategoryController : BaseController
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetCategories([FromQuery] GetCategorysQuery query,
         CancellationToken cancellationToken = default)
     {
@@ -22,6 +24,7 @@ public class CategoryController : BaseController
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetCategories([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         CategoryResponse? result = await this.Mediator.Send(new GetCategoryByIdQuery(id), cancellationToken);
@@ -30,6 +33,7 @@ public class CategoryController : BaseController
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryCommand command,
         CancellationToken cancellationToken = default)
     {
@@ -39,6 +43,7 @@ public class CategoryController : BaseController
     }
 
     [HttpPut("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, [FromBody] UpdateCategoryRequest command,
         CancellationToken cancellationToken = default)
     {
@@ -48,6 +53,7 @@ public class CategoryController : BaseController
     }
     
     [HttpDelete("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> DeleteCategory([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(new DeleteCategoryCommand(id), cancellationToken);
