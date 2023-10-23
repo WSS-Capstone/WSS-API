@@ -19,4 +19,5 @@ public enum ServiceStatus
     Active = 1,
     InActive = 2,
     Deleted = 3,
+    Pending = 4
 }

@@ -39,7 +39,7 @@ public class
         var query = _repo.GetServices(null, new Expression<Func<Data.Models.Service, object>>[]
         {
             s => s.Category,
-            s => s.CurrentPrices.OrderByDescending(x => x.CreateDate).FirstOrDefault(),
+            s => s.CurrentPrices,
             s => s.ServiceImages
         });
         
@@ -72,7 +72,7 @@ public class
             });
         }
         
-        list.ForEach(s => s.Category.Services.Clear());
+        list.ForEach(s => s.Category?.Services.Clear());
         
         var result = this._mapper.ProjectTo<ServiceResponse>(list.AsQueryable());
 
