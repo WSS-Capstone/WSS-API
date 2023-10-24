@@ -37,8 +37,10 @@ public class DeleteServiceCommandHandler : IRequestHandler<DeleteServiceCommand,
        {
            throw new Exception("Service not found");
        }
+
+       service.Status = (int?)ServiceStatus.InActive;
        
-       var query = await _serviceRepo.DeleteService(service);
+       var query = await _serviceRepo.UpdateService(service);
        
        var result = this._mapper.Map<ServiceResponse>(query);
 

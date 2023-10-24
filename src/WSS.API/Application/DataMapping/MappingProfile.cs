@@ -176,7 +176,7 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Category,
                 opt => opt.MapFrom(src => src.Category))
             .ForMember(dto => dto.CurrentPrices,
-                opt => opt.MapFrom(src => src.CurrentPrices.FirstOrDefault()))
+                opt => opt.MapFrom(src => src.CurrentPrices.OrderByDescending(s => s.DateOfApply).FirstOrDefault()))
             .ReverseMap();
 
         this.CreateMap<Service, CreateServiceCommand>().ReverseMap();
