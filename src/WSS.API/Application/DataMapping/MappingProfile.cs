@@ -103,6 +103,7 @@ public class MappingProfile : Profile
         this.CreateMap<Commission, UpdateCategoryCommand>().ReverseMap();
         this.CreateMap<CreateCommissionCommand, UpdateCategoryCommand>().ReverseMap();
     }
+
     private void DayOffProfile()
     {
         this.CreateMap<DayOff, DayOffResponse>().ReverseMap();
@@ -181,6 +182,7 @@ public class MappingProfile : Profile
 
         this.CreateMap<Service, CreateServiceCommand>().ReverseMap();
         this.CreateMap<Service, UpdateServiceCommand>().ReverseMap();
+        this.CreateMap<Service, ApprovalServiceCommand>().ReverseMap();
         this.CreateMap<CreateServiceCommand, UpdateServiceCommand>().ReverseMap();
     }
 

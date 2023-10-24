@@ -32,7 +32,6 @@ public class ServiceController: BaseController
     }
     
     [HttpPost]
-    [AllowAnonymous]
     public async Task<IActionResult> CreateService([FromBody] CreateServiceCommand command,
         CancellationToken cancellationToken = default)
     {
@@ -42,11 +41,19 @@ public class ServiceController: BaseController
     }
     
     [HttpPut("{id}")]
-    [AllowAnonymous]
     public async Task<IActionResult> UpdateService([FromRoute] Guid id, [FromBody] CreateServiceCommand command,
         CancellationToken cancellationToken = default)
     {
         ServiceResponse? result = await this.Mediator.Send(new UpdateServiceCommand(id, command), cancellationToken);
+
+        return result != null ? Ok(result) : BadRequest();
+    }
+    
+    [HttpPut("approval/{id}")]
+    public async Task<IActionResult> ApprovalService([FromRoute] Guid id, [FromBody] ApprovalServiceRequest command,
+        CancellationToken cancellationToken = default)
+    {
+        ServiceResponse? result = await this.Mediator.Send(new ApprovalServiceCommand(id, command), cancellationToken);
 
         return result != null ? Ok(result) : BadRequest();
     }
