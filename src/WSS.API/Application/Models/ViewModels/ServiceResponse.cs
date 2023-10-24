@@ -10,10 +10,13 @@ public class ServiceResponse
     public CurrentPriceResponse? CurrentPrices { get; set; }
     public virtual ICollection<ServiceImageResponse> ServiceImages { get; set; }
     public Guid? CategoryId { get; set; }
-    public Guid? OwnerId { get; set; }
+    public string? Unit { get; set; }
     public string? Description { get; set; }
     public ServiceStatus? Status { get; set; }
+    public int Used { get; set; }
+    public double Rating { get; set; }
 }
+
 public enum ServiceStatus
 {
     Active = 1,

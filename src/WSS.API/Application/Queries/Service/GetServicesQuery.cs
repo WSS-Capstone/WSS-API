@@ -40,7 +40,9 @@ public class
         {
             s => s.Category,
             s => s.CurrentPrices,
-            s => s.ServiceImages
+            s => s.ServiceImages,
+            s => s.OrderDetails.Select(o => o.Order),
+            S => S.OrderDetails.Select(o => o.Feedbacks)
         });
         
         if(request.Status != null || request.Status?.Length > 0)
@@ -75,7 +77,7 @@ public class
         list.ForEach(s => s.Category?.Services.Clear());
         
         var result = this._mapper.ProjectTo<ServiceResponse>(list.AsQueryable());
-
+        
         return new PagingResponseQuery<ServiceResponse, ServiceSortCriteria>(request, result, total);
     }
 }
