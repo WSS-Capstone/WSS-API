@@ -141,6 +141,8 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (OrderStatus)src.Status))
             .ReverseMap();
+        this.CreateMap<Order, CreateOrderCommand>().ReverseMap();
+        this.CreateMap<Order, UpdateOrderCommand>().ReverseMap();
     }
 
     private void OrderDetailProfile()

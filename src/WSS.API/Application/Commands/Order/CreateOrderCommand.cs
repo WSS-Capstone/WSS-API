@@ -8,11 +8,8 @@ namespace WSS.API.Application.Commands.Order;
 
 public class CreateOrderCommand : IRequest<OrderResponse>
 {
-    public string? Code { get; set; }
-    public Guid Id { get; set; }
     public Guid? CustomerId { get; set; }
     public Guid? OwnerId { get; set; }
-    public Guid? WeddingInformationId { get; set; }
     public string? Fullname { get; set; }
     public string? Address { get; set; }
     public string? Phone { get; set; }
@@ -21,15 +18,12 @@ public class CreateOrderCommand : IRequest<OrderResponse>
     public double? TotalAmount { get; set; }
     public double? TotalAmountRequest { get; set; }
     public string? Description { get; set; }
-    public int? Status { get; set; }
+    public OrderStatus Status { get; set; }
     public int? StatusPayment { get; set; }
-    public DateTime? CreateDate { get; set; }
     public Guid? CreateBy { get; set; }
-    public DateTime? UpdateDate { get; set; }
-    public Guid? UpdateBy { get; set; }
     
     public virtual WeddingInformationRequest? WeddingInformation { get; set; }
-    public virtual ICollection<OrderDetailRequest> OrderDetails { get; set; }
+    public virtual ICollection<OrderDetailRequest>? OrderDetails { get; set; }
 }
 
 public class WeddingInformationRequest
