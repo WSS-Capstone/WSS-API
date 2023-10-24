@@ -10,6 +10,7 @@ public class CreateVoucherCommand : IRequest<VoucherResponse>
     public string? ImageUrl { get; set; }
     public double? DiscountValueVoucher { get; set; }
     public double MinAmount { get; set; }
+    public Guid? CreateBy { get; set; }
 }
 
 public class CreateVoucherCommandHandler : IRequestHandler<CreateVoucherCommand, VoucherResponse>
