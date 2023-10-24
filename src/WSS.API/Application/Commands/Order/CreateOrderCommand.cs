@@ -9,7 +9,6 @@ namespace WSS.API.Application.Commands.Order;
 public class CreateOrderCommand : IRequest<OrderResponse>
 {
     public Guid? CustomerId { get; set; }
-    public Guid? OwnerId { get; set; }
     public string? Fullname { get; set; }
     public string? Address { get; set; }
     public string? Phone { get; set; }
@@ -18,8 +17,6 @@ public class CreateOrderCommand : IRequest<OrderResponse>
     public double? TotalAmount { get; set; }
     public double? TotalAmountRequest { get; set; }
     public string? Description { get; set; }
-    public OrderStatus Status { get; set; }
-    public int? StatusPayment { get; set; }
     public Guid? CreateBy { get; set; }
     
     public virtual WeddingInformationRequest? WeddingInformation { get; set; }
@@ -40,7 +37,6 @@ public class WeddingInformationRequest
 
 public class OrderDetailRequest
 {
-    public Guid? OrderId { get; set; }
     public Guid? ServiceId { get; set; }
     public string? Address { get; set; }
     public DateTime? StartTime { get; set; }
@@ -48,7 +44,6 @@ public class OrderDetailRequest
     public double? Price { get; set; }
     public double? Total { get; set; }
     public string? Description { get; set; }
-    public int? Status { get; set; }
 }
 
 public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, OrderResponse>
@@ -72,24 +67,31 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         var code = await _orderRepo.GetOrders().OrderByDescending(x => x.Code).Select(x => x.Code)
             .FirstOrDefaultAsync(cancellationToken);
         var order = _mapper.Map<Data.Models.Order>(request);
-        order.Status = (int)OrderStatus.PENDING;
+        order.StatusOrder = (int)StatusOrder.PENDING;
+        order.StatusPayment = (int)StatusPayment.PENDING;
         order.Id = Guid.NewGuid();
         order.Code = GenCode.NextId(code);
         order.CreateDate = DateTime.UtcNow;
-        
-        var weddingInformation = _mapper.Map<Data.Models.WeddingInformation>(request.WeddingInformation);
-        weddingInformation.Id = Guid.NewGuid();
-        
-        var orderDetails = _mapper.Map<List<OrderDetail>>(request.OrderDetails);
-        foreach (var orderDetail in orderDetails)
+
+        Guid? weddingInformationId = null;
+        if (request.WeddingInformation != null)
         {
-            orderDetail.OrderId = order.Id;
-            orderDetail.Id = Guid.NewGuid();
+            var weddingInformation = _mapper.Map<Data.Models.WeddingInformation>(request.WeddingInformation);
+            weddingInformation.Id = Guid.NewGuid();
+            weddingInformationId = weddingInformation.Id;
         }
-        await _weddingInformationRepo.CreateWeddingInformation(weddingInformation);
-        await _orderDetailRepo.CreateOrderDetails(orderDetails);
+
+        if (request.OrderDetails != null)
+        {
+            var orderDetails = _mapper.Map<List<OrderDetail>>(request.OrderDetails);
+            foreach (var orderDetail in orderDetails)
+            {
+                orderDetail.OrderId = order.Id;
+                orderDetail.Status = (int)OrderDetailStatus.ACTIVE;
+            }
+        }
         
-        order.WeddingInformationId = weddingInformation.Id;
+        order.WeddingInformationId = weddingInformationId;
         order = await _orderRepo.CreateOrder(order);
 
         return _mapper.Map<OrderResponse>(order);

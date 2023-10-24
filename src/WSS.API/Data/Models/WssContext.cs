@@ -42,7 +42,7 @@ namespace WSS.API.Data.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=20.189.117.242;Database=WSS;User Id=sa;Password=29327Cab@456789;TrustServerCertificate=True;Connect Timeout=120");
+                optionsBuilder.UseSqlServer("Server=20.189.117.242;Database=WSS;User Id=sa;Password=29327Cab@456789;TrustServerCertificate=True;");
             }
         }
 
@@ -169,7 +169,7 @@ namespace WSS.API.Data.Models
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.CurrentPrices)
                     .HasForeignKey(d => d.ServiceId)
-                    .HasConstraintName("FK_CurrentPrice_Service");
+                    .HasConstraintName("CurrentPrice_Service_Id_fk");
             });
 
             modelBuilder.Entity<DayOff>(entity =>
@@ -236,7 +236,7 @@ namespace WSS.API.Data.Models
             {
                 entity.ToTable("Order");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.Code)
                     .HasMaxLength(50)
@@ -256,14 +256,9 @@ namespace WSS.API.Data.Models
                     .HasConstraintName("FK_Order_Combo");
 
                 entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.OrderCustomers)
+                    .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.CustomerId)
                     .HasConstraintName("FK_Order_User");
-
-                entity.HasOne(d => d.Owner)
-                    .WithMany(p => p.OrderOwners)
-                    .HasForeignKey(d => d.OwnerId)
-                    .HasConstraintName("FK_Order_User1");
 
                 entity.HasOne(d => d.Voucher)
                     .WithMany(p => p.Orders)
@@ -280,7 +275,7 @@ namespace WSS.API.Data.Models
             {
                 entity.ToTable("OrderDetail");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.EndTime).HasColumnType("datetime");
 
@@ -467,7 +462,7 @@ namespace WSS.API.Data.Models
             {
                 entity.ToTable("WeddingInformation");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.WeddingDay).HasColumnType("datetime");
             });

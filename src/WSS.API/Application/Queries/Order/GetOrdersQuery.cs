@@ -4,7 +4,7 @@ namespace WSS.API.Application.Queries.Order;
 
 public class GetOrdersQuery : PagingParam<OrderSortCriteria>, IRequest<PagingResponseQuery<OrderResponse, OrderSortCriteria>>
 {
-    public OrderStatus? Status { get; set; }
+    public StatusOrder? Status { get; set; }
 }
 
 public enum OrderSortCriteria
@@ -31,11 +31,11 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
     {
         var query = _repo.GetOrders(null, new Expression<Func<Data.Models.Order, object>>[]
         {
-            o => o.Owner
+            o => o.Customer
         });
         if(request.Status != null)
         {
-            query = query.Where(s => s.Status == (int)request.Status);
+            query = query.Where(s => s.StatusOrder == (int)request.Status);
         }
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         

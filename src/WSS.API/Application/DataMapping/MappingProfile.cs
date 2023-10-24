@@ -138,8 +138,10 @@ public class MappingProfile : Profile
     private void OrderProfile()
     {
         this.CreateMap<Order, OrderResponse>()
-            .ForMember(dto => dto.Status,
-                opt => opt.MapFrom(src => (OrderStatus)src.Status))
+            .ForMember(dto => dto.StatusOrder,
+                opt => opt.MapFrom(src => (StatusOrder)src.StatusOrder))
+            .ForMember(dto => dto.StatusPayment,
+                opt => opt.MapFrom(src => (StatusOrder)src.StatusPayment))
             .ReverseMap();
         this.CreateMap<Order, CreateOrderCommand>().ReverseMap();
         this.CreateMap<Order, UpdateOrderCommand>().ReverseMap();
@@ -181,9 +183,17 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.CurrentPrices,
                 opt => opt.MapFrom(src => src.CurrentPrices.OrderByDescending(s => s.DateOfApply).FirstOrDefault()))
             .ForMember(dto => dto.Used,
-                opt => opt.MapFrom(src => src.OrderDetails.Count == 0 ? 0 : src.OrderDetails.DistinctBy(od => od.OrderId).Count(o => o.Order.Status == (int)OrderStatus.DONE)))
+                opt => opt.MapFrom(src =>
+                    src.OrderDetails.Count == 0
+                        ? 0
+                        : src.OrderDetails.DistinctBy(od => od.OrderId)
+                            .Count(o => o.Order.StatusOrder == (int)StatusOrder.DONE)))
             .ForMember(dto => dto.Rating,
-                opt => opt.MapFrom(src => src.OrderDetails.Count == 0 ? 0 : src.OrderDetails.Average(o => o.Feedbacks.Count == 0 ? 0 : o.Feedbacks.Average(f => f.Rating))))
+                opt => opt.MapFrom(src =>
+                    src.OrderDetails.Count == 0
+                        ? 0
+                        : src.OrderDetails.Average(o =>
+                            o.Feedbacks.Count == 0 ? 0 : o.Feedbacks.Average(f => f.Rating))))
             .ReverseMap();
 
         this.CreateMap<Service, CreateServiceCommand>().ReverseMap();

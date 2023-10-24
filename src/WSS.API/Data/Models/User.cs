@@ -8,8 +8,7 @@ namespace WSS.API.Data.Models
         public User()
         {
             Feedbacks = new HashSet<Feedback>();
-            OrderCustomers = new HashSet<Order>();
-            OrderOwners = new HashSet<Order>();
+            Orders = new HashSet<Order>();
             PartnerPaymentHistories = new HashSet<PartnerPaymentHistory>();
             Tasks = new HashSet<Task>();
             Vouchers = new HashSet<Voucher>();
@@ -32,8 +31,7 @@ namespace WSS.API.Data.Models
         public virtual Account IdNavigation { get; set; } = null!;
         public virtual DayOff? DayOff { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
-        public virtual ICollection<Order> OrderCustomers { get; set; }
-        public virtual ICollection<Order> OrderOwners { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<PartnerPaymentHistory> PartnerPaymentHistories { get; set; }
         public virtual ICollection<Task> Tasks { get; set; }
         public virtual ICollection<Voucher> Vouchers { get; set; }
