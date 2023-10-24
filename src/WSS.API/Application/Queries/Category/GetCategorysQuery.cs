@@ -34,7 +34,7 @@ public class GetCategorysQueryHandler : IRequestHandler<GetCategorysQuery,
     {
         var query = _categoryRepo.GetCategorys(null, new Expression<Func<Data.Models.Category, object>>[]
         {
-            c => c.Services,
+            // c => c.Services,
             c => c.Commision
         });
 
@@ -53,8 +53,9 @@ public class GetCategorysQueryHandler : IRequestHandler<GetCategorysQuery,
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
 
         query = query.GetWithPaging(request.Page, request.PageSize);
-
-        var result = this._mapper.ProjectTo<CategoryResponse>(query);
+        
+        
+        var result = this._mapper.ProjectTo<CategoryResponse>(query.ToList().AsQueryable());
 
         return new PagingResponseQuery<CategoryResponse, CategorySortCriteria>(request, result, total);
     }

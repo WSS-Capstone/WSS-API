@@ -184,7 +184,7 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.OrderDetails.Count == 0 ? 0 : src.OrderDetails.DistinctBy(od => od.OrderId).Count(o => o.Order.Status == (int)OrderStatus.DONE)))
             .ForMember(dto => dto.Rating,
                 opt => opt.MapFrom(src => src.OrderDetails.Count == 0 ? 0 : src.OrderDetails.Average(o => o.Feedbacks.Count == 0 ? 0 : o.Feedbacks.Average(f => f.Rating))))
-            .ReverseMap();
+            ;
 
         this.CreateMap<Service, CreateServiceCommand>().ReverseMap();
         this.CreateMap<Service, UpdateServiceCommand>().ReverseMap();
