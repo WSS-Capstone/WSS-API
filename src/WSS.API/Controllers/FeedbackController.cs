@@ -25,10 +25,10 @@ public class FeedbackController : BaseController
 
         return result != null ? Ok(result) : NotFound();
     }
-    [HttpGet("{serviceId}")]
+    [HttpGet("service/{serviceId}")]
     public async Task<IActionResult> GetFeedbackByService([FromRoute] Guid serviceId, CancellationToken cancellationToken = default)
     {
-        FeedbackResponse? result = await this.Mediator.Send(new GetFeedbackByServiceQuery(serviceId), cancellationToken);
+        var result = await this.Mediator.Send(new GetFeedbackByServiceQuery(serviceId), cancellationToken);
 
         return result != null ? Ok(result) : NotFound();
     }
