@@ -15,7 +15,7 @@ public class UpdateAccountProfileCommand : IRequest<AccountResponse>
         DateOfBirth = command?.DateOfBirth;
         Phone = command?.Phone;
         Address = command?.Address;
-        Gender = command?.Gender;
+        Gender = (Gender)command?.Gender;
         CategoryId = command?.CategoryId;
         RoleName = command?.RoleName;
         Status = command?.Status;
@@ -29,7 +29,7 @@ public class UpdateAccountProfileCommand : IRequest<AccountResponse>
     public DateTime? DateOfBirth { get; set; }
     public string? Phone { get; set; }
     public string? Address { get; set; }
-    public int? Gender { get; set; }
+    public Gender Gender { get; set; }
     public string? ImageUrl { get; set; }
     public Guid? CategoryId { get; set; }
     public string? Reason { get; set; }
@@ -44,7 +44,7 @@ public class UpdateMyAccountProfileCommand
     public DateTime? DateOfBirth { get; set; }
     public string? Phone { get; set; }
     public string? Address { get; set; }
-    public int? Gender { get; set; }
+    public Gender Gender { get; set; }
     public string? ImageUrl { get; set; }
     public Guid? CategoryId { get; set; }
     public RoleEnum? RoleName { get; set; }
@@ -93,7 +93,7 @@ public class UpdateAccountPasswordCommandHandler : IRequestHandler<UpdateAccount
         account.User.Address = string.IsNullOrEmpty(request.Address) ? account.User?.Address : request.Address;
         account.User.Phone = string.IsNullOrEmpty(request.Phone) ? account.User?.Phone : request.Phone;
         account.User.CategoryId = request.CategoryId ?? account.User?.CategoryId;
-        account.User.Gender = request.Gender ?? account.User?.Gender;
+        account.User.Gender = (int?)request.Gender ?? account.User?.Gender;
         account.User.ImageUrl = string.IsNullOrEmpty(request.ImageUrl) ? account.User?.ImageUrl : request.ImageUrl;
         account.User.DateOfBirth = request.DateOfBirth ?? account?.User?.DateOfBirth;
         account.RoleName = request.RoleName == null ? account.RoleName : request.RoleName.ToString();
