@@ -7,6 +7,8 @@ public class GetServicesQuery : PagingParam<ServiceSortCriteria>, IRequest<Pagin
 {
     public ServiceStatus[]? Status { get; set; } = new[] { ServiceStatus.Active };
     public DateTime? CheckDate { get; set; }
+    public float? PriceFrom { get; set; }
+    public float? PriceTo { get; set; }
 }
 
 public enum ServiceSortCriteria
@@ -48,6 +50,14 @@ public class
         if(request.Status != null || request.Status?.Length > 0)
         {
             query = query.Where(s => request.Status.Contains((ServiceStatus)s.Status));
+        }
+
+        if (request.PriceFrom != null || request.PriceTo != null)
+        {
+            query = query.Where(s => s.CurrentPrices.Any(cp =>
+                (request.PriceFrom == null || cp.Price >= request.PriceFrom) &&
+                (request.PriceTo == null || cp.Price <= request.PriceTo)
+            ));
         }
         
         var total = await query.CountAsync(cancellationToken: cancellationToken);
