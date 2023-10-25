@@ -7,7 +7,7 @@ namespace WSS.API.Infrastructure.Services.Identity;
 public class IdentitySvc : IIdentitySvc
 {
     private const string UserIdClaim = "user_id";
-    private const string EmailClaim = "email";
+    private const string EmailClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
     private const string VerifyClaim = "email_verified";
     private const string AuthRefIdClaim = ClaimTypes.NameIdentifier;
 
