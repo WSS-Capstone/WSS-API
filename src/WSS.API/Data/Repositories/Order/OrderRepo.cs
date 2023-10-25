@@ -25,46 +25,46 @@ public class OrderRepo : IOrderRepo
     }
 
     /// <inheritdoc />
-    public async Task<Models.Order> CreateOrder(Models.Order user, bool tempSave = false)
+    public async Task<Models.Order> CreateOrder(Models.Order order, bool tempSave = false)
     {
-        await _repo.InsertAsync(user);
+        await _repo.InsertAsync(order);
 
         _ = tempSave
             ? await _dbContextFactory.UnitOfWork<WSSContext, Models.Order>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
-        return user;
+        return order;
     }
 
     /// <inheritdoc />
-    public async Task<Models.Order> UpdateOrder(Models.Order user, bool tempSave = false)
+    public async Task<Models.Order> UpdateOrder(Models.Order order, bool tempSave = false)
     {
-        await _repo.UpdateAsync(user);
+        await _repo.UpdateAsync(order);
 
         _ = tempSave
             ? await _dbContextFactory.UnitOfWork<WSSContext, Models.Order>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
-        return user;
+        return order;
     }
 
     /// <inheritdoc />
-    public async Task<Models.Order> DeleteOrder(Models.Order user, bool tempSave = false)
+    public async Task<Models.Order> DeleteOrder(Models.Order order, bool tempSave = false)
     {
-        await _repo.DeleteAsync(user);
+        await _repo.DeleteAsync(order);
 
         _ = tempSave
             ? await _dbContextFactory.UnitOfWork<WSSContext, Models.Order>().SaveTempChangesAsync()
             : await _dbContextFactory.SaveAllAsync();
 
-        return user;
+        return order;
     }
 
     /// <inheritdoc />
     public async Task<Models.Order?> GetOrderById(Guid id,
         Expression<Func<Models.Order, object>>[]? includeProperties = null)
     {
-        var user = await _repo.GetByIdAsync(id, includeProperties);
-        return user;
+        var order = await _repo.GetByIdAsync(id, includeProperties);
+        return order;
     }
 }

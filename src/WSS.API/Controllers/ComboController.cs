@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using WSS.API.Application.Commands.Combo;
 using WSS.API.Application.Queries.Combo;
 
@@ -13,6 +14,7 @@ public class ComboController : BaseController
     }
     
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetCombos([FromQuery] GetCombosQuery query,
         CancellationToken cancellationToken = default)
     {
@@ -22,6 +24,7 @@ public class ComboController : BaseController
     }
     
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetCombo([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         ComboResponse? result = await this.Mediator.Send(new GetComboDetailQuery(id), cancellationToken);
