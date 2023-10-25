@@ -9,7 +9,7 @@ public class ComboResponse
     public string? Description { get; set; }
     public ComboStatus? Status { get; set; }
     
-    public List<ComboServicesResponse>? ComboServices { get; set; }
+    // public List<ComboServicesResponse>? ComboServices { get; set; }
 }
 
 public enum ComboStatus

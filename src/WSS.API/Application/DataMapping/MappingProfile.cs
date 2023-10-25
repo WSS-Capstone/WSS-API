@@ -75,7 +75,7 @@ public class MappingProfile : Profile
         this.CreateMap<Combo, ComboResponse>()
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (ComboStatus)src.Status))
-            .ForMember(dto => dto.ComboServices, opt => opt.MapFrom(src => src.ComboServices))
+            // .ForMember(dto => dto.ComboServices, opt => opt.MapFrom(src => src.ComboServices))
             .ReverseMap();
 
         this.CreateMap<Combo, AddNewComboCommand>()
