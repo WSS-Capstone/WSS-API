@@ -6,7 +6,7 @@ public class GetCombosQuery : PagingParam<ComboSortCriteria>,
     IRequest<PagingResponseQuery<ComboResponse, ComboSortCriteria>>
 {
     public string? Name { get; set; }
-    public CategoryStatus? Status { get; set; }
+    public ComboStatus? Status { get; set; }
 }
 
 public enum ComboSortCriteria

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using WSS.API.Application.Feedback;
 using WSS.API.Application.Queries.Feedback;
 
@@ -10,6 +11,7 @@ public class FeedbackController : BaseController
     }
     
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetFeedbacks([FromQuery] GetFeedbacksQuery query,
         CancellationToken cancellationToken = default)
     {
@@ -19,6 +21,7 @@ public class FeedbackController : BaseController
     }
     
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetFeedbacks([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         FeedbackResponse? result = await this.Mediator.Send(new GetFeedbackByIdQuery(id), cancellationToken);
@@ -26,6 +29,7 @@ public class FeedbackController : BaseController
         return result != null ? Ok(result) : NotFound();
     }
     [HttpGet("service/{serviceId}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetFeedbackByService([FromRoute] Guid serviceId, CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(new GetFeedbackByServiceQuery(serviceId), cancellationToken);
@@ -33,6 +37,7 @@ public class FeedbackController : BaseController
         return result != null ? Ok(result) : NotFound();
     }
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> CreateFeedback([FromBody] CreateFeedbackCommand request, CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(request, cancellationToken);
@@ -40,6 +45,7 @@ public class FeedbackController : BaseController
     }
     
     [HttpPut("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> UpdateFeedback([FromRoute] Guid id, [FromBody] UpdateFeedbackRequest request,
         CancellationToken cancellationToken = default)
     {

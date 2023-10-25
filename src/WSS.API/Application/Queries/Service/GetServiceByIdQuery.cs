@@ -28,8 +28,10 @@ public class GetServiceByIdQueryHandler : IRequestHandler<GetServiceByIdQuery, S
         var query = await _repo.GetServiceById(request.Id, new Expression<Func<Data.Models.Service, object>>[]
         {
             s => s.Category,
-            s => s.CurrentPrices.OrderByDescending(x => x.CreateDate).FirstOrDefault(),
-            s => s.ServiceImages
+            s => s.CurrentPrices,
+            s => s.ServiceImages,
+            s => s.OrderDetails.Select(o => o.Order),
+            S => S.OrderDetails.Select(o => o.Feedbacks)
         });
 
         if (query == null)
