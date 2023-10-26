@@ -5,7 +5,7 @@ using WSS.API.Application.Queries.Combo;
 namespace WSS.API.Controllers;
 
 [Route("api/v{version:apiVersion}/[controller]")]
-
+[ApiVersion("1")]
 public class ComboController : BaseController
 {
     
@@ -13,6 +13,9 @@ public class ComboController : BaseController
     {
     }
     
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetCombos([FromQuery] GetCombosQuery query,
@@ -23,6 +26,9 @@ public class ComboController : BaseController
         return Ok(result);
     }
     
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetCombo([FromRoute] Guid id, CancellationToken cancellationToken = default)

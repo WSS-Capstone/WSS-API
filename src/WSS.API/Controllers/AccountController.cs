@@ -17,6 +17,7 @@ public class AccountController : BaseController
     }
 
     [HttpGet]
+    [ApiVersion("1")]
     public async Task<IActionResult> GetAccountByRoleName([FromQuery] List<RoleEnum> roleNames,
         CancellationToken cancellationToken = default)
     {
@@ -25,6 +26,7 @@ public class AccountController : BaseController
     }
 
     [HttpPost("register")]
+    [ApiVersion("3")]
     [AllowAnonymous]
     public async Task<IActionResult> RegisterAccount([FromBody] CreateAccountForCustomerCommand request,
         CancellationToken cancellationToken = default)
@@ -35,6 +37,7 @@ public class AccountController : BaseController
     }
 
     [HttpPost]
+    [ApiVersion("1")]
     public async Task<IActionResult> CreateAccountForAdmin([FromBody] CreateAccountForAdminCommand request,
         CancellationToken cancellationToken = default)
     {
@@ -44,6 +47,7 @@ public class AccountController : BaseController
 
 
     [HttpPatch]
+    [ApiVersion("1")]
     public async Task<IActionResult> UpdateAccountProfile([FromBody] UpdateAccountProfileCommand request,
         CancellationToken cancellationToken = default)
     {
@@ -53,6 +57,9 @@ public class AccountController : BaseController
     }
 
     [HttpPatch("profile")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
+    
     public async Task<IActionResult> UpdateAccountProfile([FromBody] UpdateMyAccountProfileCommand request,
         CancellationToken cancellationToken = default)
     {

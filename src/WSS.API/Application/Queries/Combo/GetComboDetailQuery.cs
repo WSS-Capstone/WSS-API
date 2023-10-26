@@ -25,10 +25,11 @@ public class GetComboDetailQueryHandler : IRequestHandler<GetComboDetailQuery, C
 
     public async Task<ComboResponse> Handle(GetComboDetailQuery request, CancellationToken cancellationToken)
     {
-        var combo = await _comboRepo.GetComboById(request.Id, new Expression<Func<Data.Models.Combo, object>>[]
+        var query = _comboRepo.GetCombos(c => c.Id == request.Id, new Expression<Func<Data.Models.Combo, object>>[]
         {
-            c => c.ComboServices
+            c => c.ComboServices,
+            c => c.ComboServices.Select(o => o.Service)
         });
-        return _mapper.Map<ComboResponse>(combo);
+        return await _mapper.ProjectTo<ComboResponse>(query).FirstOrDefaultAsync();
     }
 }

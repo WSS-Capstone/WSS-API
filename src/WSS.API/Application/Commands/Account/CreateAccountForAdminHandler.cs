@@ -65,7 +65,7 @@ public class CreateAccountForAdminHandler : IRequestHandler<CreateAccountForAdmi
             Id = id,
             RefId = uid,
             RoleName = request.RoleName.ToString(),
-            Status = 1,
+            Status = (int?)AccountStatus.Active,
             Username = request.Email,
             CreateDate = DateTime.Now
         });

@@ -6,6 +6,7 @@ namespace WSS.API.Controllers;
 
 /// <inheritdoc />
 [Route("api/v{version:apiVersion}/[controller]")]
+[ApiVersion("1")]
 public class CategoryController : BaseController
 {
     /// <inheritdoc />
@@ -13,6 +14,9 @@ public class CategoryController : BaseController
     {
     }
 
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetCategories([FromQuery] GetCategorysQuery query,
@@ -23,6 +27,9 @@ public class CategoryController : BaseController
         return Ok(result);
     }
 
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetCategories([FromRoute] Guid id, CancellationToken cancellationToken = default)
@@ -33,7 +40,6 @@ public class CategoryController : BaseController
     }
 
     [HttpPost]
-    [AllowAnonymous]
     public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryCommand command,
         CancellationToken cancellationToken = default)
     {
@@ -43,7 +49,6 @@ public class CategoryController : BaseController
     }
 
     [HttpPut("{id}")]
-    [AllowAnonymous]
     public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, [FromBody] UpdateCategoryRequest command,
         CancellationToken cancellationToken = default)
     {
@@ -53,7 +58,6 @@ public class CategoryController : BaseController
     }
     
     [HttpDelete("{id}")]
-    [AllowAnonymous]
     public async Task<IActionResult> DeleteCategory([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(new DeleteCategoryCommand(id), cancellationToken);

@@ -29,16 +29,16 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
     {
         var code = await _categoryRepo.GetCategorys().OrderByDescending(x => x.Code).Select(x => x.Code)
             .FirstOrDefaultAsync(cancellationToken);
-        var commissionId = Guid.NewGuid();
+        var newId = Guid.NewGuid();
         var category = _mapper.Map<Data.Models.Category>(request);
-        category.Id = Guid.NewGuid();
+        category.Id = newId;
         category.Code = GenCode.NextId(code);
         category.CreateDate = DateTime.Now;
         category.Status = (int?)CategoryStatus.Active;
-        category.CommisionId = commissionId;
-        category.Commision = new Data.Models.Commission()
+        category.CommisionId = request.CommissionValue == null ? null : newId;
+        category.Commision = request.CommissionValue == null ? null :  new Data.Models.Commission()
         {
-            Id = commissionId,
+            Id = newId,
             DateOfApply = DateTime.Today,
             CommisionValue = request.CommissionValue,
         };

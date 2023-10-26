@@ -22,6 +22,7 @@ namespace WSS.API.Data.Models
         public Guid? CreateBy { get; set; }
         public DateTime? UpdateDate { get; set; }
         public Guid? UpdateBy { get; set; }
+        public string? ImageUrl { get; set; }
 
         public virtual ICollection<ComboService> ComboServices { get; set; }
         public virtual ICollection<Order> Orders { get; set; }

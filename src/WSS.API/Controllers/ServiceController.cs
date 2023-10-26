@@ -4,6 +4,7 @@ using WSS.API.Application.Queries.Service;
 
 namespace WSS.API.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
+[ApiVersion("1")]
 public class ServiceController: BaseController
 
 {
@@ -12,6 +13,9 @@ public class ServiceController: BaseController
     {
     }
     
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetServices([FromQuery] GetServicesQuery query,
@@ -22,6 +26,9 @@ public class ServiceController: BaseController
         return Ok(result);
     }
     
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetServiceById([FromRoute] Guid id, CancellationToken cancellationToken = default)
@@ -31,6 +38,8 @@ public class ServiceController: BaseController
         return result != null ? Ok(result) : NotFound();
     }
     
+    [ApiVersion("1")]
+    [ApiVersion("2")]
     [HttpPost]
     public async Task<IActionResult> CreateService([FromBody] CreateServiceCommand command,
         CancellationToken cancellationToken = default)
@@ -40,6 +49,8 @@ public class ServiceController: BaseController
         return result != null ? Ok(result) : BadRequest();
     }
     
+    [ApiVersion("1")]
+    [ApiVersion("2")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateService([FromRoute] Guid id, [FromBody] CreateServiceCommand command,
         CancellationToken cancellationToken = default)
@@ -58,6 +69,7 @@ public class ServiceController: BaseController
         return result != null ? Ok(result) : BadRequest();
     }
     
+    [ApiVersion("2")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePartner([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {

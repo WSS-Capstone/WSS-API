@@ -61,12 +61,12 @@ public class UserFireFilter : IAsyncActionFilter
                     Username = userInFb.Result.Email,
                     RefId = userId,
                     RoleName = RoleName.CUSTOMER,
-                    Status = userInFb.Result.EmailVerified ? 1 : 0,
+                    // Status = userInFb.Result.EmailVerified ? 1 : 0,
                 });
             } else if (user.Result != null && userInFb.Result != null)
             {
-                user.Result.Status = userInFb.Result.EmailVerified ? 1 : 0;
-                await this._accountRepo.UpdateAccount(user.Result);
+                // user.Result.Status = userInFb.Result.EmailVerified ? 1 : 0;
+                // await this._accountRepo.UpdateAccount(user.Result);
             }
         }
         await next();

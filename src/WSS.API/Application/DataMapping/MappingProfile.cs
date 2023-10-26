@@ -79,8 +79,6 @@ public class MappingProfile : Profile
             .ReverseMap();
 
         this.CreateMap<Combo, AddNewComboCommand>()
-            .ForMember(dto => dto.ComboServices,
-                opt => opt.MapFrom(src => src.ComboServices))
             .ReverseMap();
 
         this.CreateMap<Combo, ComboService>()
@@ -93,6 +91,16 @@ public class MappingProfile : Profile
     {
         this.CreateMap<ComboService, ComboServicesResponse>()
             .ForMember(dto => dto.Service, opt => opt.MapFrom(src => src.Service))
+            .ReverseMap();
+
+        this.CreateMap<ComboService, ServiceResponse>()
+            .ForMember(dto => dto.Id, opt => opt.MapFrom(src => src.ServiceId))
+            .ForMember(dto => dto.Name, opt => opt.MapFrom(src => src.Service.Name))
+            .ForMember(dto => dto.Quantity, opt => opt.MapFrom(src => src.Service.Quantity))
+            .ForMember(dto => dto.Unit, opt => opt.MapFrom(src => src.Service.Unit))
+            .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(src => src.Service.CategoryId))
+            .ForMember(dto => dto.CoverUrl, opt => opt.MapFrom(src => src.Service.CoverUrl))
+            .ForMember(dto => dto.ServiceImages, opt => opt.MapFrom(src => src.Service.ServiceImages))
             .ReverseMap();
     }
 

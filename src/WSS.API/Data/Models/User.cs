@@ -29,7 +29,6 @@ namespace WSS.API.Data.Models
 
         public virtual Category? Category { get; set; }
         public virtual Account IdNavigation { get; set; } = null!;
-        public virtual DayOff? DayOff { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<PartnerPaymentHistory> PartnerPaymentHistories { get; set; }

@@ -5,6 +5,6 @@ public class DayOffResponse
     public Guid Id { get; set; }
     public string? Code { get; set; }
     public Guid? PartnerId { get; set; }
-    public Guid? DayOff1 { get; set; }
+    public DateTime? Day { get; set; }
     public string? Reason { get; set; }
 }
