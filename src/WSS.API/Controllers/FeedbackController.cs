@@ -19,6 +19,15 @@ public class FeedbackController : BaseController
 
         return Ok(result);
     }
+    [HttpGet("group")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetFeedbacksGroup([FromQuery] GetFeedbackGroupByRatingQuery query,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(query, cancellationToken);
+
+        return Ok(result);
+    }
     
     [HttpGet("{id}")]
     [AllowAnonymous]

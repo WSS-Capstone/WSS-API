@@ -37,9 +37,19 @@ public class GetFeedbacksQueryHandler :  IRequestHandler<GetFeedbacksQuery, Pagi
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
         
         query = query.GetWithPaging(request.Page, request.PageSize);
+        var groupedFeedback = await query
+            .GroupBy(feedback => feedback.Rating) 
+            .Select(group => new
+            {
+                Rating = group.Key,
+                Feedbacks = group.ToList()
+            })
+            .ToListAsync();
 
-        var result = this._mapper.ProjectTo<FeedbackResponse>(query);
-
+        var result = groupedFeedback
+            .SelectMany(group => group.Feedbacks).AsQueryable()
+            .Select(feedback => this._mapper.Map<FeedbackResponse>(feedback));
+        
         return new PagingResponseQuery<FeedbackResponse, FeedbackSortCriteria>(request, result, total);
     }
 }
