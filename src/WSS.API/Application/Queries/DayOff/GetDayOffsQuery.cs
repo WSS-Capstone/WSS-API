@@ -8,12 +8,14 @@ public class GetDayOffsQuery : PagingParam<DayOffSortCriteria>,
     public Guid? UserId { get; set; }
     public DateTime? FromDate { get; set; }
     public DateTime? ToDate { get; set; }
+    public DayOffStatus[]? Status { get; set; } = new []{ DayOffStatus.Active, DayOffStatus.InActive };
 }
 
 public class UserDayOffRequest : PagingParam<DayOffSortCriteria>
 {
     public DateTime? FromDate { get; set; }
     public DateTime? ToDate { get; set; }
+    public DayOffStatus[]? Status { get; set; } = new []{ DayOffStatus.Active, DayOffStatus.InActive };
 }
 
 public enum DayOffSortCriteria
@@ -23,6 +25,12 @@ public enum DayOffSortCriteria
     Rating,
     Status,
     CreateDate
+}
+
+public enum DayOffStatus
+{
+    Active = 1,
+    InActive = 2
 }
 
 public class
@@ -50,6 +58,7 @@ public class
         }
 
         var query = _repo.GetDayOffs(predicate);
+        query = query.Where(x => request.Status.Contains((DayOffStatus)x.Status));
         var total = await query.CountAsync(cancellationToken: cancellationToken);
 
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);

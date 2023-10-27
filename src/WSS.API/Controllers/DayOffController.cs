@@ -11,11 +11,13 @@ namespace WSS.API.Controllers;
 public class DayOffController : BaseController
 {
     private IIdentitySvc _identitySvc;
+
     public DayOffController(IMediator mediator, IIdentitySvc identitySvc) : base(mediator)
     {
         _identitySvc = identitySvc;
     }
 
+    [ApiVersion("1")]
     [HttpGet]
     public async Task<IActionResult> GetDayOffs([FromQuery] GetDayOffsQuery query,
         CancellationToken cancellationToken = default)
@@ -39,7 +41,8 @@ public class DayOffController : BaseController
             Page = query.Page,
             PageSize = query.PageSize,
             SortKey = query.SortKey,
-            SortOrder = query.SortOrder
+            SortOrder = query.SortOrder,
+            Status = query.Status
         }, cancellationToken);
 
         return Ok(result);
@@ -53,19 +56,48 @@ public class DayOffController : BaseController
         return result != null ? Ok(result) : NotFound();
     }
 
+    [ApiVersion("2")]
     [HttpPost]
-    public async Task<IActionResult> CreateDayOff([FromBody] CreateDayOffCommand request,
+    public async Task<IActionResult> CreateDayOff([FromBody] CreateDayOffRequest request,
         CancellationToken cancellationToken = default)
     {
-        var result = await this.Mediator.Send(request, cancellationToken);
+        var userId = Guid.Parse(this._identitySvc.GetUserRefId());
+        var result = await this.Mediator.Send(new CreateDayOffCommand()
+        {
+            Day = request.Day,
+            PartnerId = userId
+        }, cancellationToken);
         return Ok(result);
     }
 
+    [ApiVersion("2")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateDayOff([FromRoute] Guid id, [FromBody] UpdateDayOffRequest request,
         CancellationToken cancellationToken = default)
     {
-        var result = await this.Mediator.Send(new UpdateDayOffCommand(id, request), cancellationToken);
+        var userId = Guid.Parse(this._identitySvc.GetUserRefId());
+        var result = await this.Mediator.Send(new UpdateDayOffCommand()
+        {
+            Id = id, 
+            PartnerId = userId,
+            Day = request.Day
+        }, cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [ApiVersion("2")]
+    [HttpPost("{id}")]
+    public async Task<IActionResult> DeleteDayOff([FromRoute] Guid id, [FromBody] DeleteDayOffRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var userId = Guid.Parse(this._identitySvc.GetUserRefId());
+        var result = await this.Mediator.Send(new DeleteDayOffCommand()
+        {
+            Id = id, 
+            PartnerId = userId,
+            Reason = request.Reason
+        }, cancellationToken);
 
         return Ok(result);
     }

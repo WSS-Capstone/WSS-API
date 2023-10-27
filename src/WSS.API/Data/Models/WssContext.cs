@@ -120,7 +120,8 @@ namespace WSS.API.Data.Models
                 entity.HasOne(d => d.Combo)
                     .WithMany(p => p.ComboServices)
                     .HasForeignKey(d => d.ComboId)
-                    .HasConstraintName("FK_ComboServices_Combo").OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_ComboServices_Combo");
 
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.ComboServices)
@@ -187,12 +188,11 @@ namespace WSS.API.Data.Models
 
             modelBuilder.Entity<DayOff>(entity =>
             {
-                entity.HasNoKey();
-
                 entity.ToTable("DayOff");
 
-                entity.HasIndex(e => e.PartnerId, "IX_PartnerService")
-                    .IsUnique();
+                entity.HasIndex(e => e.PartnerId, "IX_PartnerService");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Code)
                     .HasMaxLength(50)
@@ -201,8 +201,8 @@ namespace WSS.API.Data.Models
                 entity.Property(e => e.Day).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Partner)
-                    .WithOne()
-                    .HasForeignKey<DayOff>(d => d.PartnerId)
+                    .WithMany(p => p.DayOffs)
+                    .HasForeignKey(d => d.PartnerId)
                     .HasConstraintName("FK_DayOff_User");
             });
 

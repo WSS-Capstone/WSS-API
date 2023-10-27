@@ -7,6 +7,7 @@ using WSS.API.Application.Commands.DayOff;
 using WSS.API.Application.Commands.Order;
 using WSS.API.Application.Commands.Service;
 using WSS.API.Application.Commands.Voucher;
+using WSS.API.Application.Queries.DayOff;
 using Task = WSS.API.Data.Models.Task;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
@@ -123,9 +124,13 @@ public class MappingProfile : Profile
 
     private void DayOffProfile()
     {
-        this.CreateMap<DayOff, DayOffResponse>().ReverseMap();
+        this.CreateMap<DayOff, DayOffResponse>()
+            .ForMember(dto => dto.Status,
+                opt => opt.MapFrom(src => (DayOffStatus)src.Status))
+            .ReverseMap();
         this.CreateMap<DayOff, CreateDayOffCommand>().ReverseMap();
-        this.CreateMap<DayOff, UpdateCategoryCommand>().ReverseMap();
+        this.CreateMap<DayOff, UpdateDayOffCommand>().ReverseMap();
+        this.CreateMap<DayOff, DeleteDayOffCommand>().ReverseMap();
         this.CreateMap<CreateDayOffCommand, UpdateCategoryCommand>().ReverseMap();
     }
 

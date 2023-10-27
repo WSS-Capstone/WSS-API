@@ -1,32 +1,19 @@
+using WSS.API.Application.Queries.DayOff;
 using WSS.API.Data.Repositories.DayOff;
 
 namespace WSS.API.Application.Commands.DayOff;
 
 public class UpdateDayOffCommand : IRequest<DayOffResponse>
 {
-    public UpdateDayOffCommand(Guid id, UpdateDayOffRequest request)
-    {
-        Id = id;
-        Code = request.Code;
-        PartnerId = request.PartnerId;
-        DayOff1 = request.DayOff1;
-        Reason = request.Reason;
-    }
-    
     public Guid Id { get; set; }
-    public string? Code { get; set; }
     public Guid? PartnerId { get; set; }
-    public Guid? DayOff1 { get; set; }
-    public string? Reason { get; set; }
+    public DateTime? Day { get; set; }
+
 }
 
 public class UpdateDayOffRequest
 {
-    public Guid Id { get; set; }
-    public string? Code { get; set; }
-    public Guid? PartnerId { get; set; }
-    public Guid? DayOff1 { get; set; }
-    public string? Reason { get; set; }
+    public DateTime? Day { get; set; }
 }
 
 public class UpdateDayOffCommandHandler : IRequestHandler<UpdateDayOffCommand, DayOffResponse>
@@ -42,16 +29,26 @@ public class UpdateDayOffCommandHandler : IRequestHandler<UpdateDayOffCommand, D
 
     public async Task<DayOffResponse> Handle(UpdateDayOffCommand request, CancellationToken cancellationToken)
     {
-        var feedback = await _repo.GetDayOffById(request.Id);
-        if (feedback == null)
+        var exist = await _repo.GetDayOffs(x => x.Day.Value.Date == request.Day.Value.Date
+                                                && x.PartnerId == request.PartnerId 
+                                                && x.Id != request.Id 
+                                                && x.Status == (int?)DayOffStatus.Active)
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        if (exist != null)
+        {
+            throw new Exception("Ngày nghỉ đã tồn tại");
+        }
+        
+        var dayoff = await _repo.GetDayOffById(request.Id);
+        if (dayoff == null)
         {
             throw new Exception("Day off not found");
         }
-       
-        feedback = this._mapper.Map(request, feedback);
         
-        await _repo.UpdateDayOff(feedback);
-        var result = this._mapper.Map<DayOffResponse>(feedback);
+        dayoff = this._mapper.Map(request, dayoff);
+        
+        await _repo.UpdateDayOff(dayoff);
+        var result = this._mapper.Map<DayOffResponse>(dayoff);
 
         return result;
     }
