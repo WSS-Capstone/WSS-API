@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace WSS.API.Infrastructure.Config;
 
@@ -37,12 +38,43 @@ public static class SwaggerConfig
             {
                 Title = "Wedding Service API",
                 Version = "v1",
-                Description = "WSS API Endpoints",
+                Description = "WSS API Endpoints for Owner",
                 Contact = new OpenApiContact
                 {
-                    Name = "WSS Dev"
+                    Name = "WSS Owner"
                 }
             });
+            
+            c.SwaggerDoc("v2", new OpenApiInfo
+            {
+                Title = "Wedding Service API for Partner and Staff",
+                Version = "v2",
+                Description = "WSS API Endpoints Partner and Staff",
+                Contact = new OpenApiContact
+                {
+                    Name = "WSS Partner and Staff"
+                }
+            });
+            
+            c.SwaggerDoc("v3", new OpenApiInfo
+            {
+                Title = "Wedding Service API for Customer",
+                Version = "v3",
+                Description = "WSS API Endpoints Customer",
+                Contact = new OpenApiContact
+                {
+                    Name = "WSS Customer"
+                }
+            });
+            
+            // c.DocInclusionPredicate((docName, apiDesc) =>
+            // {
+            //     var versions = apiDesc.CustomAttributes()
+            //         .OfType<ApiVersionAttribute>()
+            //         .SelectMany(attr => attr.Versions);
+            //
+            //     return versions.Any(v => $"v{v.ToString()}" == docName);
+            // });
 
             c.DescribeAllParametersInCamelCase();
             // Set the comments path for the Swagger JSON and UI.
@@ -88,7 +120,9 @@ public static class SwaggerConfig
         app.UseSwagger(c => { c.RouteTemplate = "{documentName}/api-docs"; });
         app.UseSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/v1/api-docs", "WSS.API v1");
+            c.SwaggerEndpoint("/v1/api-docs", "WSS.API Owner");
+            c.SwaggerEndpoint("/v2/api-docs", "WSS.API Partner and Staff");
+            c.SwaggerEndpoint("/v3/api-docs", "WSS.API Customer");
             c.RoutePrefix = string.Empty;
         });
 

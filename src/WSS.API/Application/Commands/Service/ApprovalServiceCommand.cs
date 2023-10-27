@@ -15,13 +15,13 @@ public class ApprovalServiceCommand : IRequest<ServiceResponse>
 
     public Guid Id { get; set; }
     public ServiceStatus Status { get; set; }
-    public string Reason { get; set; }
+    public string? Reason { get; set; }
 }
 
 public class ApprovalServiceRequest
 {
     public ServiceStatus Status { get; set; }
-    public string Reason { get; set; }
+    public string? Reason { get; set; }
 }
 
 public class ApprovalServiceCommandHandler : IRequestHandler<ApprovalServiceCommand, ServiceResponse>

@@ -16,11 +16,7 @@ public class UpdateAccountProfileCommand : IRequest<AccountResponse>
         Phone = command?.Phone;
         Address = command?.Address;
         Gender = (Gender)command?.Gender;
-        CategoryId = command?.CategoryId;
-        RoleName = command?.RoleName;
-        Status = command?.Status;
         ImageUrl = command?.ImageUrl;
-        Reason = command?.Reason;
     }
 
     public string Email { get; set; }
@@ -46,10 +42,6 @@ public class UpdateMyAccountProfileCommand
     public string? Address { get; set; }
     public Gender Gender { get; set; }
     public string? ImageUrl { get; set; }
-    public Guid? CategoryId { get; set; }
-    public RoleEnum? RoleName { get; set; }
-    public AccountStatus? Status { get; set; }
-    public string? Reason { get; set; }
 }
 
 

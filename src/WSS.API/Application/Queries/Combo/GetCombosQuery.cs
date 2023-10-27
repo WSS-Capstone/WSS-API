@@ -33,7 +33,8 @@ public class
     {
         var query = _comboRepo.GetCombos(null, new Expression<Func<Data.Models.Combo, object>>[]
         {
-            // c => c.ComboServices
+            c => c.ComboServices,
+            c => c.ComboServices.Select(o => o.Service)
         });
 
         if (!string.IsNullOrEmpty(request.Name))
@@ -51,7 +52,7 @@ public class
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
 
         query = query.GetWithPaging(request.Page, request.PageSize);
-
+        
         var result = this._mapper.ProjectTo<ComboResponse>(query);
 
         return new PagingResponseQuery<ComboResponse, ComboSortCriteria>(request, result, total);
