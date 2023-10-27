@@ -4,7 +4,7 @@ using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Commands.Combo;
 
-public class AddNewComboCommand : IRequest<ComboService>
+public class AddNewComboCommand : IRequest<ComboResponse>
 {
     public string? Name { get; set; }
     public double? DiscountValueCombo { get; set; }
@@ -12,7 +12,7 @@ public class AddNewComboCommand : IRequest<ComboService>
     public Guid[] ComboServicesId { get; set; }
 }
 
-public class AddNewComboCommandHandler : IRequestHandler<AddNewComboCommand, ComboService>
+public class AddNewComboCommandHandler : IRequestHandler<AddNewComboCommand, ComboResponse>
 {
     private readonly IComboRepo _comboRepo;
     private readonly IServiceRepo _serviceRepo;
@@ -25,7 +25,7 @@ public class AddNewComboCommandHandler : IRequestHandler<AddNewComboCommand, Com
         _serviceRepo = serviceRepo;
     }
 
-    public async Task<ComboService> Handle(AddNewComboCommand request, CancellationToken cancellationToken)
+    public async Task<ComboResponse> Handle(AddNewComboCommand request, CancellationToken cancellationToken)
     {
         var code = await _comboRepo.GetCombos().OrderByDescending(x => x.Code).Select(x => x.Code)
             .FirstOrDefaultAsync(cancellationToken);
@@ -56,7 +56,7 @@ public class AddNewComboCommandHandler : IRequestHandler<AddNewComboCommand, Com
         
         var query = await _comboRepo.CreateCombo(combo);
         
-        var result = this._mapper.Map<ComboService>(query);
+        var result = this._mapper.Map<ComboResponse>(query);
         
         return result;
     }

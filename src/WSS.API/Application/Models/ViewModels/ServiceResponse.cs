@@ -13,8 +13,8 @@ public class ServiceResponse
     public string? Unit { get; set; }
     public string? Description { get; set; }
     public ServiceStatus? Status { get; set; }
-    public int Used { get; set; }
-    public double Rating { get; set; }
+    public int? Used { get; set; }
+    public double? Rating { get; set; }
 }
 
 public enum ServiceStatus

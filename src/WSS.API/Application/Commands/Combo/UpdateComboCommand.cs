@@ -1,4 +1,5 @@
 using WSS.API.Data.Repositories.Combo;
+using WSS.API.Data.Repositories.ComboServices;
 using WSS.API.Data.Repositories.Service;
 
 namespace WSS.API.Application.Commands.Combo;
@@ -26,12 +27,14 @@ public class UpdateComboCommandHandler : IRequestHandler<UpdateComboCommand, Com
     private readonly IComboRepo _comboRepo;
     private readonly IMapper _mapper;
     private readonly IServiceRepo _serviceRepo;
+    private readonly IComboServiceRepo _comboServiceRepo;
 
-    public UpdateComboCommandHandler(IComboRepo comboRepo, IMapper mapper, IServiceRepo serviceRepo)
+    public UpdateComboCommandHandler(IComboRepo comboRepo, IMapper mapper, IServiceRepo serviceRepo, IComboServiceRepo comboServiceRepo)
     {
         _comboRepo = comboRepo;
         _mapper = mapper;
         _serviceRepo = serviceRepo;
+        _comboServiceRepo = comboServiceRepo;
     }
 
     public async Task<ComboResponse> Handle(UpdateComboCommand request, CancellationToken cancellationToken)
@@ -56,9 +59,9 @@ public class UpdateComboCommandHandler : IRequestHandler<UpdateComboCommand, Com
         var serviceWprice = this._mapper.ProjectTo<ServiceResponse>(serviceInCombo.AsQueryable()).ToList();
         var serviceCombos = serviceWprice.Select(s => new ComboService()
         {
+            Id = Guid.NewGuid(),
             ServiceId = s.Id,
             ComboId = comboInDb.Id,
-            Id = Guid.NewGuid(),
             CreateDate = DateTime.Now
         }).ToList();
         

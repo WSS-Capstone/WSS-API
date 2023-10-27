@@ -34,8 +34,13 @@ public class
         var query = _comboRepo.GetCombos(null, new Expression<Func<Data.Models.Combo, object>>[]
         {
             c => c.ComboServices,
-            c => c.ComboServices.Select(o => o.Service)
+            c => c.ComboServices.Select(o => o.Service),
         });
+
+        query = query
+            .Include(c => c.ComboServices)
+            .ThenInclude(o => o.Service)
+            .ThenInclude(l => l.CurrentPrices);
 
         if (!string.IsNullOrEmpty(request.Name))
         {
@@ -52,9 +57,8 @@ public class
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
 
         query = query.GetWithPaging(request.Page, request.PageSize);
-        
-        var result = this._mapper.ProjectTo<ComboResponse>(query);
-
+        var list = await query.ToListAsync(cancellationToken: cancellationToken);
+        var result = this._mapper.ProjectTo<ComboResponse>(list.AsQueryable());
         return new PagingResponseQuery<ComboResponse, ComboSortCriteria>(request, result, total);
     }
 }

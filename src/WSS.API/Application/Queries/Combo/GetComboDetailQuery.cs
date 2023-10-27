@@ -30,6 +30,12 @@ public class GetComboDetailQueryHandler : IRequestHandler<GetComboDetailQuery, C
             c => c.ComboServices,
             c => c.ComboServices.Select(o => o.Service)
         });
+        
+        query = query
+            .Include(c => c.ComboServices)
+            .ThenInclude(o => o.Service)
+            .ThenInclude(l => l.CurrentPrices);
+        
         return await _mapper.ProjectTo<ComboResponse>(query).FirstOrDefaultAsync();
     }
 }

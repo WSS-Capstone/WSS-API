@@ -120,7 +120,7 @@ namespace WSS.API.Data.Models
                 entity.HasOne(d => d.Combo)
                     .WithMany(p => p.ComboServices)
                     .HasForeignKey(d => d.ComboId)
-                    .HasConstraintName("FK_ComboServices_Combo");
+                    .HasConstraintName("FK_ComboServices_Combo").OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.ComboServices)
