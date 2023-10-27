@@ -10,6 +10,7 @@ public class DeleteServiceCommand : IRequest<ServiceResponse>
     }
 
     public Guid Id { get; set; }
+    public string? Reason { get; set; }
 }
 
 public class DeleteServiceCommandHandler : IRequestHandler<DeleteServiceCommand, ServiceResponse>
@@ -39,6 +40,10 @@ public class DeleteServiceCommandHandler : IRequestHandler<DeleteServiceCommand,
        }
 
        service.Status = (int?)ServiceStatus.InActive;
+       if (!string.IsNullOrEmpty(request.Reason))
+       {
+           service.Reason = request.Reason;
+       }
        
        var query = await _serviceRepo.UpdateService(service);
        

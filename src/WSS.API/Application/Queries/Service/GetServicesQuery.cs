@@ -5,7 +5,24 @@ namespace WSS.API.Application.Queries.Service;
 
 public class GetServicesQuery : PagingParam<ServiceSortCriteria>, IRequest<PagingResponseQuery<ServiceResponse, ServiceSortCriteria>>
 {
-    public ServiceStatus[]? Status { get; set; } = new[] { ServiceStatus.Active };
+    public ServiceStatus[]? Status { get; set; } = new[] { ServiceStatus.Active, ServiceStatus.Deleted, ServiceStatus.Pending, ServiceStatus.Reject, ServiceStatus.InActive };
+    public DateTime? CheckDate { get; set; }
+    public float? PriceFrom { get; set; }
+    public float? PriceTo { get; set; }
+
+    public Guid? PartnetId { get; set; }
+}
+
+public class GetServicesCustomer : PagingParam<ServiceSortCriteria>
+{
+    public DateTime? CheckDate { get; set; }
+    public float? PriceFrom { get; set; }
+    public float? PriceTo { get; set; }
+}
+
+public class GetServicePartnerRequest : PagingParam<ServiceSortCriteria>
+{
+    public ServiceStatus[]? Status { get; set; } = new[] { ServiceStatus.Active, ServiceStatus.Deleted, ServiceStatus.Pending, ServiceStatus.Reject, ServiceStatus.InActive };
     public DateTime? CheckDate { get; set; }
     public float? PriceFrom { get; set; }
     public float? PriceTo { get; set; }
@@ -50,6 +67,11 @@ public class
         if(request.Status != null || request.Status?.Length > 0)
         {
             query = query.Where(s => request.Status.Contains((ServiceStatus)s.Status));
+        }
+
+        if (request.PartnetId != null)
+        {
+            query = query.Where(s => s.CreateBy == request.PartnetId);
         }
 
         if (request.PriceFrom != null || request.PriceTo != null)

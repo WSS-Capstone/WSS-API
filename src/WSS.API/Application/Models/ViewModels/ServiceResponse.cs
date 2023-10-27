@@ -15,6 +15,7 @@ public class ServiceResponse
     public ServiceStatus? Status { get; set; }
     public int? Used { get; set; }
     public double? Rating { get; set; }
+    public string? Reason { get; set; }
 }
 
 public enum ServiceStatus

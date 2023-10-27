@@ -60,10 +60,12 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
         service.Id = Guid.NewGuid();
         service.Code = GenCode.NextId(code);
         service.CreateDate = DateTime.Now;
+        
         service.Status = (int?)(user.RoleName == "Owner" ? ServiceStatus.Active : ServiceStatus.Pending);
-        service.CreateBy = user.RoleName == "Owner" ? user.Id : null;
+        service.CreateBy = user.RoleName != "Owner" ? user.Id : null;
         if (request.ImageUrls is { Length: > 0 })
         {
+            service.CoverUrl = request.ImageUrls?.FirstOrDefault();
             service.ServiceImages = new List<ServiceImage>();
             foreach (var imageUrl in request.ImageUrls)
             {

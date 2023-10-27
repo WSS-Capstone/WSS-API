@@ -2,10 +2,16 @@ using WSS.API.Data.Repositories.Category;
 
 namespace WSS.API.Application.Queries.Category;
 
-public class GetCategorysQuery : PagingParam<CategorySortCriteria>, IRequest<PagingResponseQuery<CategoryResponse, CategorySortCriteria>>
+public class GetCategorysQuery : PagingParam<CategorySortCriteria>,
+    IRequest<PagingResponseQuery<CategoryResponse, CategorySortCriteria>>
 {
     public string? Name { get; set; }
     public CategoryStatus? Status { get; set; }
+}
+
+public class GetCategoryActiveRequest : PagingParam<CategorySortCriteria>
+{
+    public string? Name { get; set; }
 }
 
 public enum CategorySortCriteria
@@ -53,8 +59,8 @@ public class GetCategorysQueryHandler : IRequestHandler<GetCategorysQuery,
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
 
         query = query.GetWithPaging(request.Page, request.PageSize);
-        
-        
+
+
         var result = this._mapper.ProjectTo<CategoryResponse>(query.ToList().AsQueryable());
 
         return new PagingResponseQuery<CategoryResponse, CategorySortCriteria>(request, result, total);

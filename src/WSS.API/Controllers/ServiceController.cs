@@ -1,27 +1,74 @@
 using Microsoft.AspNetCore.Authorization;
 using WSS.API.Application.Commands.Service;
 using WSS.API.Application.Queries.Service;
+using WSS.API.Infrastructure.Services.Identity;
+using Task = System.Threading.Tasks.Task;
 
 namespace WSS.API.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1")]
 public class ServiceController: BaseController
-
 {
+    private readonly IIdentitySvc _identitySvc;
     /// <inheritdoc />
-    public ServiceController(IMediator mediator) : base(mediator)
+    public ServiceController(IMediator mediator, IIdentitySvc identitySvc) : base(mediator)
     {
+        _identitySvc = identitySvc;
     }
     
     [ApiVersion("1")]
-    [ApiVersion("2")]
-    [ApiVersion("3")]
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetServices([FromQuery] GetServicesQuery query,
         CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(query, cancellationToken);
+
+        return Ok(result);
+    }
+    
+    [ApiVersion("3")]
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetServicesCustomer([FromQuery] GetServicesCustomer query,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(new GetServicesQuery()
+        {
+            Page = query.Page,
+            PageSize = query.PageSize,
+            SortKey = query.SortKey,
+            SortOrder = query.SortOrder,
+            Status = new [] { ServiceStatus.Active },
+            CheckDate = query.CheckDate,
+            PriceFrom = query.PriceFrom,
+            PriceTo = query.PriceTo,
+        }, cancellationToken);
+
+        return Ok(result);
+    }
+    
+    
+    
+    [HttpGet]
+    [ApiVersion("2")]
+    public async Task<IActionResult> GetServicesPartner([FromQuery] GetServicePartnerRequest query,
+        CancellationToken cancellationToken = default)
+    {
+        var userId = Guid.Parse(this._identitySvc.GetUserRefId());
+
+        var result = await this.Mediator.Send(new GetServicesQuery()
+        {
+            Page = query.Page,
+            PageSize = query.PageSize,
+            SortKey = query.SortKey,
+            SortOrder = query.SortOrder,
+            Status = query.Status,
+            CheckDate = query.CheckDate,
+            PriceFrom = query.PriceFrom,
+            PriceTo = query.PriceTo,
+            PartnetId = userId,
+        }, cancellationToken);
 
         return Ok(result);
     }
@@ -69,11 +116,32 @@ public class ServiceController: BaseController
         return result != null ? Ok(result) : BadRequest();
     }
     
-    [ApiVersion("2")]
+    [ApiVersion("1")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeletePartner([FromRoute] Guid id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> InactiveService([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         ServiceResponse? result = await this.Mediator.Send(new DeleteServiceCommand(id), cancellationToken);
+
+        return result != null ? Ok(result) : BadRequest();
+    }
+
+    /// <summary>
+    /// Inactive service partner
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    [ApiVersion("2")]
+    [HttpPost("{id}")]
+    public async Task<IActionResult> InActiveServicePartner([FromRoute] Guid id, InactiveServiceRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ServiceResponse? result = await this.Mediator.Send(new DeleteServiceCommand(id)
+        {
+            Id = id,
+            Reason = request.Reason
+        }, cancellationToken);
 
         return result != null ? Ok(result) : BadRequest();
     }

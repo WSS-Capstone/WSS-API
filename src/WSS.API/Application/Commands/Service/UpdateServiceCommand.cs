@@ -29,6 +29,11 @@ public class UpdateServiceCommand : IRequest<ServiceResponse>
     public string? Description { get; set; }
 }
 
+public class InactiveServiceRequest 
+{
+    public string? Reason { get; set; }
+}
+
 public class UpdateServiceCommandHandler : IRequestHandler<UpdateServiceCommand, ServiceResponse>
 {
     private IMapper _mapper;

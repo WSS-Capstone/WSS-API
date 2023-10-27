@@ -15,8 +15,6 @@ public class CategoryController : BaseController
     }
 
     [ApiVersion("1")]
-    [ApiVersion("2")]
-    [ApiVersion("3")]
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetCategories([FromQuery] GetCategorysQuery query,
@@ -26,13 +24,34 @@ public class CategoryController : BaseController
 
         return Ok(result);
     }
+    
+    
+    [ApiVersion("2")]
+    [ApiVersion("3")]
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetCategoriesActive([FromQuery] GetCategoryActiveRequest query,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(new GetCategorysQuery()
+        {
+            Page = query.Page,
+            PageSize = query.PageSize,
+            SortKey = query.SortKey,
+            SortOrder = query.SortOrder,
+            Status = CategoryStatus.Active,
+            Name = query.Name
+        }, cancellationToken);
+
+        return Ok(result);
+    }
 
     [ApiVersion("1")]
     [ApiVersion("2")]
     [ApiVersion("3")]
     [HttpGet("{id}")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetCategories([FromRoute] Guid id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetCategoryById([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         CategoryResponse? result = await this.Mediator.Send(new GetCategoryByIdQuery(id), cancellationToken);
 
