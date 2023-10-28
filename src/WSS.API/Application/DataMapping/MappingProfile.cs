@@ -1,6 +1,7 @@
 using WSS.API.Application.Commands.Account;
 using WSS.API.Application.Commands.Category;
 using WSS.API.Application.Commands.Combo;
+using WSS.API.Application.Commands.Comment;
 using WSS.API.Application.Commands.Commission;
 using WSS.API.Application.Commands.CurrentPrice;
 using WSS.API.Application.Commands.DayOff;
@@ -38,6 +39,7 @@ public class MappingProfile : Profile
         this.VoucherProfile();
         this.WeddingInformationProfile();
         this.DayOffProfile();
+        this.CommentProfile();
     }
 
     private void AccountProfile()
@@ -122,6 +124,14 @@ public class MappingProfile : Profile
         this.CreateMap<Commission, CreateCommissionCommand>().ReverseMap();
         this.CreateMap<Commission, UpdateCategoryCommand>().ReverseMap();
         this.CreateMap<CreateCommissionCommand, UpdateCategoryCommand>().ReverseMap();
+    }
+    private void CommentProfile()
+    {
+        this.CreateMap<Comment, CommentResponse>().ReverseMap();
+        this.CreateMap<Comment, CreateCommentCommand>().ReverseMap();
+        this.CreateMap<Comment, UpdateCommentCommand>().ReverseMap();
+        this.CreateMap<Comment, DeleteCommentCommand>().ReverseMap();
+        this.CreateMap<CreateCommentCommand, UpdateCommentCommand>().ReverseMap();
     }
 
     private void DayOffProfile()

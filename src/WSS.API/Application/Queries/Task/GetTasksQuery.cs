@@ -38,7 +38,8 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
         {
             t => t.OrderDetail,
             t => t.Partner,
-            t => t.Staff
+            t => t.Staff,
+            t => t.Comments
         });
 
         query = query.Include(t => t.OrderDetail.Service);

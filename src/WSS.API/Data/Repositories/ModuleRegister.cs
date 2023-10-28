@@ -2,6 +2,7 @@ using WSS.API.Data.Repositories.Account;
 using WSS.API.Data.Repositories.Category;
 using WSS.API.Data.Repositories.Combo;
 using WSS.API.Data.Repositories.ComboServices;
+using WSS.API.Data.Repositories.Comment;
 using WSS.API.Data.Repositories.Commission;
 using WSS.API.Data.Repositories.CurrentPrice;
 using WSS.API.Data.Repositories.DayOff;
@@ -50,5 +51,6 @@ public static class ModuleRegister
         services.AddScoped<IWeddingInformationRepo, WeddingInformationRepo>();
         services.AddScoped<IUserRepo, UserRepo>();
         services.AddScoped<IDayOffRepo, DayOffRepo>();
+        services.AddScoped<ICommentRepo, CommentRepo>();
     }
 }

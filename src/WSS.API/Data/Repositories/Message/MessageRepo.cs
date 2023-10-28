@@ -2,7 +2,7 @@ namespace WSS.API.Data.Repositories.Message;
 
 public class MessageRepo : IMessageRepo
 {
-     private readonly IDbContextFactory _dbContextFactory;
+    private readonly IDbContextFactory _dbContextFactory;
     private readonly IGenericRepository<Models.Message> _repo;
 
     /// <summary>
