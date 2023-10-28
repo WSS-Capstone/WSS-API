@@ -78,6 +78,7 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (ComboStatus)src.Status))
             .ForMember(dto => dto.ComboServices, opt => opt.MapFrom(src => src.ComboServices))
+            .ForMember(dto => dto.DisountPrice, opt => opt.MapFrom(src => src.TotalAmount / 100 * (100 - src.DiscountValueCombo)))
             .ReverseMap();
 
         this.CreateMap<Combo, AddNewComboCommand>()

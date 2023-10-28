@@ -27,9 +27,9 @@ public class FeedbackController : BaseController
     [ApiVersion("2")]
     [HttpGet("group")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetFeedbacksGroup(CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetFeedbacksGroup([FromQuery] GetFeedbackGroupByRatingQuery request ,CancellationToken cancellationToken = default)
     {
-        var result = await this.Mediator.Send(new GetFeedbackGroupByRatingQuery(), cancellationToken);
+        var result = await this.Mediator.Send(request, cancellationToken);
 
         return Ok(result);
     }
