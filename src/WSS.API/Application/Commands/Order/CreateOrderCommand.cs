@@ -1,7 +1,5 @@
-using WSS.API.Application.Models.Requests;
 using WSS.API.Data.Repositories.Account;
 using WSS.API.Data.Repositories.Order;
-using WSS.API.Data.Repositories.OrderDetail;
 using WSS.API.Data.Repositories.WeddingInformation;
 using WSS.API.Infrastructure.Services.Identity;
 using WSS.API.Infrastructure.Utilities;
@@ -40,7 +38,6 @@ public class OrderDetailRequest
     public Guid? ServiceId { get; set; }
     public string? Address { get; set; }
     public DateTime? StartTime { get; set; }
-    public DateTime? EndTime { get; set; }
     public double? Price { get; set; }
     public double? Total { get; set; }
     public string? Description { get; set; }
@@ -96,6 +93,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             var orderDetails = _mapper.Map<List<OrderDetail>>(request.OrderDetails);
             foreach (var orderDetail in orderDetails)
             {
+                orderDetail.StartTime = orderDetail.StartTime;
+                orderDetail.EndTime = orderDetail.StartTime.Value.AddDays(1);
                 orderDetail.OrderId = order.Id;
                 orderDetail.Status = (int)OrderDetailStatus.ACTIVE;
             }

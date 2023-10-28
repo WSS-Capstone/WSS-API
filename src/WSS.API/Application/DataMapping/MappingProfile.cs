@@ -154,6 +154,12 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.User,
                 opt => opt.MapFrom(src => src.CreateByNavigation))
             .ReverseMap();
+        this.CreateMap<Data.Models.Feedback, FeedbackResponseForGetServiceResponse>()
+            .ForMember(dto => dto.Status,
+                opt => opt.MapFrom(src => (FeedbackStatus)src.Status))
+            .ForMember(dto => dto.User,
+                opt => opt.MapFrom(src => src.CreateByNavigation))
+            .ReverseMap();
     }
 
     private void MessageProfile()

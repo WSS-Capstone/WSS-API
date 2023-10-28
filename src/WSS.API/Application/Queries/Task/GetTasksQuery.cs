@@ -5,6 +5,8 @@ namespace WSS.API.Application.Queries.Task;
 public class GetTasksQuery: PagingParam<TaskSortCriteria>, IRequest<PagingResponseQuery<TaskResponse, TaskSortCriteria>>
 {
     public Guid? UserId { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
 }
 
 public class GetTaskOwnerRequest : PagingParam<TaskSortCriteria>{}
@@ -46,6 +48,12 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
         {
             query = query.Where(x => x.StaffId == request.UserId || x.PartnerId == request.UserId);
         }
+
+        if (request.StartDate != null && request.EndDate != null)
+        {
+            query = query.Where(t => t.StartDate >= request.StartDate && t.EndDate <= request.EndDate);
+        }
+        
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
