@@ -7,6 +7,9 @@ public class GetTasksQuery: PagingParam<TaskSortCriteria>, IRequest<PagingRespon
     public Guid? UserId { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
+
+    public DateTime? DueDateFrom  { get; set; }
+    public DateTime? DueDateTo   { get; set; }
 }
 
 public class GetTaskOwnerRequest : PagingParam<TaskSortCriteria>{}
@@ -54,6 +57,16 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
         {
             query = query.Where(t => t.StartDate >= request.StartDate && t.EndDate <= request.EndDate);
         }
+        
+        if (request.DueDateFrom != null)
+        {
+            query = query.Where(t => t.EndDate.Value.Date >= request.DueDateFrom.Value.Date);
+        }
+        if (request.DueDateTo != null)
+        {
+            query = query.Where(t => t.EndDate.Value.Date <= request.DueDateTo.Value.Date);
+        }
+        
         
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         

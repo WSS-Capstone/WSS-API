@@ -25,7 +25,6 @@ public class UpdateTaskCommand : IRequest<TaskResponse>
 
 public class UpdateStatusTaskRequest
 {
-    public Guid Id { get; set; }
     public TaskStatus? Status { get; set; }
 }
 

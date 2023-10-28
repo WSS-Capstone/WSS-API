@@ -7,12 +7,6 @@ public class DeleteDayOffCommand : IRequest<DayOffResponse>
 {
     public Guid Id { get; set; }
     public Guid? PartnerId { get; set; }
-    public string? Reason { get; set; }
-}
-
-public class DeleteDayOffRequest
-{
-    public string? Reason { get; set; }
 }
 
 public class DeleteDayOffCommandHandler : IRequestHandler<DeleteDayOffCommand, DayOffResponse>
@@ -40,7 +34,6 @@ public class DeleteDayOffCommandHandler : IRequestHandler<DeleteDayOffCommand, D
         }
 
         dayoff.Status = (int)DayOffStatus.InActive;
-        dayoff.Reason = request.Reason;
         await _repo.UpdateDayOff(dayoff);
         var result = this._mapper.Map<DayOffResponse>(dayoff);
 

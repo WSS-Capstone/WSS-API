@@ -22,6 +22,7 @@ public class TaskResponse
 
 public enum TaskStatus
 {
+    Expected = 0,
     TO_DO = 1,
     IN_PROGRESS = 2,
     DONE = 3,

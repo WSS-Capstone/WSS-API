@@ -43,6 +43,7 @@ public class ServiceController: BaseController
             CheckDate = query.CheckDate,
             PriceFrom = query.PriceFrom,
             PriceTo = query.PriceTo,
+            Name = query.Name
         }, cancellationToken);
 
         return Ok(result);
@@ -68,6 +69,7 @@ public class ServiceController: BaseController
             PriceFrom = query.PriceFrom,
             PriceTo = query.PriceTo,
             PartnetId = userId,
+            Name = query.Name
         }, cancellationToken);
 
         return Ok(result);
