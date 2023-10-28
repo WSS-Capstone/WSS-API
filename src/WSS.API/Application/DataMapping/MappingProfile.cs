@@ -6,6 +6,7 @@ using WSS.API.Application.Commands.CurrentPrice;
 using WSS.API.Application.Commands.DayOff;
 using WSS.API.Application.Commands.Order;
 using WSS.API.Application.Commands.Service;
+using WSS.API.Application.Commands.Task;
 using WSS.API.Application.Commands.Voucher;
 using WSS.API.Application.Queries.DayOff;
 using Task = WSS.API.Data.Models.Task;
@@ -148,6 +149,10 @@ public class MappingProfile : Profile
         this.CreateMap<Data.Models.Feedback, FeedbackResponse>()
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (FeedbackStatus)src.Status))
+            .ForMember(dto => dto.Service,
+                opt => opt.MapFrom(src => src.OrderDetail.Service))
+            .ForMember(dto => dto.User,
+                opt => opt.MapFrom(src => src.CreateByNavigation))
             .ReverseMap();
     }
 
@@ -163,7 +168,7 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.StatusOrder,
                 opt => opt.MapFrom(src => (StatusOrder)src.StatusOrder))
             .ForMember(dto => dto.StatusPayment,
-                opt => opt.MapFrom(src => (StatusOrder)src.StatusPayment))
+                opt => opt.MapFrom(src => (StatusPayment)src.StatusPayment))
             .ReverseMap();
         this.CreateMap<Order, CreateOrderCommand>().ReverseMap();
         this.CreateMap<Order, UpdateOrderCommand>().ReverseMap();
@@ -235,7 +240,14 @@ public class MappingProfile : Profile
         this.CreateMap<Task, TaskResponse>()
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (TaskStatus)src.Status))
+            .ForMember(dto => dto.Service,
+                opt => opt.MapFrom(src => src.OrderDetail.Service))
+            .ForMember(dto => dto.Order,
+                opt => opt.MapFrom(src => src.OrderDetail.Order))
             .ReverseMap();
+
+        this.CreateMap<Task, CreateTaskCommand>().ReverseMap();
+        this.CreateMap<Task, UpdateTaskCommand>().ReverseMap();
     }
 
     private void VoucherProfile()

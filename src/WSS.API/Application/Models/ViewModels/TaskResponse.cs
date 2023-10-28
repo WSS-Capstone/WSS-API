@@ -3,12 +3,12 @@ namespace WSS.API.Application.Models.ViewModels;
 public class TaskResponse
 {
     public Guid Id { get; set; }
-    public Guid? StaffId { get; set; }
-    public Guid? PartnerId { get; set; }
-    public Guid? OrderDetailId { get; set; }
+    public string? Code { get; set; }
+    public UserResponse? Staff { get; set; }
+    public UserResponse? Partner { get; set; }
+    public ServiceResponse? Service { get; set; }
+    public OrderResponse? Order { get; set; }
     public string? TaskName { get; set; }
-
-    public string? Content { get; set; }
 
     public DateTime? StartDate { get; set; }
 

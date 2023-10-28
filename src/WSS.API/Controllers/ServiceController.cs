@@ -126,7 +126,7 @@ public class ServiceController: BaseController
     }
 
     /// <summary>
-    /// Inactive service partner
+    /// Cập nhật trạng thái để partner ngưng cung cấp.
     /// </summary>
     /// <param name="id"></param>
     /// <param name="request"></param>

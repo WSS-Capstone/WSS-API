@@ -6,8 +6,8 @@ public class FeedbackResponse
     public string? Content { get; set; }
     public DateTime? CreateDate { get; set; }
     public int? Rating { get; set; }
-    public Guid? OrderDetailId { get; set; }
-    public Guid? UserId { get; set; }
+    public ServiceResponse Service { get; set; }
+    public UserResponse User { get; set; }
     public FeedbackStatus? Status { get; set; } 
 }
 

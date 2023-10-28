@@ -28,6 +28,8 @@ namespace WSS.API.Data.Models
 
         public virtual User? CreateByNavigation { get; set; }
         public virtual OrderDetail? OrderDetail { get; set; }
+        public virtual User? Partner { get; set; }
+        public virtual User? Staff { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
     }
 }

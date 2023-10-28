@@ -1,14 +1,18 @@
 using WSS.API.Application.Commands.Task;
 using WSS.API.Application.Queries.Task;
+using WSS.API.Infrastructure.Services.Identity;
 
 namespace WSS.API.Controllers;
 
 [Route("api/v{version:apiVersion}/[controller]")]
+[ApiVersion("1")]
 public class TaskController : BaseController
 {
+    private readonly IIdentitySvc _identitySvc;
     /// <inheritdoc />
-    public TaskController(IMediator mediator) : base(mediator)
+    public TaskController(IMediator mediator, IIdentitySvc identitySvc) : base(mediator)
     {
+        _identitySvc = identitySvc;
     }
 
     [HttpGet]
@@ -19,6 +23,24 @@ public class TaskController : BaseController
 
         return Ok(result);
     }
+    
+    [HttpGet]
+    [ApiVersion("2")]
+    public async Task<IActionResult> GetTasksOwner([FromQuery] GetTaskOwnerRequest query, CancellationToken cancellationToken = default)
+    {
+        var userId = Guid.Parse(this._identitySvc.GetUserRefId());
+        var result = await this.Mediator.Send(new GetTasksQuery()
+        {
+            Page = query.Page,
+            PageSize = query.PageSize,
+            SortKey = query.SortKey,
+            SortOrder = query.SortOrder,
+            UserId = userId
+        }, cancellationToken);
+
+        return Ok(result);
+    }
+    
     [HttpGet("{id}")]
     public async Task<IActionResult> GetTasks([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
@@ -41,4 +63,20 @@ public class TaskController : BaseController
 
         return Ok(result);
     }
+    
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [HttpPut("{id}/status")]
+    public async Task<IActionResult> UpdateTaskStatus([FromRoute] Guid id, [FromBody] UpdateStatusTaskRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(new UpdateTaskCommand()
+        {
+            Id = id,
+            Status = (int?)request.Status
+        }, cancellationToken);
+
+        return Ok(result);
+    }
+    
 }

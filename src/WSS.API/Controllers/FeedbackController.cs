@@ -10,6 +10,9 @@ public class FeedbackController : BaseController
     {
     }
     
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetFeedbacks([FromQuery] GetFeedbacksQuery query,
@@ -19,16 +22,21 @@ public class FeedbackController : BaseController
 
         return Ok(result);
     }
+    
+    [ApiVersion("3")]
+    [ApiVersion("2")]
     [HttpGet("group")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetFeedbacksGroup([FromQuery] GetFeedbackGroupByRatingQuery query,
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetFeedbacksGroup(CancellationToken cancellationToken = default)
     {
-        var result = await this.Mediator.Send(query, cancellationToken);
+        var result = await this.Mediator.Send(new GetFeedbackGroupByRatingQuery(), cancellationToken);
 
         return Ok(result);
     }
     
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetFeedbacks([FromRoute] Guid id, CancellationToken cancellationToken = default)
@@ -37,6 +45,10 @@ public class FeedbackController : BaseController
 
         return result != null ? Ok(result) : NotFound();
     }
+    
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     [HttpGet("service/{serviceId}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetFeedbackByService([FromRoute] Guid serviceId, CancellationToken cancellationToken = default)
@@ -45,6 +57,8 @@ public class FeedbackController : BaseController
 
         return result != null ? Ok(result) : NotFound();
     }
+    
+    [ApiVersion("3")]
     [HttpPost]
     [AllowAnonymous]
     public async Task<IActionResult> CreateFeedback([FromBody] CreateFeedbackCommand request, CancellationToken cancellationToken = default)
@@ -53,6 +67,7 @@ public class FeedbackController : BaseController
         return Ok(result);
     }
     
+    [ApiVersion("3")]
     [HttpPut("{id}")]
     [AllowAnonymous]
     public async Task<IActionResult> UpdateFeedback([FromRoute] Guid id, [FromBody] UpdateFeedbackRequest request,

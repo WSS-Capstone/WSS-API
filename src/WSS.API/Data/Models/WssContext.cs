@@ -375,6 +375,7 @@ namespace WSS.API.Data.Models
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.ServiceImages)
                     .HasForeignKey(d => d.ServiceId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_ServiceImage_Service");
             });
 
@@ -400,7 +401,7 @@ namespace WSS.API.Data.Models
                 entity.Property(e => e.UpdateDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.CreateByNavigation)
-                    .WithMany(p => p.Tasks)
+                    .WithMany(p => p.TaskCreateByNavigations)
                     .HasForeignKey(d => d.CreateBy)
                     .HasConstraintName("FK_Task_Owner");
 
@@ -408,6 +409,16 @@ namespace WSS.API.Data.Models
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(d => d.OrderDetailId)
                     .HasConstraintName("FK_Task_OrderDetail");
+
+                entity.HasOne(d => d.Partner)
+                    .WithOne(p => p.TaskPartner)
+                    .HasForeignKey<Task>(d => d.PartnerId)
+                    .HasConstraintName("FK_Task_User1");
+
+                entity.HasOne(d => d.Staff)
+                    .WithMany(p => p.TaskStaffs)
+                    .HasForeignKey(d => d.StaffId)
+                    .HasConstraintName("FK_Task_User");
             });
 
             modelBuilder.Entity<User>(entity =>

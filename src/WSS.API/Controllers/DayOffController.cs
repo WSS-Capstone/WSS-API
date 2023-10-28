@@ -86,6 +86,13 @@ public class DayOffController : BaseController
         return Ok(result);
     }
     
+    /// <summary>
+    /// Xoá ngày đã đăng ký bận mà partner tự đăng ký
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [ApiVersion("2")]
     [HttpPost("{id}")]
     public async Task<IActionResult> DeleteDayOff([FromRoute] Guid id, [FromBody] DeleteDayOffRequest request,

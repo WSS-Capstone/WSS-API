@@ -4,8 +4,10 @@ namespace WSS.API.Application.Queries.Task;
 
 public class GetTasksQuery: PagingParam<TaskSortCriteria>, IRequest<PagingResponseQuery<TaskResponse, TaskSortCriteria>>
 {
-    
+    public Guid? UserId { get; set; }
 }
+
+public class GetTaskOwnerRequest : PagingParam<TaskSortCriteria>{}
 
 public enum TaskSortCriteria
 {
@@ -32,14 +34,25 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
     {
         var query = _categoryRepo.GetTasks(null, new Expression<Func<Data.Models.Task, object>>[]
         {
+            t => t.OrderDetail,
+            t => t.Partner,
+            t => t.Staff
         });
+
+        query = query.Include(t => t.OrderDetail.Service);
+        query = query.Include(t => t.OrderDetail.Order);
+
+        if (request.UserId != null)
+        {
+            query = query.Where(x => x.StaffId == request.UserId || x.PartnerId == request.UserId);
+        }
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
         
         query = query.GetWithPaging(request.Page, request.PageSize);
-
-        var result = this._mapper.ProjectTo<TaskResponse>(query);
+        var list = await query.ToListAsync(cancellationToken: cancellationToken);
+        var result = this._mapper.ProjectTo<TaskResponse>(list.AsQueryable());
 
         return new PagingResponseQuery<TaskResponse, TaskSortCriteria>(request, result, total);
     }

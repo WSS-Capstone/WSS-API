@@ -2,9 +2,9 @@ using WSS.API.Data.Repositories.Feedback;
 
 namespace WSS.API.Application.Queries.Feedback;
 
-public class GetFeedbacksQuery : PagingParam<FeedbackSortCriteria>, IRequest<PagingResponseQuery<FeedbackResponse, FeedbackSortCriteria>>
+public class GetFeedbacksQuery : PagingParam<FeedbackSortCriteria>,
+    IRequest<PagingResponseQuery<FeedbackResponse, FeedbackSortCriteria>>
 {
-    
 }
 
 public enum FeedbackSortCriteria
@@ -16,7 +16,8 @@ public enum FeedbackSortCriteria
     CreateDate
 }
 
-public class GetFeedbacksQueryHandler :  IRequestHandler<GetFeedbacksQuery, PagingResponseQuery<FeedbackResponse, FeedbackSortCriteria>>
+public class GetFeedbacksQueryHandler : IRequestHandler<GetFeedbacksQuery,
+    PagingResponseQuery<FeedbackResponse, FeedbackSortCriteria>>
 {
     private IMapper _mapper;
     private IFeedbackRepo _repo;
@@ -27,18 +28,23 @@ public class GetFeedbacksQueryHandler :  IRequestHandler<GetFeedbacksQuery, Pagi
         _repo = repo;
     }
 
-    public async Task<PagingResponseQuery<FeedbackResponse, FeedbackSortCriteria>> Handle(GetFeedbacksQuery request, CancellationToken cancellationToken)
+    public async Task<PagingResponseQuery<FeedbackResponse, FeedbackSortCriteria>> Handle(GetFeedbacksQuery request,
+        CancellationToken cancellationToken)
     {
         var query = _repo.GetFeedbacks(null, new Expression<Func<Data.Models.Feedback, object>>[]
         {
+            f => f.OrderDetail,
+            f => f.CreateByNavigation
         });
+
+        query = query.Include(l => l.OrderDetail.Service);
         var total = await query.CountAsync(cancellationToken: cancellationToken);
-        
+
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
-        
+
         query = query.GetWithPaging(request.Page, request.PageSize);
         var groupedFeedback = await query
-            .GroupBy(feedback => feedback.Rating) 
+            .GroupBy(feedback => feedback.Rating)
             .Select(group => new
             {
                 Rating = group.Key,
@@ -49,7 +55,7 @@ public class GetFeedbacksQueryHandler :  IRequestHandler<GetFeedbacksQuery, Pagi
         var result = groupedFeedback
             .SelectMany(group => group.Feedbacks).AsQueryable()
             .Select(feedback => this._mapper.Map<FeedbackResponse>(feedback));
-        
+
         return new PagingResponseQuery<FeedbackResponse, FeedbackSortCriteria>(request, result, total);
     }
 }

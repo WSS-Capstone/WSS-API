@@ -19,9 +19,12 @@ namespace WSS.API.Application.Queries.Feedback
 
         public async Task<Dictionary<int?, List<FeedbackResponse>?>> Handle(GetFeedbackGroupByRatingQuery request, CancellationToken cancellationToken)
         {
-            var query = _repo.GetFeedbacks(null, new Expression<Func<Data.Models.Feedback, object>>[]
+            var query = _repo.GetFeedbacks(f => f.Status == (int?)FeedbackStatus.Approved, new Expression<Func<Data.Models.Feedback, object>>[]
             {
+                f => f.OrderDetail,
+                f => f.CreateByNavigation
             });
+            query = query.Include(l => l.OrderDetail.Service);
 
             var groupedFeedback = query
                 .GroupBy(feedback => feedback.Rating)
