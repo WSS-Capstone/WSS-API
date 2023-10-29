@@ -65,7 +65,8 @@ public class DayOffController : BaseController
         var result = await this.Mediator.Send(new CreateDayOffCommand()
         {
             Day = request.Day,
-            PartnerId = userId
+            PartnerId = userId,
+            Reason = request.Reason
         }, cancellationToken);
         return Ok(result);
     }
@@ -80,7 +81,8 @@ public class DayOffController : BaseController
         {
             Id = id, 
             PartnerId = userId,
-            Day = request.Day
+            Day = request.Day,
+            Reason = request.Reason
         }, cancellationToken);
 
         return Ok(result);
@@ -94,16 +96,14 @@ public class DayOffController : BaseController
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [ApiVersion("2")]
-    [HttpPost("{id}")]
-    public async Task<IActionResult> DeleteDayOff([FromRoute] Guid id, [FromBody] DeleteDayOffRequest request,
-        CancellationToken cancellationToken = default)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteDayOff([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         var userId = Guid.Parse(this._identitySvc.GetUserRefId());
         var result = await this.Mediator.Send(new DeleteDayOffCommand()
         {
             Id = id, 
             PartnerId = userId,
-            Reason = request.Reason
         }, cancellationToken);
 
         return Ok(result);

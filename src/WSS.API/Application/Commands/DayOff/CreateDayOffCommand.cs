@@ -10,12 +10,13 @@ public class CreateDayOffCommand : IRequest<DayOffResponse>
     public Guid? PartnerId { get; set; }
 
     public DateTime? Day { get; set; }
-    // public string? Reason { get; set; }
+    public string? Reason { get; set; }
 }
 
 public class CreateDayOffRequest
 {
     public DateTime? Day { get; set; }
+    public string? Reason { get; set; }
 }
 
 public class CreateDayOffCommandHandler : IRequestHandler<CreateDayOffCommand, DayOffResponse>

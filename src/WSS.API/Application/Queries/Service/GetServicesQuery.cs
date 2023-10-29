@@ -7,6 +7,7 @@ public class GetServicesQuery : PagingParam<ServiceSortCriteria>, IRequest<Pagin
 {
     public ServiceStatus[]? Status { get; set; } = new[] { ServiceStatus.Active, ServiceStatus.Deleted, ServiceStatus.Pending, ServiceStatus.Reject, ServiceStatus.InActive };
     public DateTime? CheckDate { get; set; }
+    public string? Name { get; set; }
     public float? PriceFrom { get; set; }
     public float? PriceTo { get; set; }
 
@@ -16,6 +17,7 @@ public class GetServicesQuery : PagingParam<ServiceSortCriteria>, IRequest<Pagin
 public class GetServicesCustomer : PagingParam<ServiceSortCriteria>
 {
     public DateTime? CheckDate { get; set; }
+    public string? Name { get; set; }
     public float? PriceFrom { get; set; }
     public float? PriceTo { get; set; }
 }
@@ -24,6 +26,7 @@ public class GetServicePartnerRequest : PagingParam<ServiceSortCriteria>
 {
     public ServiceStatus[]? Status { get; set; } = new[] { ServiceStatus.Active, ServiceStatus.Deleted, ServiceStatus.Pending, ServiceStatus.Reject, ServiceStatus.InActive };
     public DateTime? CheckDate { get; set; }
+    public string? Name { get; set; }
     public float? PriceFrom { get; set; }
     public float? PriceTo { get; set; }
 }
@@ -81,13 +84,17 @@ public class
                 (request.PriceTo == null || cp.Price <= request.PriceTo)
             ));
         }
+
+        if (!string.IsNullOrEmpty(request.Name))
+        {
+            query = query.Where(s => s.Name.Contains(request.Name));
+        }
         
         var total = await query.CountAsync(cancellationToken: cancellationToken);
 
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
 
         query = query.GetWithPaging(request.Page, request.PageSize);
-
         
         var list = await query.ToListAsync(cancellationToken: cancellationToken);
 
