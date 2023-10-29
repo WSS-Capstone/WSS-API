@@ -14,7 +14,7 @@ public class VnPayService
     public async Task<string> Get(BusinessPayment businessPayment)
     {
         string url = _configuration["VnPay:Url"];
-        string returnUrl = _configuration["VnPay:ReturnPath"];
+        string returnUrl = _configuration["VnPay:Url"];
         string tmnCode = _configuration["VnPay:TmnCode"];
         string hashSecret = _configuration["VnPay:HashSecret"];
         VnPayLibrary pay = new VnPayLibrary();
