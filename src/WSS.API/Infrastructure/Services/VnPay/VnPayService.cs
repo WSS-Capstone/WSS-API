@@ -36,7 +36,7 @@ public class VnPayService
         pay.AddRequestData("vnp_CreateDate",
             DateTime.Now.ToString("yyyyMMddHHmmss")); //ngày thanh toán theo định dạng yyyyMMddHHmmss
         pay.AddRequestData("vnp_CurrCode", "VND"); //Đơn vị tiền tệ sử dụng thanh toán. Hiện tại chỉ hỗ trợ VND
-        pay.AddRequestData("vnp_IpAddr", "20.189.117.242"); //Địa chỉ IP của khách hàng thực hiện giao dịch
+        pay.AddRequestData("vnp_IpAddr", pay.GetIpAddress(context)); //Địa chỉ IP của khách hàng thực hiện giao dịch
         pay.AddRequestData("vnp_Locale", "vn"); //Ngôn ngữ giao diện hiển thị - Tiếng Việt (vn), Tiếng Anh (en)
         pay.AddRequestData("vnp_OrderInfo", businessPayment.OrderId.ToString()); //Thông tin mô tả nội dung thanh toán
         pay.AddRequestData("vnp_OrderType",
