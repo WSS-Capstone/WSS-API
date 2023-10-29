@@ -28,4 +28,19 @@ public class VnPayController : BaseController
         var result = await _vnPayService.Get(businessPayment);
         return result != null ? Ok(result) : NotFound();
     }
+    // <summary>
+    /// [Guest] Endpoint for company create url payment with condition
+    /// 
+    /// <param name="businessPayment">An object payment</param>
+    /// <returns>List of user</returns>
+    /// <response code="200">Returns the list of user</response>
+    /// <response code="204">Returns if list of user is empty</response>
+    /// <response code="403">Return if token is access denied</response>
+    [HttpGet("confirm")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Get()
+    {
+        var result = await _vnPayService.Confirm(null);
+        return result != null ? Ok(result) : NotFound();
+    }
 }

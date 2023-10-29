@@ -5,14 +5,21 @@ namespace WSS.API.Infrastructure.Services.VnPay;
 public class VnPayService
 {
     private readonly IConfiguration _configuration;
+    private readonly IHttpContextAccessor _contextAccessor;
 
-    public VnPayService(IConfiguration configuration)
+    public VnPayService(IConfiguration configuration, IHttpContextAccessor contextAccessor)
     {
         _configuration = configuration;
+        _contextAccessor = contextAccessor;
     }
 
     public async Task<string> Get(BusinessPayment businessPayment)
     {
+        HttpContext? context = _contextAccessor.HttpContext;
+        if (context == null)
+        {
+            throw new Exception("Http Context not found");
+        }
         string url = _configuration["VnPay:Url"];
         string returnUrl = _configuration["VnPay:Url"];
         string tmnCode = _configuration["VnPay:TmnCode"];
@@ -29,7 +36,7 @@ public class VnPayService
         pay.AddRequestData("vnp_CreateDate",
             DateTime.Now.ToString("yyyyMMddHHmmss")); //ngày thanh toán theo định dạng yyyyMMddHHmmss
         pay.AddRequestData("vnp_CurrCode", "VND"); //Đơn vị tiền tệ sử dụng thanh toán. Hiện tại chỉ hỗ trợ VND
-        pay.AddRequestData("vnp_IpAddr", businessPayment.Ip); //Địa chỉ IP của khách hàng thực hiện giao dịch
+        pay.AddRequestData("vnp_IpAddr", pay.GetIpAddress(context)); //Địa chỉ IP của khách hàng thực hiện giao dịch
         pay.AddRequestData("vnp_Locale", "vn"); //Ngôn ngữ giao diện hiển thị - Tiếng Việt (vn), Tiếng Anh (en)
         pay.AddRequestData("vnp_OrderInfo", businessPayment.OrderId.ToString()); //Thông tin mô tả nội dung thanh toán
         pay.AddRequestData("vnp_OrderType",
