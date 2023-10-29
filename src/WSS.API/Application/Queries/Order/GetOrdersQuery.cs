@@ -31,8 +31,20 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
     {
         var query = _repo.GetOrders(null, new Expression<Func<Data.Models.Order, object>>[]
         {
-            o => o.Customer
+            o => o.OrderDetails,
+            o => o.Customer,
+            o => o.WeddingInformation,
+            o => o.Combo,
+            o => o.Voucher,
         });
+        query = query
+            .Include(o => o.OrderDetails)
+            .ThenInclude(p => p.Service);
+        
+        query = query
+            .Include(o => o.OrderDetails)
+            .ThenInclude(p => p.Service).ThenInclude(l => l.CurrentPrices);
+        
         if(request.Status != null)
         {
             query = query.Where(s => s.StatusOrder == (int)request.Status);
@@ -42,8 +54,8 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
         
         query = query.GetWithPaging(request.Page, request.PageSize);
-
-        var result = this._mapper.ProjectTo<OrderResponse>(query);
+        var list = await query.ToListAsync(cancellationToken: cancellationToken);
+        var result = this._mapper.ProjectTo<OrderResponse>(list.AsQueryable());
 
         return new PagingResponseQuery<OrderResponse, OrderSortCriteria>(request, result, total);
     }

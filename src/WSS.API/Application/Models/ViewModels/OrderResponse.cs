@@ -18,6 +18,11 @@ public class OrderResponse
     public Guid? CreateBy { get; set; }
     public StatusPayment? StatusPayment { get; set; }
     public StatusOrder? StatusOrder { get; set; }
+    public virtual ComboResponse? Combo { get; set; }
+    public virtual UserResponse? Customer { get; set; }
+    public virtual VoucherResponse? Voucher { get; set; }
+    public virtual WeddingInformation? WeddingInformation { get; set; }
+    // public virtual List<OrderDetailResponse> OrderDetails { get; set; }
 }
 
 public enum StatusOrder
@@ -31,8 +36,8 @@ public enum StatusOrder
 public enum StatusPayment
 {
     PENDING = 1,
-    CONFIRM = 2,
-    DOING = 3,
+    CONFIRM = 2, // Cho Dat coc
+    DOING = 3, // Da dat coc/
     DONE = 4,
     CANCEL = 5,
 }

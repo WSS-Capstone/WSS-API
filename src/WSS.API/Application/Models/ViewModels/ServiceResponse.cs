@@ -3,6 +3,7 @@ namespace WSS.API.Application.Models.ViewModels;
 public class ServiceResponse
 {
     public Guid Id { get; set; }
+    public string? Code { get; set; }
     public string? Name { get; set; }
     public string? CoverUrl { get; set; }
     public int? Quantity { get; set; }

@@ -1,5 +1,9 @@
 using WSS.API.Data.Repositories.Account;
+using WSS.API.Data.Repositories.Combo;
 using WSS.API.Data.Repositories.Order;
+using WSS.API.Data.Repositories.Service;
+using WSS.API.Data.Repositories.Task;
+using WSS.API.Data.Repositories.Voucher;
 using WSS.API.Data.Repositories.WeddingInformation;
 using WSS.API.Infrastructure.Services.Identity;
 using WSS.API.Infrastructure.Utilities;
@@ -12,11 +16,13 @@ public class CreateOrderCommand : IRequest<OrderResponse>
     public string? Address { get; set; }
     public string? Phone { get; set; }
     public Guid? VoucherId { get; set; }
+
     public Guid? ComboId { get; set; }
-    public double? TotalAmount { get; set; }
-    public double? TotalAmountRequest { get; set; }
+
+    // public double? TotalAmount { get; set; } // Tong so tien thanh toan
+    // public double? TotalAmountRequest { get; set; } // So tien coc
     public string? Description { get; set; }
-    
+
     public virtual WeddingInformationRequest? WeddingInformation { get; set; }
     public virtual ICollection<OrderDetailRequest>? OrderDetails { get; set; }
 }
@@ -37,9 +43,11 @@ public class OrderDetailRequest
 {
     public Guid? ServiceId { get; set; }
     public string? Address { get; set; }
+
     public DateTime? StartTime { get; set; }
-    public double? Price { get; set; }
-    public double? Total { get; set; }
+
+    // public double? Price { get; set; }
+    // public double? Total { get; set; }
     public string? Description { get; set; }
 }
 
@@ -49,15 +57,25 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
     private readonly IOrderRepo _orderRepo;
     private readonly IAccountRepo _accountRepo;
     private readonly IIdentitySvc _identitySvc;
+    private readonly IServiceRepo _serviceRepo;
+    private readonly IComboRepo _comboRepo;
+    private readonly IVoucherRepo _voucherRepo;
+    private readonly ITaskRepo _taskRepo;
     private readonly IWeddingInformationRepo _weddingInformationRepo;
 
-    public CreateOrderCommandHandler(IMapper mapper, IOrderRepo orderRepo, IAccountRepo accountRepo, IIdentitySvc identitySvc, IWeddingInformationRepo weddingInformationRepo)
+    public CreateOrderCommandHandler(IMapper mapper, IOrderRepo orderRepo, IAccountRepo accountRepo,
+        IIdentitySvc identitySvc, IWeddingInformationRepo weddingInformationRepo, IServiceRepo serviceRepo,
+        IComboRepo comboRepo, IVoucherRepo voucherRepo, ITaskRepo taskRepo)
     {
         _mapper = mapper;
         _orderRepo = orderRepo;
         _accountRepo = accountRepo;
         _identitySvc = identitySvc;
         _weddingInformationRepo = weddingInformationRepo;
+        _serviceRepo = serviceRepo;
+        _comboRepo = comboRepo;
+        _voucherRepo = voucherRepo;
+        _taskRepo = taskRepo;
     }
 
     public async Task<OrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -91,16 +109,58 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         if (request.OrderDetails != null)
         {
             var orderDetails = _mapper.Map<List<OrderDetail>>(request.OrderDetails);
+            var services = await _serviceRepo.GetServices(s => orderDetails.Select(x => x.ServiceId).Contains(s.Id),
+                new Expression<Func<Data.Models.Service, object>>[]
+                {
+                    s => s.CurrentPrices
+                }).ToListAsync(cancellationToken);
+            List<ServiceResponse> serviceResponse = _mapper.Map<List<ServiceResponse>>(services);
+            ComboResponse? comboResponse = null;
+            Data.Models.Voucher? voucher = null;
+            if (request.ComboId != null)
+            {
+                var combo = this._comboRepo.GetCombos(c => c.Id == (Guid)request.ComboId,
+                        new Expression<Func<Data.Models.Combo, object>>[]
+                        {
+                            c => c.ComboServices,
+                            c => c.ComboServices.Select(o => o.Service),
+                        })
+                    .Include(c => c.ComboServices)
+                    .ThenInclude(o => o.Service)
+                    .ThenInclude(l => l.CurrentPrices);
+                var rcombo = await combo.FirstOrDefaultAsync(cancellationToken: cancellationToken);
+                comboResponse = rcombo == null ? null : _mapper.Map<ComboResponse>(rcombo);
+            }
+
             foreach (var orderDetail in orderDetails)
             {
+                var serviceDetail = serviceResponse.Find(x => x.Id == orderDetail.ServiceId);
                 orderDetail.StartTime = orderDetail.StartTime;
                 orderDetail.EndTime = orderDetail.StartTime.Value.AddDays(1);
                 orderDetail.OrderId = order.Id;
+                orderDetail.Price = serviceDetail?.CurrentPrices?.Price;
                 orderDetail.Status = (int)OrderDetailStatus.ACTIVE;
+                
             }
+
+            var totalPrice = orderDetails.Sum(od => od.Price);
+            if(request.ComboId != null)
+            {
+                var discountCombo = comboResponse.TotalAmount / 100 * (100 - comboResponse.DiscountValueCombo);
+                totalPrice = totalPrice - discountCombo;
+            }
+
+            if (request.VoucherId != null)
+            {
+                voucher = await this._voucherRepo.GetVoucherById((Guid)request.VoucherId);
+                totalPrice = voucher == null ? totalPrice : (totalPrice / 100) * (100 - voucher.DiscountValueVoucher);
+            }
+            
+            order.OrderDetails = orderDetails;
         }
-        
+
         order.WeddingInformationId = weddingInformationId;
+        // order.TotalAmount = request.OrderDetails?.Sum(x => x.);
         order = await _orderRepo.CreateOrder(order);
 
         return _mapper.Map<OrderResponse>(order);

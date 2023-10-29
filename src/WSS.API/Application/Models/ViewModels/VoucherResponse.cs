@@ -3,6 +3,7 @@ namespace WSS.API.Application.Models.ViewModels;
 public class VoucherResponse
 {
     public Guid Id { get; set; }
+    public string? Code { get; set; }
     public string? Name { get; set; }
     public string? ImageUrl { get; set; }
     public double? DiscountValueVoucher { get; set; }
