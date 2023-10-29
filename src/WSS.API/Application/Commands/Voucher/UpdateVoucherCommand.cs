@@ -12,6 +12,8 @@ public class UpdateVoucherCommand : IRequest<VoucherResponse>
         DiscountValueVoucher = request.DiscountValueVoucher;
         MinAmount = request.MinAmount;
         ImageUrl = request.ImageUrl;
+        EndTime = request.EndTime;
+        StartTime = request.StartTime;
     }
     
     public Guid Id { get; set; }
@@ -20,6 +22,8 @@ public class UpdateVoucherCommand : IRequest<VoucherResponse>
     public string? ImageUrl { get; set; }
     public double? DiscountValueVoucher { get; set; }
     public double MinAmount { get; set; }
+    public DateTime? EndTime { get; set; }
+    public DateTime? StartTime { get; set; }
 }
 
 public class UpdateVoucherRequest
@@ -30,6 +34,8 @@ public class UpdateVoucherRequest
     public string? ImageUrl { get; set; }
     public double? DiscountValueVoucher { get; set; }
     public double MinAmount { get; set; }
+    public DateTime? EndTime { get; set; }
+    public DateTime? StartTime { get; set; }
 }
 
 public class UpdateVoucherCommandHandler : IRequestHandler<UpdateVoucherCommand, VoucherResponse>
