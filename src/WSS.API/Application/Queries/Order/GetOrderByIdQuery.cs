@@ -24,8 +24,27 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
 
     public async Task<OrderResponse> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
     {
-        var query = await _repo.GetOrderById(request.Id);
-        var result = this._mapper.Map<OrderResponse>(query);
+        var query = _repo.GetOrders(o => o.Id == request.Id, new Expression<Func<Data.Models.Order, object>>[]
+        {
+            o => o.OrderDetails,
+            o => o.Customer,
+            o => o.WeddingInformation,
+            o => o.Combo,
+            o => o.Voucher,
+        });
+        query = query
+            .Include(o => o.OrderDetails)
+            .ThenInclude(p => p.Service);
+        
+        query = query
+            .Include(o => o.OrderDetails)
+            .ThenInclude(p => p.Feedbacks);
+        
+        query = query
+            .Include(o => o.OrderDetails)
+            .ThenInclude(p => p.Service).ThenInclude(l => l.CurrentPrices);
+        var order = await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        var result = this._mapper.Map<OrderResponse>(order);
 
         return result;
     }

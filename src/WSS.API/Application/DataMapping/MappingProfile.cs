@@ -186,8 +186,8 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => (StatusOrder)src.StatusOrder))
             .ForMember(dto => dto.StatusPayment,
                 opt => opt.MapFrom(src => (StatusPayment)src.StatusPayment))
-            // .ForMember(opt => opt.OrderDetails,
-            //     opt => opt.MapFrom(src => src.OrderDetails ?? null))
+            .ForMember(opt => opt.OrderDetails,
+                opt => opt.MapFrom(src => src.OrderDetails))
             .ReverseMap();
         this.CreateMap<Order, CreateOrderCommand>().ReverseMap();
         this.CreateMap<Order, UpdateOrderCommand>().ReverseMap();
