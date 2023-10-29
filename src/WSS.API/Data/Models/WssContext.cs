@@ -383,8 +383,7 @@ namespace WSS.API.Data.Models
             {
                 entity.ToTable("Task");
 
-                entity.HasIndex(e => e.PartnerId, "IX_Task")
-                    .IsUnique();
+                entity.HasIndex(e => e.PartnerId, "IX_Task");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
@@ -411,8 +410,8 @@ namespace WSS.API.Data.Models
                     .HasConstraintName("FK_Task_OrderDetail");
 
                 entity.HasOne(d => d.Partner)
-                    .WithOne(p => p.TaskPartner)
-                    .HasForeignKey<Task>(d => d.PartnerId)
+                    .WithMany(p => p.TaskPartners)
+                    .HasForeignKey(d => d.PartnerId)
                     .HasConstraintName("FK_Task_User1");
 
                 entity.HasOne(d => d.Staff)

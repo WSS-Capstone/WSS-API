@@ -12,6 +12,7 @@ namespace WSS.API.Data.Models
             Orders = new HashSet<Order>();
             PartnerPaymentHistories = new HashSet<PartnerPaymentHistory>();
             TaskCreateByNavigations = new HashSet<Task>();
+            TaskPartners = new HashSet<Task>();
             TaskStaffs = new HashSet<Task>();
             Vouchers = new HashSet<Voucher>();
         }
@@ -31,12 +32,12 @@ namespace WSS.API.Data.Models
 
         public virtual Category? Category { get; set; }
         public virtual Account IdNavigation { get; set; } = null!;
-        public virtual Task? TaskPartner { get; set; }
         public virtual ICollection<DayOff> DayOffs { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<PartnerPaymentHistory> PartnerPaymentHistories { get; set; }
         public virtual ICollection<Task> TaskCreateByNavigations { get; set; }
+        public virtual ICollection<Task> TaskPartners { get; set; }
         public virtual ICollection<Task> TaskStaffs { get; set; }
         public virtual ICollection<Voucher> Vouchers { get; set; }
     }

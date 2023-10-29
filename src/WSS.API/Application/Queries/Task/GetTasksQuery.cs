@@ -45,8 +45,8 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
             t => t.Comments
         });
 
-        query = query.Include(t => t.OrderDetail.Service);
-        query = query.Include(t => t.OrderDetail.Order);
+        // query = query.Include(t => t.OrderDetail.Service);
+        // query = query.Include(t => t.OrderDetail.Order);
 
         if (request.UserId != null)
         {
@@ -60,11 +60,11 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
         
         if (request.DueDateFrom != null)
         {
-            query = query.Where(t => t.EndDate.Value.Date >= request.DueDateFrom.Value.Date);
+            query = query.Where(t => t.EndDate != null && t.EndDate.Value.Date >= request.DueDateFrom.Value.Date);
         }
         if (request.DueDateTo != null)
         {
-            query = query.Where(t => t.EndDate.Value.Date <= request.DueDateTo.Value.Date);
+            query = query.Where(t => t.EndDate != null && t.EndDate.Value.Date <= request.DueDateTo.Value.Date);
         }
         
         
@@ -74,7 +74,7 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
         
         query = query.GetWithPaging(request.Page, request.PageSize);
         var list = await query.ToListAsync(cancellationToken: cancellationToken);
-        var result = this._mapper.ProjectTo<TaskResponse>(list.AsQueryable());
+        var result = this._mapper.Map<List<TaskResponse>>(list).AsQueryable();
 
         return new PagingResponseQuery<TaskResponse, TaskSortCriteria>(request, result, total);
     }
