@@ -45,8 +45,8 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
             t => t.Comments
         });
 
-        // query = query.Include(t => t.OrderDetail.Service);
-        // query = query.Include(t => t.OrderDetail.Order);
+        query = query.Include(t => t.OrderDetail.Service);
+        query = query.Include(t => t.OrderDetail.Order);
 
         if (request.UserId != null)
         {
