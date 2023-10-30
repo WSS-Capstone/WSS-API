@@ -33,6 +33,7 @@ public class
     {
         var query = _comboRepo.GetCombos(null, new Expression<Func<Data.Models.Combo, object>>[]
         {
+            c => c.Orders,
             c => c.ComboServices,
             c => c.ComboServices.Select(o => o.Service),
         });
@@ -42,6 +43,18 @@ public class
             .ThenInclude(o => o.Service)
             .ThenInclude(l => l.CurrentPrices);
 
+        query = query
+            .Include(c => c.ComboServices)
+            .ThenInclude(o => o.Service)
+            .ThenInclude(l => l.OrderDetails)
+            .ThenInclude(od => od.Order);
+        
+        query = query
+            .Include(c => c.ComboServices)
+            .ThenInclude(o => o.Service)
+            .ThenInclude(l => l.OrderDetails)
+            .ThenInclude(od => od.Feedbacks);
+        
         query = query
             .Include(c => c.ComboServices)
             .ThenInclude(o => o.Service).ThenInclude(s => s.ServiceImages);

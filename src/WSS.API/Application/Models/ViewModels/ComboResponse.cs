@@ -10,6 +10,8 @@ public class ComboResponse
     public double? TotalAmount { get; set; }
     public string? Description { get; set; }
     public ComboStatus? Status { get; set; }
+    public int? Used { get; set; }
+    public double? Rating { get; set; }
     
     public List<ServiceResponse>? ComboServices { get; set; }
 }
