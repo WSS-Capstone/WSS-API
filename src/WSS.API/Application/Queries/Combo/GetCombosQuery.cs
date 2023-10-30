@@ -42,6 +42,10 @@ public class
             .ThenInclude(o => o.Service)
             .ThenInclude(l => l.CurrentPrices);
 
+        query = query
+            .Include(c => c.ComboServices)
+            .ThenInclude(o => o.Service).ThenInclude(s => s.ServiceImages);
+        
         if (!string.IsNullOrEmpty(request.Name))
         {
             query = query.Where(c => c.Name.Contains(request.Name));
