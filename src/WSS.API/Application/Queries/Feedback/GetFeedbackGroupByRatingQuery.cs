@@ -6,6 +6,7 @@ namespace WSS.API.Application.Queries.Feedback
     public class GetFeedbackGroupByRatingQuery : IRequest<Dictionary<int?, List<FeedbackResponse>?>>
     {
         public Guid? ServiceId { get; set; } = null;
+        public Guid? ComboId { get; set; }
     }
 
     public class GetFeedbackGroupByRatingQueryHandler : IRequestHandler<GetFeedbackGroupByRatingQuery, Dictionary<int?, List<FeedbackResponse>?>>
@@ -34,9 +35,16 @@ namespace WSS.API.Application.Queries.Feedback
                 f => f.CreateByNavigation
             });
 
+            query = query.Include(f => f.OrderDetail).ThenInclude(l => l.Order);
+
             if (request.ServiceId != null)
             {
                 query = query.Where(x => listOrderDetailId.Contains((Guid)x.OrderDetailId));
+            }
+
+            if (request.ComboId != null)
+            {
+                query = query.Where(x => x.OrderDetail.Order.ComboId == request.ComboId);
             }
             
             query = query.Include(l => l.OrderDetail.Service);
