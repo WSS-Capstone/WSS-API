@@ -27,10 +27,11 @@ public class GetComboDetailQueryHandler : IRequestHandler<GetComboDetailQuery, C
     {
         var query = _comboRepo.GetCombos(c => c.Id == request.Id, new Expression<Func<Data.Models.Combo, object>>[]
         {
+            c => c.Orders,
             c => c.ComboServices,
             c => c.ComboServices.Select(o => o.Service)
         });
-        
+
         query = query
             .Include(c => c.ComboServices)
             .ThenInclude(o => o.Service)
@@ -38,8 +39,20 @@ public class GetComboDetailQueryHandler : IRequestHandler<GetComboDetailQuery, C
 
         query = query
             .Include(c => c.ComboServices)
+            .ThenInclude(o => o.Service)
+            .ThenInclude(l => l.OrderDetails)
+            .ThenInclude(od => od.Order);
+
+        query = query
+            .Include(c => c.ComboServices)
+            .ThenInclude(o => o.Service)
+            .ThenInclude(l => l.OrderDetails)
+            .ThenInclude(od => od.Feedbacks);
+
+        query = query
+            .Include(c => c.ComboServices)
             .ThenInclude(o => o.Service).ThenInclude(s => s.ServiceImages);
-        
+
         return await _mapper.ProjectTo<ComboResponse>(query).FirstOrDefaultAsync();
     }
 }

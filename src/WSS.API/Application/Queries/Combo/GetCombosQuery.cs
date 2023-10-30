@@ -6,6 +6,8 @@ public class GetCombosQuery : PagingParam<ComboSortCriteria>,
     IRequest<PagingResponseQuery<ComboResponse, ComboSortCriteria>>
 {
     public string? Name { get; set; }
+    public double? PriceFrom { get; set; }
+    public double? PriceTo { get; set; }
     public ComboStatus? Status { get; set; }
 }
 
@@ -62,6 +64,16 @@ public class
         if (!string.IsNullOrEmpty(request.Name))
         {
             query = query.Where(c => c.Name.Contains(request.Name));
+        }
+
+        if (request.PriceFrom != null)
+        {
+            query = query.Where(c => (c.TotalAmount / 100 * (100 - c.DiscountValueCombo)) >= request.PriceFrom);
+        }
+
+        if (request.PriceTo != null)
+        {
+            query = query.Where(c => (c.TotalAmount / 100 * (100 - c.DiscountValueCombo)) <= request.PriceTo);
         }
 
         if (request.Status != null)
