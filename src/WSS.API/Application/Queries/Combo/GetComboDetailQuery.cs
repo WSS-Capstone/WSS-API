@@ -52,7 +52,7 @@ public class GetComboDetailQueryHandler : IRequestHandler<GetComboDetailQuery, C
         query = query
             .Include(c => c.ComboServices)
             .ThenInclude(o => o.Service).ThenInclude(s => s.ServiceImages);
-
-        return await _mapper.ProjectTo<ComboResponse>(query).FirstOrDefaultAsync();
+        var combo = await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        return _mapper.Map<ComboResponse>(combo);
     }
 }

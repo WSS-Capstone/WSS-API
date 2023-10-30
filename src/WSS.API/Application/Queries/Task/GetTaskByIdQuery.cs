@@ -34,6 +34,10 @@ public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, TaskRes
         
         query = query.Include(t => t.OrderDetail.Service);
         query = query.Include(t => t.OrderDetail.Order);
+        query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.WeddingInformation);
+        query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Customer);
+        query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Combo);
+        query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Voucher);
         
         var task = await query.FirstOrDefaultAsync(cancellationToken);
         var result = this._mapper.Map<TaskResponse>(task);
