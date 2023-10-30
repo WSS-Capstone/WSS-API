@@ -4,7 +4,13 @@ namespace WSS.API.Application.Queries.Order;
 
 public class GetOrdersQuery : PagingParam<OrderSortCriteria>, IRequest<PagingResponseQuery<OrderResponse, OrderSortCriteria>>
 {
-    public StatusOrder? Status { get; set; }
+    public Guid CustomerId { get; set; }
+    public StatusOrder[]? Status { get; set; }
+}
+
+public class GetOrderCustomerQuery : PagingParam<OrderSortCriteria>
+{
+    public StatusOrder[]? Status { get; set; }
 }
 
 public enum OrderSortCriteria
@@ -47,8 +53,14 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
         
         if(request.Status != null)
         {
-            query = query.Where(s => s.StatusOrder == (int)request.Status);
+            query = query.Where(s => request.Status.Contains((StatusOrder)s.StatusOrder));
         }
+
+        if (request.CustomerId != null)
+        {
+            query = query.Where(s => s.CreateBy == request.CustomerId);
+        }
+        
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
