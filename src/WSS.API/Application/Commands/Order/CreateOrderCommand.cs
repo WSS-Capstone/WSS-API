@@ -5,8 +5,10 @@ using WSS.API.Data.Repositories.Service;
 using WSS.API.Data.Repositories.Task;
 using WSS.API.Data.Repositories.Voucher;
 using WSS.API.Data.Repositories.WeddingInformation;
+using WSS.API.Infrastructure.Config;
 using WSS.API.Infrastructure.Services.Identity;
 using WSS.API.Infrastructure.Utilities;
+using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
 namespace WSS.API.Application.Commands.Order;
 
@@ -94,8 +96,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         order.Id = Guid.NewGuid();
         order.Code = GenCode.NextId(code);
         order.CreateDate = DateTime.UtcNow;
-        order.CreateBy = user.Id;
-        order.CustomerId = user.Id;
+        order.CreateBy = user.User.Id;
+        order.CustomerId = user.User.Id;
 
         Guid? weddingInformationId = null;
         if (request.WeddingInformation != null)
@@ -105,14 +107,15 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             weddingInformationId = weddingInformation.Id;
             await _weddingInformationRepo.CreateWeddingInformation(weddingInformation);
         }
-
+        Data.Models.Task task = new Data.Models.Task();
         if (request.OrderDetails != null)
         {
             var orderDetails = _mapper.Map<List<OrderDetail>>(request.OrderDetails);
             var services = await _serviceRepo.GetServices(s => orderDetails.Select(x => x.ServiceId).Contains(s.Id),
                 new Expression<Func<Data.Models.Service, object>>[]
                 {
-                    s => s.CurrentPrices
+                    s => s.CurrentPrices,
+                    s => s.CreateByNavigation
                 }).ToListAsync(cancellationToken);
             List<ServiceResponse> serviceResponse = _mapper.Map<List<ServiceResponse>>(services);
             ComboResponse? comboResponse = null;
@@ -134,13 +137,32 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
 
             foreach (var orderDetail in orderDetails)
             {
+                orderDetail.Id = Guid.NewGuid();
                 var serviceDetail = serviceResponse.Find(x => x.Id == orderDetail.ServiceId);
+                var userCreate = await this._accountRepo.GetAccounts(a => a.RefId == serviceDetail.CreateByNavigation.RefId,
+                    new Expression<Func<Data.Models.Account, object>>[]
+                    {
+                        a => a.User
+                    }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
+                if (userCreate.RoleName == RoleName.PARTNER)
+                {
+                    var codeTask = await _taskRepo.GetTasks().OrderByDescending(x => x.Code).Select(x => x.Code)
+                        .FirstOrDefaultAsync(cancellationToken);
+                    task.Id = Guid.NewGuid();
+                    task.PartnerId = userCreate.Id;
+                    task.OrderDetailId = orderDetail.Id;
+                    task.TaskName = "Dịch vụ " + serviceDetail.Name + " của " + userCreate.User?.Fullname;
+                    task.Status = (int)TaskStatus.Expected;
+                    task.Code = GenCode.NextId(codeTask);
+                    task.CreateDate = DateTime.UtcNow;
+                    task.CreateBy = user.Id;
+                    await _taskRepo.CreateTask(task);
+                }
                 orderDetail.StartTime = orderDetail.StartTime;
                 orderDetail.EndTime = orderDetail.StartTime.Value.AddDays(1);
                 orderDetail.OrderId = order.Id;
                 orderDetail.Price = serviceDetail?.CurrentPrices?.Price;
                 orderDetail.Status = (int)OrderDetailStatus.ACTIVE;
-                
             }
 
             var totalPrice = orderDetails.Sum(od => od.Price);
@@ -160,9 +182,9 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         }
 
         order.WeddingInformationId = weddingInformationId;
-        // order.TotalAmount = request.OrderDetails?.Sum(x => x.);
+        order.TotalAmount = order.OrderDetails.Sum(od => od.Price);
+        order.TotalAmountRequest = order.TotalAmount / 100 * 30;
         order = await _orderRepo.CreateOrder(order);
-
         return _mapper.Map<OrderResponse>(order);
     }
 }

@@ -4,7 +4,7 @@ namespace WSS.API.Application.Queries.Order;
 
 public class GetOrdersQuery : PagingParam<OrderSortCriteria>, IRequest<PagingResponseQuery<OrderResponse, OrderSortCriteria>>
 {
-    public Guid CustomerId { get; set; }
+    public Guid? CustomerId { get; set; }
     public StatusOrder[]? Status { get; set; }
 }
 
@@ -58,7 +58,7 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
 
         if (request.CustomerId != null)
         {
-            query = query.Where(s => s.CreateBy == request.CustomerId);
+            query = query.Where(s => s.CustomerId == request.CustomerId);
         }
         
         var total = await query.CountAsync(cancellationToken: cancellationToken);
