@@ -15,7 +15,7 @@ public class UpdateAccountProfileCommand : IRequest<AccountResponse>
         DateOfBirth = command?.DateOfBirth;
         Phone = command?.Phone;
         Address = command?.Address;
-        Gender = (Gender)command?.Gender;
+        Gender = command?.Gender;
         ImageUrl = command?.ImageUrl;
     }
 
@@ -25,7 +25,7 @@ public class UpdateAccountProfileCommand : IRequest<AccountResponse>
     public DateTime? DateOfBirth { get; set; }
     public string? Phone { get; set; }
     public string? Address { get; set; }
-    public Gender Gender { get; set; }
+    public Gender? Gender { get; set; }
     public string? ImageUrl { get; set; }
     public Guid? CategoryId { get; set; }
     public string? Reason { get; set; }
@@ -40,7 +40,7 @@ public class UpdateMyAccountProfileCommand
     public DateTime? DateOfBirth { get; set; }
     public string? Phone { get; set; }
     public string? Address { get; set; }
-    public Gender Gender { get; set; }
+    public Gender? Gender { get; set; }
     public string? ImageUrl { get; set; }
 }
 

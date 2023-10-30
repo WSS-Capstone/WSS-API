@@ -2,6 +2,7 @@ using FirebaseAdmin.Auth;
 using WSS.API.Data.Repositories.Account;
 using WSS.API.Data.Repositories.User;
 using WSS.API.Infrastructure.Config;
+using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Commands.Account;
 
@@ -47,6 +48,9 @@ public class CreateAccountForAdminHandler : IRequestHandler<CreateAccountForAdmi
         {
             throw new Exception("Email already exists!");
         }
+        
+        var code = await _accountRepo.GetAccounts().OrderByDescending(x => x.Code).Select(x => x.Code)
+            .FirstOrDefaultAsync(cancellationToken);
 
         var id = Guid.NewGuid();
         var uid = id.ToString();
@@ -63,6 +67,7 @@ public class CreateAccountForAdminHandler : IRequestHandler<CreateAccountForAdmi
         await _accountRepo.CreateAccount(new Data.Models.Account()
         {
             Id = id,
+            Code = GenCode.NextId(code, "A"),
             RefId = uid,
             RoleName = request.RoleName.ToString(),
             Status = (int?)AccountStatus.Active,
