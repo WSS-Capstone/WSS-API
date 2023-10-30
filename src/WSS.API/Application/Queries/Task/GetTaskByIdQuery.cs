@@ -24,17 +24,22 @@ public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, TaskRes
 
     public async Task<TaskResponse> Handle(GetTaskByIdQuery request, CancellationToken cancellationToken)
     {
-        var query = _repo.GetTasks(t => t.Id == request.Id, new Expression<Func<Data.Models.Task, object>>[]
+        var query =  _repo.GetTasks(t => t.Id == request.Id, new Expression<Func<Data.Models.Task, object>>[]
         {
             t => t.OrderDetail,
             t => t.Partner,
             t => t.Staff,
             t => t.Comments
         });
+        
         query = query.Include(t => t.OrderDetail.Service);
         query = query.Include(t => t.OrderDetail.Order);
+        query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.WeddingInformation);
+        query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Customer);
+        query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Combo);
+        query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Voucher);
         
-        var task = await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        var task = await query.FirstOrDefaultAsync(cancellationToken);
         var result = this._mapper.Map<TaskResponse>(task);
 
         return result;
