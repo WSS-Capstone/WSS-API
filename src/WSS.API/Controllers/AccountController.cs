@@ -18,6 +18,7 @@ public class AccountController : BaseController
 
     [HttpGet]
     [ApiVersion("1")]
+    [ApiVersion("2")]
     public async Task<IActionResult> GetAccountByRoleName([FromQuery] List<RoleEnum> roleNames,
         CancellationToken cancellationToken = default)
     {
