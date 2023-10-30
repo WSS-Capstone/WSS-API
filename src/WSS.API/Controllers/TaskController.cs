@@ -42,6 +42,8 @@ public class TaskController : BaseController
     }
     
     [HttpGet("{id}")]
+    [ApiVersion("1")]
+    [ApiVersion("2")]
     public async Task<IActionResult> GetTasks([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         TaskResponse? result = await this.Mediator.Send(new GetTaskByIdQuery(id), cancellationToken);

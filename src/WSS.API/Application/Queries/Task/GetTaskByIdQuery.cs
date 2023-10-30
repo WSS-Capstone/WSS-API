@@ -24,8 +24,19 @@ public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, TaskRes
 
     public async Task<TaskResponse> Handle(GetTaskByIdQuery request, CancellationToken cancellationToken)
     {
-        var query = await _repo.GetTaskById(request.Id);
-        var result = this._mapper.Map<TaskResponse>(query);
+        var query =  _repo.GetTasks(t => t.Id == request.Id, new Expression<Func<Data.Models.Task, object>>[]
+        {
+            t => t.OrderDetail,
+            t => t.Partner,
+            t => t.Staff,
+            t => t.Comments
+        });
+        
+        query = query.Include(t => t.OrderDetail.Service);
+        query = query.Include(t => t.OrderDetail.Order);
+        
+        var task = await query.FirstOrDefaultAsync(cancellationToken);
+        var result = this._mapper.Map<TaskResponse>(task);
 
         return result;
     }
