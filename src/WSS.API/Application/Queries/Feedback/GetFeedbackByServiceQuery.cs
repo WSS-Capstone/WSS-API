@@ -40,7 +40,7 @@ public class GetFeedbacksByServiceQueryHandler :  IRequestHandler<GetFeedbackByS
         var total = await query.CountAsync(cancellationToken: cancellationToken);
         var list = query.ToList();
         
-        var result = this._mapper.ProjectTo<FeedbackResponse>(list.AsQueryable());
+        var result = this._mapper.Map<List<FeedbackResponse>>(list).AsQueryable();
         
         return new PagingResponseQuery<FeedbackResponse, FeedbackSortCriteria>(request, result, total);
     }

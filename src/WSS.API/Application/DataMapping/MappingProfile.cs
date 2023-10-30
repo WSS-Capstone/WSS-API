@@ -9,6 +9,7 @@ using WSS.API.Application.Commands.Order;
 using WSS.API.Application.Commands.Service;
 using WSS.API.Application.Commands.Task;
 using WSS.API.Application.Commands.Voucher;
+using WSS.API.Application.Feedback;
 using WSS.API.Application.Queries.DayOff;
 using Task = WSS.API.Data.Models.Task;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
@@ -177,6 +178,9 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.User,
                 opt => opt.MapFrom(src => src.CreateByNavigation))
             .ReverseMap();
+
+        this.CreateMap<Data.Models.Feedback, CreateFeedbackCommand>().ReverseMap();
+        this.CreateMap<Data.Models.Feedback, UpdateFeedbackCommand>().ReverseMap();
     }
 
     private void MessageProfile()

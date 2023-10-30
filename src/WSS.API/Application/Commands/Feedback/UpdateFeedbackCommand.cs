@@ -4,15 +4,6 @@ namespace WSS.API.Application.Feedback;
 
 public class UpdateFeedbackCommand : IRequest<FeedbackResponse>
 {
-    public UpdateFeedbackCommand(Guid id, UpdateFeedbackRequest request)
-    {
-        Id = id;
-        Content = request.Content;
-        Rating = request.Rating;
-        OrderDetailId = request.OrderDetailId;
-        UserId = request.UserId;
-        Status = request.Status;
-    }
     
     public Guid Id { get; set; }
     public string? Content { get; set; }
@@ -28,8 +19,6 @@ public class UpdateFeedbackRequest
     public string? Content { get; set; }
     public int? Rating { get; set; }
     public Guid? OrderDetailId { get; set; }
-    public Guid? UserId { get; set; }
-    public int? Status { get; set; }
 }
 
 public class UpdateFeedbackCommandHandler : IRequestHandler<UpdateFeedbackCommand, FeedbackResponse>

@@ -12,6 +12,13 @@ public class CreateFeedbackCommand : IRequest<FeedbackResponse>
     public int? Status { get; set; }
 }
 
+public class CreateFeedbackRequest
+{
+    public string? Content { get; set; }
+    public int? Rating { get; set; }
+    public Guid? OrderDetailId { get; set; }
+}
+
 public class CreateFeedbackCommandHandler : IRequestHandler<CreateFeedbackCommand, FeedbackResponse>
 {
     private readonly IMapper _mapper;
