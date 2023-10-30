@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using WSS.API.Application.Models.Requests;
 using WSS.API.Infrastructure.Services.VnPay;
 
 namespace WSS.API.Controllers;
@@ -6,26 +7,26 @@ namespace WSS.API.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class VnPayController : BaseController
 {
-    private readonly VnPayService _vnPayService;
+    private readonly IVnPayPaymentService _vnPayPaymentService;
 
-    public VnPayController(VnPayService vnPayService, IMediator mediator) : base(mediator)
+    public VnPayController(IVnPayPaymentService vnPayPaymentService, IMediator mediator) : base(mediator)
     {
-        _vnPayService = vnPayService;
+        _vnPayPaymentService = vnPayPaymentService;
     }
 
     // <summary>
     /// [Guest] Endpoint for company create url payment with condition
     /// 
-    /// <param name="businessPayment">An object payment</param>
+    /// <param name="payment">An object payment</param>
     /// <returns>List of user</returns>
     /// <response code="200">Returns the list of user</response>
     /// <response code="204">Returns if list of user is empty</response>
     /// <response code="403">Return if token is access denied</response>
     [HttpGet]
     [AllowAnonymous]
-    public async Task<IActionResult> Get([FromQuery] BusinessPayment businessPayment)
+    public async Task<IActionResult> Get([FromQuery] VnPayPayment payment)
     {
-        var result = await _vnPayService.Get(businessPayment);
+        var result = await _vnPayPaymentService.CreatePayment(payment);
         return result != null ? Ok(result) : NotFound();
     }
     // <summary>
@@ -40,7 +41,7 @@ public class VnPayController : BaseController
     [AllowAnonymous]
     public async Task<IActionResult> Get()
     {
-        var result = await _vnPayService.Confirm(null);
+        var result = await _vnPayPaymentService.Confirm();
         return result != null ? Ok(result) : NotFound();
     }
 }

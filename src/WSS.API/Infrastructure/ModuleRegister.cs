@@ -1,4 +1,6 @@
-﻿using WSS.API.Infrastructure.Services.File;
+﻿using Microsoft.Extensions.Options;
+using WSS.API.Infrastructure.Config;
+using WSS.API.Infrastructure.Services.File;
 using WSS.API.Infrastructure.Services.Identity;
 using WSS.API.Infrastructure.Services.Mail;
 using WSS.API.Infrastructure.Services.VnPay;
@@ -18,7 +20,13 @@ public static class ModuleRegister
     {
         services.AddTransient<IIdentitySvc, IdentitySvc>();
         services.AddScoped<IFileSvc, FileSvc>();
-        services.AddScoped<VnPayService>();
+        services.AddScoped<IVnPayPaymentService, VnPayPaymentService>();
         services.AddScoped<IMailService, MailService>();
+        services.AddOptions<VnPaySettings>()
+            .BindConfiguration(VnPaySettings.ConfigSection)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+              
+        services.AddSingleton(sp => sp.GetRequiredService<IOptions<VnPaySettings>>().Value);
     }
 }
