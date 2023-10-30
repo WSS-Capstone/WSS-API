@@ -43,6 +43,7 @@ public class ServiceController: BaseController
             CheckDate = query.CheckDate,
             PriceFrom = query.PriceFrom,
             PriceTo = query.PriceTo,
+            CategoryId = query.CategoryId,
             Name = query.Name
         }, cancellationToken);
 
@@ -69,6 +70,7 @@ public class ServiceController: BaseController
             PriceFrom = query.PriceFrom,
             PriceTo = query.PriceTo,
             PartnetId = userId,
+            CategoryId = query.CategoryId,
             Name = query.Name
         }, cancellationToken);
 

@@ -7,6 +7,7 @@ public class GetServicesQuery : PagingParam<ServiceSortCriteria>, IRequest<Pagin
 {
     public ServiceStatus[]? Status { get; set; } = new[] { ServiceStatus.Active, ServiceStatus.Deleted, ServiceStatus.Pending, ServiceStatus.Reject, ServiceStatus.InActive };
     public DateTime? CheckDate { get; set; }
+    public Guid? CategoryId { get; set; }
     public string? Name { get; set; }
     public float? PriceFrom { get; set; }
     public float? PriceTo { get; set; }
@@ -17,6 +18,7 @@ public class GetServicesQuery : PagingParam<ServiceSortCriteria>, IRequest<Pagin
 public class GetServicesCustomer : PagingParam<ServiceSortCriteria>
 {
     public DateTime? CheckDate { get; set; }
+    public Guid? CategoryId { get; set; }
     public string? Name { get; set; }
     public float? PriceFrom { get; set; }
     public float? PriceTo { get; set; }
@@ -26,6 +28,7 @@ public class GetServicePartnerRequest : PagingParam<ServiceSortCriteria>
 {
     public ServiceStatus[]? Status { get; set; } = new[] { ServiceStatus.Active, ServiceStatus.Deleted, ServiceStatus.Pending, ServiceStatus.Reject, ServiceStatus.InActive };
     public DateTime? CheckDate { get; set; }
+    public Guid? CategoryId { get; set; }
     public string? Name { get; set; }
     public float? PriceFrom { get; set; }
     public float? PriceTo { get; set; }
@@ -77,6 +80,11 @@ public class
             query = query.Where(s => s.CreateBy == request.PartnetId);
         }
 
+        if (request.CategoryId != null)
+        {
+            query = query.Where(s => s.CategoryId == request.CategoryId);
+        }
+        
         if (request.PriceFrom != null || request.PriceTo != null)
         {
             query = query.Where(s => s.CurrentPrices.Any(cp =>
@@ -115,8 +123,8 @@ public class
         
         list.ForEach(s => s.Category?.Services.Clear());
         
-        var result = this._mapper.ProjectTo<ServiceResponse>(list.AsQueryable());
+        var result = this._mapper.Map<List<ServiceResponse>>(list);
         
-        return new PagingResponseQuery<ServiceResponse, ServiceSortCriteria>(request, result, total);
+        return new PagingResponseQuery<ServiceResponse, ServiceSortCriteria>(request, result.AsQueryable(), total);
     }
 }
