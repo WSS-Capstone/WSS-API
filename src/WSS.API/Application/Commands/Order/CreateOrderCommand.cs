@@ -18,13 +18,8 @@ public class CreateOrderCommand : IRequest<OrderResponse>
     public string? Address { get; set; }
     public string? Phone { get; set; }
     public Guid? VoucherId { get; set; }
-
     public Guid? ComboId { get; set; }
-
-    // public double? TotalAmount { get; set; } // Tong so tien thanh toan
-    // public double? TotalAmountRequest { get; set; } // So tien coc
     public string? Description { get; set; }
-
     public virtual WeddingInformationRequest? WeddingInformation { get; set; }
     public virtual ICollection<OrderDetailRequest>? OrderDetails { get; set; }
 }
@@ -45,11 +40,7 @@ public class OrderDetailRequest
 {
     public Guid? ServiceId { get; set; }
     public string? Address { get; set; }
-
     public DateTime? StartTime { get; set; }
-
-    // public double? Price { get; set; }
-    // public double? Total { get; set; }
     public string? Description { get; set; }
 }
 
@@ -107,6 +98,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             weddingInformationId = weddingInformation.Id;
             await _weddingInformationRepo.CreateWeddingInformation(weddingInformation);
         }
+
         Data.Models.Task task = new Data.Models.Task();
         if (request.OrderDetails != null)
         {
@@ -139,7 +131,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             {
                 orderDetail.Id = Guid.NewGuid();
                 var serviceDetail = serviceResponse.Find(x => x.Id == orderDetail.ServiceId);
-                var userCreate = await this._accountRepo.GetAccounts(a => a.RefId == serviceDetail.CreateByNavigation.RefId,
+                var userCreate = await this._accountRepo.GetAccounts(
+                    a => a.RefId == serviceDetail.CreateByNavigation.RefId,
                     new Expression<Func<Data.Models.Account, object>>[]
                     {
                         a => a.User
@@ -158,6 +151,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                     task.CreateBy = user.Id;
                     await _taskRepo.CreateTask(task);
                 }
+
                 orderDetail.StartTime = orderDetail.StartTime;
                 orderDetail.EndTime = orderDetail.StartTime.Value.AddDays(1);
                 orderDetail.OrderId = order.Id;
@@ -166,7 +160,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             }
 
             var totalPrice = orderDetails.Sum(od => od.Price);
-            if(request.ComboId != null)
+            if (request.ComboId != null)
             {
                 var discountCombo = comboResponse.TotalAmount / 100 * (100 - comboResponse.DiscountValueCombo);
                 totalPrice = totalPrice - discountCombo;
@@ -177,7 +171,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                 voucher = await this._voucherRepo.GetVoucherById((Guid)request.VoucherId);
                 totalPrice = voucher == null ? totalPrice : (totalPrice / 100) * (100 - voucher.DiscountValueVoucher);
             }
-            
+
             order.OrderDetails = orderDetails;
         }
 
