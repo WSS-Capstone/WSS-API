@@ -8,6 +8,7 @@ public class TaskResponse
     public UserResponse? Partner { get; set; }
     public ServiceResponse? Service { get; set; }
     public OrderResponse? Order { get; set; }
+    public OrderDetailResponse? OrderDetail { get; set; }
     public string? TaskName { get; set; }
 
     public DateTime? StartDate { get; set; }

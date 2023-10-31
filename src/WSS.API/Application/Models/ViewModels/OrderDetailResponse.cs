@@ -8,7 +8,7 @@ public class OrderDetailResponse
     public Guid? PartnerId { get; set; }
     public string? Address { get; set; }
     public DateTime? StartTime { get; set; }
-    public string? QuantityService { get; set; }
+    public DateTime? EndTime { get; set; }
     public double? Price { get; set; }
     public double? Total { get; set; }
     public string? Description { get; set; }
