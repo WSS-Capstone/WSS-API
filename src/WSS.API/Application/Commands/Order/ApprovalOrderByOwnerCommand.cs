@@ -71,9 +71,9 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
             var task = new Data.Models.Task();
             task.Id = Guid.NewGuid();
             task.OrderDetailId = order.OrderDetails.FirstOrDefault().Id;
-            task.Status = (int)TaskStatus.Todo;
+            task.Status = (int)TaskStatus.TO_DO;
             task.CreateDate = DateTime.Now;
-            task.CreateBy = user.User.Id;
+            task.CreateBy = user.User?.Id;
             task.TaskName = "Tạo task cho order";
             await _taskRepo.CreateTask(task);
         }

@@ -78,7 +78,7 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
         var result = this._mapper.Map<List<TaskResponse>>(list);
         result.ForEach(t =>
         {
-            t.Order.OrderDetails.Clear();
+            t.Order?.OrderDetails.Clear();
         });
         return new PagingResponseQuery<TaskResponse, TaskSortCriteria>(request, result.AsQueryable(), total);
     }
