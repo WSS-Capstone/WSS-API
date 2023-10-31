@@ -5,11 +5,13 @@ namespace WSS.API.Application.Queries.Comment;
 public class GetCommentsQuery : PagingParam<CommentSortCriteria>,
     IRequest<PagingResponseQuery<CommentResponse, CommentSortCriteria>>
 {
+    public Guid? TaskId { get; set; }
 }
 
 public class GetCommentActiveRequest : PagingParam<CommentSortCriteria>
 {
     public string? Content { get; set; }
+    public Guid? TaskId { get; set; }
 }
 
 public enum CommentSortCriteria
@@ -37,6 +39,11 @@ public class GetCommentsQueryHandler : IRequestHandler<GetCommentsQuery,
         {
             c => c.Task
         });
+        
+        if(request.TaskId != null)
+        {
+            query = query.Where(c => c.TaskId == request.TaskId);
+        }
         var total = await query.CountAsync(cancellationToken: cancellationToken);
 
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);

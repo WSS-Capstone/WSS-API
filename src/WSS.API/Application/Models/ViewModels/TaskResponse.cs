@@ -17,7 +17,7 @@ public class TaskResponse
     public string? ImageEvidence { get; set; }
 
     public TaskStatus? Status { get; set; }
-    public ICollection<Comment> Comments { get; set; }
+    public ICollection<CommentResponse> Comments { get; set; }
 }
 
 public enum TaskStatus
