@@ -1,3 +1,5 @@
+using Task = WSS.API.Data.Models.Task;
+
 namespace WSS.API.Application.Models.ViewModels;
 
 public class CommentResponse
@@ -7,4 +9,5 @@ public class CommentResponse
     public string? Content { get; set; }
     public DateTime? CreateDate { get; set; }
     public Guid? CreateBy { get; set; }
+    public virtual Task? Task { get; set; }
 }
