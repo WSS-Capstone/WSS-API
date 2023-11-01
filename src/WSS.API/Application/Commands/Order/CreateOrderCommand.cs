@@ -17,7 +17,7 @@ public class CreateOrderCommand : IRequest<OrderResponse>
     public string? Fullname { get; set; }
     public string? Address { get; set; }
     public string? Phone { get; set; }
-    public Guid? VoucherId { get; set; }
+    public string? VoucherCode { get; set; }
     public Guid? ComboId { get; set; }
     public string? Description { get; set; }
     public virtual WeddingInformationRequest? WeddingInformation { get; set; }
@@ -82,8 +82,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         var code = await _orderRepo.GetOrders().OrderByDescending(x => x.Code).Select(x => x.Code)
             .FirstOrDefaultAsync(cancellationToken);
         var order = _mapper.Map<Data.Models.Order>(request);
-        order.StatusOrder = (int)StatusOrder.Pending;
-        order.StatusPayment = (int)StatusPayment.Pending;
+        order.StatusOrder = (int)StatusOrder.PENDING;
+        order.StatusPayment = (int)StatusPayment.PENDING;
         order.Id = Guid.NewGuid();
         order.Code = GenCode.NextId(code);
         order.CreateDate = DateTime.UtcNow;
@@ -166,9 +166,9 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                 totalPrice = totalPrice - discountCombo;
             }
 
-            if (request.VoucherId != null)
+            if (request.VoucherCode != null)
             {
-                voucher = await this._voucherRepo.GetVoucherById((Guid)request.VoucherId);
+                voucher = await this._voucherRepo.GetVouchers(v => v.Code == request.VoucherCode).FirstOrDefaultAsync();
                 totalPrice = voucher == null ? totalPrice : (totalPrice / 100) * (100 - voucher.DiscountValueVoucher);
             }
 

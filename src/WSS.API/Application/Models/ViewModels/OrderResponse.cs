@@ -27,17 +27,17 @@ public class OrderResponse
 
 public enum StatusOrder
 {
-    Pending = 1,
-    Confirm = 2,
-    Doing = 3,
-    Done = 4,
-    Cancel = 5,
+    PENDING = 1,
+    CONFIRM = 2,
+    DOING = 3,
+    DONE = 4,
+    CANCEL = 5,
 }
 public enum StatusPayment
 {
-    Pending = 1,
-    Confirm = 2, // Cho Dat coc
-    Doing = 3, // Da dat coc/
-    Done = 4,
-    Cancel = 5,
+    PENDING = 1,
+    CONFIRM = 2, // Cho Dat coc
+    DOING = 3, // Da dat coc/
+    DONE = 4,
+    CANCEL = 5,
 }

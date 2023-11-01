@@ -66,7 +66,7 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
             throw new Exception("Order not found");
         }
 
-        if (request.Status == StatusOrder.Confirm)
+        if (request.Status == StatusOrder.CONFIRM)
         {
             var task = new Data.Models.Task();
             task.Id = Guid.NewGuid();
