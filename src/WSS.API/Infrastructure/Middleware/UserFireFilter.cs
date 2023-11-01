@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WSS.API.Data.Repositories.Account;
 using WSS.API.Infrastructure.Config;
 using WSS.API.Infrastructure.Services.Identity;
+using WSS.API.Infrastructure.Utilities;
 using Task = System.Threading.Tasks.Task;
 
 namespace WSS.API.Infrastructure.Middleware;
@@ -53,14 +54,23 @@ public class UserFireFilter : IAsyncActionFilter
             //     return;
             // }
             
+            var code = await _accountRepo.GetAccounts().OrderByDescending(x => x.Code).Select(x => x.Code)
+                .FirstOrDefaultAsync();
+            var newId = Guid.NewGuid();
             if (user.Result == null && userInFb.Result != null)
             {
                 await this._accountRepo.CreateAccount(new Account()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = newId,
+                    Code = GenCode.NextId(code, "A"),
                     Username = userInFb.Result.Email,
                     RefId = userId,
                     RoleName = RoleName.CUSTOMER,
+                    Status = (int?)AccountStatus.Active,
+                    User = new User()
+                    {
+                        Id = newId,
+                    }
                     // Status = userInFb.Result.EmailVerified ? 1 : 0,
                 });
             } else if (user.Result != null && userInFb.Result != null)

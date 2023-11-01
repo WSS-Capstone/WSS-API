@@ -45,17 +45,19 @@ public class MappingProfile : Profile
 
     private void AccountProfile()
     {
-        this.CreateMap<Account, AccountResponse>()
-            .ForMember(dto => dto.Status,
-                opt => opt.MapFrom(src => (AccountStatus)src.Status))
-            .ReverseMap();
-
-        this.CreateMap<Account, CreateAccountForCustomerCommand>().ReverseMap();
-
         this.CreateMap<User, UserResponse>()
             .ForMember(dto => dto.Gender,
                 opt => opt.MapFrom(src => (Gender)src.Gender))
             .ReverseMap();
+        
+        this.CreateMap<Account, AccountResponse>()
+            .ForMember(dto => dto.Status,
+                opt => opt.MapFrom(src => (AccountStatus)src.Status))
+            .ForMember(dto => dto.User, opt => opt.MapFrom(src => src.User))
+            .ReverseMap();
+
+        this.CreateMap<Account, CreateAccountForCustomerCommand>().ReverseMap();
+        
     }
 
     private void CategoryProfile()

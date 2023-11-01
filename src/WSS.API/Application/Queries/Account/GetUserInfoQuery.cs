@@ -25,10 +25,10 @@ public class GetUserInfoQueryHandler : IRequestHandler<GetUserInfoQuery, Account
     public async Task<AccountResponse> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
     {
         var userId = _identitySvc.GetUserRefId();
-        var result = await this._accountRepo.GetAccounts(a => a.RefId == userId, new Expression<Func<Data.Models.Account, object>>[]
+        var result = this._accountRepo.GetAccounts(a => a.RefId == userId, new Expression<Func<Data.Models.Account, object>>[]
         {
-            u => u.User
-        }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
-        return this._mapper.Map<AccountResponse>(result);
+            u => u.User,
+        });
+        return await this._mapper.ProjectTo<AccountResponse>(result).FirstOrDefaultAsync();
     }
 }
