@@ -40,6 +40,12 @@ public class UserFireFilter : IAsyncActionFilter
             var userInFb = this._firebaseAuth.GetUserAsync(userId);
             await Task.WhenAll(new List<Task>(){ user, userInFb });
 
+            if (user.Result != null)
+            {
+                await next();
+                return;
+            }
+            
             // if (user?.Result.Status == (int)AccountStatus.InActive)
             // {
             //     context.HttpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
