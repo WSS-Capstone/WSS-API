@@ -82,7 +82,7 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => (ComboStatus)src.Status))
             .ForMember(dto => dto.ComboServices, opt => opt.MapFrom(src => src.ComboServices))
             .ForMember(dto => dto.DisountPrice, opt => opt.MapFrom(src => src.TotalAmount / 100 * (100 - src.DiscountValueCombo)))
-            .ForMember(dto => dto.Used, opt => opt.MapFrom(src => src.Orders.Count(o => o.StatusOrder == (int)StatusOrder.DONE)))
+            .ForMember(dto => dto.Used, opt => opt.MapFrom(src => src.Orders.Count(o => o.StatusOrder == (int)StatusOrder.Done)))
             .ForMember(dto => dto.Rating, opt => 
                 opt.MapFrom(src => src.ComboServices
                     .Average(c => c.Service.OrderDetails
@@ -243,7 +243,7 @@ public class MappingProfile : Profile
                     src.OrderDetails.Count == 0
                         ? 0
                         : src.OrderDetails.DistinctBy(od => od.OrderId)
-                            .Count(o => o.Order.StatusOrder == (int)StatusOrder.DONE)))
+                            .Count(o => o.Order.StatusOrder == (int)StatusOrder.Done)))
             .ForMember(dto => dto.Rating,
                 opt => opt.MapFrom(src =>
                     src.OrderDetails.Count == 0

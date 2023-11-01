@@ -82,8 +82,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         var code = await _orderRepo.GetOrders().OrderByDescending(x => x.Code).Select(x => x.Code)
             .FirstOrDefaultAsync(cancellationToken);
         var order = _mapper.Map<Data.Models.Order>(request);
-        order.StatusOrder = (int)StatusOrder.PENDING;
-        order.StatusPayment = (int)StatusPayment.PENDING;
+        order.StatusOrder = (int)StatusOrder.Pending;
+        order.StatusPayment = (int)StatusPayment.Pending;
         order.Id = Guid.NewGuid();
         order.Code = GenCode.NextId(code);
         order.CreateDate = DateTime.UtcNow;
