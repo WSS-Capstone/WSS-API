@@ -35,7 +35,11 @@ public class TaskController : BaseController
             PageSize = query.PageSize,
             SortKey = query.SortKey,
             SortOrder = query.SortOrder,
-            UserId = userId
+            UserId = userId,
+            Status = query.Status,
+            TaskName = query.TaskName,
+            DueDateFrom = query.DueDateFrom,
+            DueDateTo = query.DueDateTo
         }, cancellationToken);
 
         return Ok(result);

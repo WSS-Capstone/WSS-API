@@ -1,18 +1,32 @@
 using WSS.API.Data.Repositories.Task;
+using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
 namespace WSS.API.Application.Queries.Task;
 
-public class GetTasksQuery: PagingParam<TaskSortCriteria>, IRequest<PagingResponseQuery<TaskResponse, TaskSortCriteria>>
+public class GetTasksQuery : PagingParam<TaskSortCriteria>,
+    IRequest<PagingResponseQuery<TaskResponse, TaskSortCriteria>>
 {
     public Guid? UserId { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
+    public string? TaskName { get; set; }
 
-    public DateTime? DueDateFrom  { get; set; }
-    public DateTime? DueDateTo   { get; set; }
+    public DateTime? DueDateFrom { get; set; }
+    public DateTime? DueDateTo { get; set; }
+
+    public TaskStatus[]? Status { get; set; } = new[]
+        { TaskStatus.EXPECTED, TaskStatus.TO_DO, TaskStatus.DONE, TaskStatus.IN_PROGRESS };
 }
 
-public class GetTaskOwnerRequest : PagingParam<TaskSortCriteria>{}
+public class GetTaskOwnerRequest : PagingParam<TaskSortCriteria>
+{
+    public string? TaskName { get; set; }
+    public DateTime? DueDateFrom { get; set; }
+    public DateTime? DueDateTo { get; set; }
+
+    public TaskStatus[]? Status { get; set; } = new[]
+        { TaskStatus.EXPECTED, TaskStatus.TO_DO, TaskStatus.DONE, TaskStatus.IN_PROGRESS };
+}
 
 public enum TaskSortCriteria
 {
@@ -24,7 +38,7 @@ public enum TaskSortCriteria
     CreateDate
 }
 
-public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponseQuery<TaskResponse, TaskSortCriteria>>
+public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagingResponseQuery<TaskResponse, TaskSortCriteria>>
 {
     private IMapper _mapper;
     private ITaskRepo _categoryRepo;
@@ -35,7 +49,8 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
         _categoryRepo = categoryRepo;
     }
 
-    public async Task<PagingResponseQuery<TaskResponse, TaskSortCriteria>> Handle(GetTasksQuery request, CancellationToken cancellationToken)
+    public async Task<PagingResponseQuery<TaskResponse, TaskSortCriteria>> Handle(GetTasksQuery request,
+        CancellationToken cancellationToken)
     {
         var query = _categoryRepo.GetTasks(null, new Expression<Func<Data.Models.Task, object>>[]
         {
@@ -55,26 +70,39 @@ public class GetTasksQueryHandler: IRequestHandler<GetTasksQuery, PagingResponse
 
         if (request.StartDate != null && request.EndDate != null)
         {
-            query = query.Where(t => t.StartDate >= request.StartDate && t.EndDate <= request.EndDate);
+            query = query.Where(t =>
+                t.StartDate.Value.Date >= request.StartDate.Value.Date &&
+                t.EndDate.Value.Date <= request.EndDate.Value.Date);
+        }
+
+        if (request.TaskName != null)
+        {
+            query = query.Where(t => t.TaskName.Contains(request.TaskName));
         }
         
         if (request.DueDateFrom != null)
         {
             query = query.Where(t => t.EndDate != null && t.EndDate.Value.Date >= request.DueDateFrom.Value.Date);
         }
+
         if (request.DueDateTo != null)
         {
             query = query.Where(t => t.EndDate != null && t.EndDate.Value.Date <= request.DueDateTo.Value.Date);
         }
-        
-        
+
+        if (request.Status != null && request.Status.Length > 0)
+        {
+            query = query.Where(t => t.Status != null && request.Status.Contains((TaskStatus)t.Status));
+        }
+
+
         var total = await query.CountAsync(cancellationToken: cancellationToken);
-        
+
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
-        
+
         query = query.GetWithPaging(request.Page, request.PageSize);
         var list = await query.ToListAsync(cancellationToken: cancellationToken);
-        
+
         var result = this._mapper.Map<List<TaskResponse>>(list);
         result.ForEach(t =>
         {
