@@ -49,7 +49,7 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Gender,
                 opt => opt.MapFrom(src => (Gender)src.Gender))
             .ReverseMap();
-        
+
         this.CreateMap<Account, AccountResponse>()
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (AccountStatus)src.Status))
@@ -57,7 +57,6 @@ public class MappingProfile : Profile
             .ReverseMap();
 
         this.CreateMap<Account, CreateAccountForCustomerCommand>().ReverseMap();
-        
     }
 
     private void CategoryProfile()
@@ -83,9 +82,11 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (ComboStatus)src.Status))
             .ForMember(dto => dto.ComboServices, opt => opt.MapFrom(src => src.ComboServices))
-            .ForMember(dto => dto.DisountPrice, opt => opt.MapFrom(src => src.TotalAmount / 100 * (100 - src.DiscountValueCombo)))
-            .ForMember(dto => dto.Used, opt => opt.MapFrom(src => src.Orders.Count(o => o.StatusOrder == (int)StatusOrder.DONE)))
-            .ForMember(dto => dto.Rating, opt => 
+            .ForMember(dto => dto.DisountPrice,
+                opt => opt.MapFrom(src => src.TotalAmount / 100 * (100 - src.DiscountValueCombo)))
+            .ForMember(dto => dto.Used,
+                opt => opt.MapFrom(src => src.Orders.Count(o => o.StatusOrder == (int)StatusOrder.DONE)))
+            .ForMember(dto => dto.Rating, opt =>
                 opt.MapFrom(src => src.ComboServices
                     .Average(c => c.Service.OrderDetails
                         .Average(od => od.Feedbacks
@@ -94,15 +95,14 @@ public class MappingProfile : Profile
 
         this.CreateMap<Combo, AddNewComboCommand>()
             .ReverseMap();
-        
+
         this.CreateMap<Combo, UpdateComboCommand>()
             .ReverseMap();
 
         this.CreateMap<Combo, ComboService>()
             .ReverseMap();
 
-        
-        
+
         this.CreateMap<ComboResponse, ComboServicesResponse>().ReverseMap();
 
         this.CreateMap<AddNewComboCommand, UpdateComboCommand>().ReverseMap();
@@ -122,9 +122,8 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(src => src.Service.CategoryId))
             .ForMember(dto => dto.CoverUrl, opt => opt.MapFrom(src => src.Service.CoverUrl))
             .ForMember(dto => dto.ServiceImages, opt => opt.MapFrom(src => src.Service.ServiceImages))
-             .ForMember(dto => dto.CurrentPrices, opt => opt.MapFrom(src => src.Service.CurrentPrices.FirstOrDefault()))
+            .ForMember(dto => dto.CurrentPrices, opt => opt.MapFrom(src => src.Service.CurrentPrices.FirstOrDefault()))
             .ReverseMap();
-        
     }
 
     private void CommissionProfile()
@@ -134,6 +133,7 @@ public class MappingProfile : Profile
         this.CreateMap<Commission, UpdateCategoryCommand>().ReverseMap();
         this.CreateMap<CreateCommissionCommand, UpdateCategoryCommand>().ReverseMap();
     }
+
     private void CommentProfile()
     {
         this.CreateMap<Comment, CommentResponse>().ReverseMap();
