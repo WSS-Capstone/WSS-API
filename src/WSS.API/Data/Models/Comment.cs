@@ -11,6 +11,7 @@ namespace WSS.API.Data.Models
         public DateTime? CreateDate { get; set; }
         public Guid? CreateBy { get; set; }
 
+        public virtual User? CreateByNavigation { get; set; }
         public virtual Task? Task { get; set; }
     }
 }

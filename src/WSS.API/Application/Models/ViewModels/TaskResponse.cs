@@ -18,6 +18,7 @@ public class TaskResponse
     public string? ImageEvidence { get; set; }
 
     public TaskStatus? Status { get; set; }
+    public virtual UserResponse? CreateBy { get; set; }
     public ICollection<CommentResponse> Comments { get; set; }
 }
 

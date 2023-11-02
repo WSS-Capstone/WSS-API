@@ -139,6 +139,11 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
+                entity.HasOne(d => d.CreateByNavigation)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.CreateBy)
+                    .HasConstraintName("FK_Comment_User");
+
                 entity.HasOne(d => d.Task)
                     .WithMany(p => p.Comments)
                     .HasForeignKey(d => d.TaskId)

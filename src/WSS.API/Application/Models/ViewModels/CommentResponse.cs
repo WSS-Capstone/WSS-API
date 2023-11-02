@@ -8,6 +8,6 @@ public class CommentResponse
     public Guid? TaskId { get; set; }
     public string? Content { get; set; }
     public DateTime? CreateDate { get; set; }
-    public Guid? CreateBy { get; set; }
-    public virtual Task? Task { get; set; }
+    public virtual TaskResponse? Task { get; set; }
+    public virtual UserResponse? CreateBy { get; set; }
 }

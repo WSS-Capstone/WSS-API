@@ -136,7 +136,10 @@ public class MappingProfile : Profile
 
     private void CommentProfile()
     {
-        this.CreateMap<Comment, CommentResponse>().ReverseMap();
+        this.CreateMap<Comment, CommentResponse>()
+            .ForMember(dto => dto.Task, opt => opt.MapFrom(src => src.Task))
+            .ForMember(dto => dto.CreateBy, opt => opt.MapFrom(src => src.CreateByNavigation))
+            .ReverseMap();
         this.CreateMap<Comment, CreateCommentCommand>().ReverseMap();
         this.CreateMap<Comment, UpdateCommentCommand>().ReverseMap();
         this.CreateMap<Comment, DeleteCommentCommand>().ReverseMap();
@@ -275,6 +278,8 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.OrderDetail.Service))
             .ForMember(dto => dto.Order,
                 opt => opt.MapFrom(src => src.OrderDetail.Order))
+            .ForMember(dto => dto.CreateBy,
+                opt => opt.MapFrom(src => src.CreateByNavigation))
             .ReverseMap();
 
         this.CreateMap<Task, CreateTaskCommand>().ReverseMap();

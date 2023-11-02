@@ -14,6 +14,7 @@ public class CommentController : BaseController
     }
 
     [ApiVersion("1")]
+    [ApiVersion("2")]
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetComments([FromQuery] GetCommentsQuery query,
@@ -37,6 +38,8 @@ public class CommentController : BaseController
     }
 
     [HttpPost]
+    [ApiVersion("1")]
+    [ApiVersion("2")]
     public async Task<IActionResult> CreateComment([FromBody] CreateCommentCommand command,
         CancellationToken cancellationToken = default)
     {

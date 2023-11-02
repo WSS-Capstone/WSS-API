@@ -7,6 +7,7 @@ namespace WSS.API.Data.Models
     {
         public User()
         {
+            Comments = new HashSet<Comment>();
             DayOffs = new HashSet<DayOff>();
             Feedbacks = new HashSet<Feedback>();
             Orders = new HashSet<Order>();
@@ -32,6 +33,7 @@ namespace WSS.API.Data.Models
 
         public virtual Category? Category { get; set; }
         public virtual Account IdNavigation { get; set; } = null!;
+        public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<DayOff> DayOffs { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
