@@ -1,7 +1,5 @@
-using WSS.API.Application.Commands.Service;
 using WSS.API.Data.Repositories.Account;
 using WSS.API.Data.Repositories.Order;
-using WSS.API.Data.Repositories.Service;
 using WSS.API.Data.Repositories.Task;
 using WSS.API.Infrastructure.Services.Identity;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;

@@ -87,8 +87,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         order.Id = Guid.NewGuid();
         order.Code = GenCode.NextId(code);
         order.CreateDate = DateTime.UtcNow;
-        order.CreateBy = user.User.Id;
-        order.CustomerId = user.User.Id;
+        order.CreateBy = user.Id;
+        order.CustomerId = user.Id;
 
         Guid? weddingInformationId = null;
         if (request.WeddingInformation != null)
