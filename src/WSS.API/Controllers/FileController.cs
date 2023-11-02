@@ -3,6 +3,9 @@ using WSS.API.Infrastructure.Services.File;
 
 namespace WSS.API.Controllers;
 [ApiController]
+[ApiVersion("1")]
+[ApiVersion("2")]
+[ApiVersion("3")]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class FileController : BaseController
 {
