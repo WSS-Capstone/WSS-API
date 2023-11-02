@@ -1,4 +1,5 @@
 using WSS.API.Data.Repositories.Voucher;
+using WSS.API.Infrastructure.Services.Identity;
 using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Commands.Voucher;
@@ -19,11 +20,13 @@ public class CreateVoucherCommandHandler : IRequestHandler<CreateVoucherCommand,
 {
     private readonly IMapper _mapper;
     private readonly IVoucherRepo _repo;
+    private readonly IIdentitySvc _identitySvc;
 
-    public CreateVoucherCommandHandler(IVoucherRepo repo, IMapper mapper)
+    public CreateVoucherCommandHandler(IVoucherRepo repo, IMapper mapper, IIdentitySvc identitySvc)
     {
         _repo = repo;
         _mapper = mapper;
+        _identitySvc = identitySvc;
     }
 
     public async Task<VoucherResponse> Handle(CreateVoucherCommand request, CancellationToken cancellationToken)
@@ -33,6 +36,8 @@ public class CreateVoucherCommandHandler : IRequestHandler<CreateVoucherCommand,
         var voucher = _mapper.Map<Data.Models.Voucher>(request);
         voucher.Id = Guid.NewGuid();
         voucher.Code = GenCode.NextId(code);
+        voucher.CreateBy = Guid.Parse(this._identitySvc.GetUserRefId());
+        voucher.CreateDate = DateTime.Now;
         voucher = await _repo.CreateVoucher(voucher);
         
         return _mapper.Map<VoucherResponse>(voucher);

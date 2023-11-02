@@ -289,6 +289,7 @@ public class MappingProfile : Profile
     private void VoucherProfile()
     {
         this.CreateMap<Voucher, VoucherResponse>()
+            .ForMember(dto => dto.CreateBy, opt => opt.MapFrom(src => src.CreateByNavigation))
             .ReverseMap();
         this.CreateMap<Voucher, CreateVoucherCommand>().ReverseMap();
         this.CreateMap<Voucher, UpdateVoucherCommand>().ReverseMap();

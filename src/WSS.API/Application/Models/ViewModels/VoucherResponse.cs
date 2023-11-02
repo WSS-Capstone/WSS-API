@@ -11,7 +11,7 @@ public class VoucherResponse
     public DateTime? CreateDate { get; set; }
     public DateTime? EndTime { get; set; }
     public DateTime? StartTime { get; set; }
-    public Guid? CreateBy { get; set; }
+    public virtual UserResponse? CreateBy { get; set; }
 }
 
 public enum VouncherStatus

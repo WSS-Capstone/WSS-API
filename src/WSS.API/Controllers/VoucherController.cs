@@ -3,12 +3,16 @@ using WSS.API.Application.Queries.Voucher;
 
 namespace WSS.API.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
+[ApiVersion("1")]
 public class VoucherController : BaseController
 {
     public VoucherController(IMediator mediator) : base(mediator)
     {
     }
     
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     [HttpGet]
     public async Task<IActionResult> GetVouchers([FromQuery] GetVouchersQuery query,
         CancellationToken cancellationToken = default)
@@ -22,6 +26,19 @@ public class VoucherController : BaseController
     public async Task<IActionResult> GetVouchers([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         VoucherResponse? result = await this.Mediator.Send(new GetVoucherByIdQuery(id), cancellationToken);
+
+        return result != null ? Ok(result) : NotFound();
+    }
+    
+    [HttpGet("code/{code}")]
+    [ApiVersion("3")]
+    [ApiVersion("2")]
+    public async Task<IActionResult> GetVoucherByCode([FromRoute] string code, CancellationToken cancellationToken = default)
+    {
+        VoucherResponse? result = await this.Mediator.Send(new GetVoucherByCodeQuery()
+        {
+            Code = code
+        }, cancellationToken);
 
         return result != null ? Ok(result) : NotFound();
     }
