@@ -1,5 +1,6 @@
 using WSS.API.Data.Repositories.OrderDetail;
 using WSS.API.Data.Repositories.Task;
+using WSS.API.Infrastructure.Services.Identity;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
 namespace WSS.API.Application.Queries.Statistic;
@@ -14,6 +15,7 @@ public class CountStatusTaskQueryHandler : IRequestHandler<CountStatusTaskQuery,
 {
     private readonly IMapper _mapper;
     private readonly ITaskRepo _repo;
+    private readonly IIdentitySvc _identitySvc;
 
     private readonly IDictionary<string, string> name = new Dictionary<string, string>()
     {
@@ -23,10 +25,11 @@ public class CountStatusTaskQueryHandler : IRequestHandler<CountStatusTaskQuery,
         { "3", "Đã hoàn thành" },
     };
 
-    public CountStatusTaskQueryHandler(IMapper mapper, ITaskRepo repo)
+    public CountStatusTaskQueryHandler(IMapper mapper, ITaskRepo repo, IIdentitySvc identitySvc)
     {
         _mapper = mapper;
         _repo = repo;
+        _identitySvc = identitySvc;
     }
 
     public async Task<List<StatusTaskResponse>> Handle(CountStatusTaskQuery request,
@@ -47,6 +50,10 @@ public class CountStatusTaskQueryHandler : IRequestHandler<CountStatusTaskQuery,
                 t.EndDate.Value.Date <= request.ToDate.Value.Date ||
                 t.StartDate.Value.Date <= request.ToDate.Value.Date);
         }
+        var userId = Guid.Parse(this._identitySvc.GetUserRefId());
+
+        query = query.Where(x => x.StaffId == userId || x.PartnerId == userId);
+
 
         var result = query.GroupBy(t => t.Status)
             .Select(k => new StatusTaskResponse()
