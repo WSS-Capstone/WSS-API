@@ -98,6 +98,14 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             weddingInformationId = weddingInformation.Id;
             await _weddingInformationRepo.CreateWeddingInformation(weddingInformation);
         }
+        ComboResponse? comboResponse = null;
+        VoucherResponse? voucherResponse = null;
+        if (request.VoucherCode != null)
+        {
+            var voucherInDb = await this._voucherRepo.GetVouchers(v => v.Code == request.VoucherCode).FirstOrDefaultAsync();
+            voucherResponse = voucherInDb == null ? null : _mapper.Map<VoucherResponse>(voucherInDb);
+        }
+
 
         Data.Models.Task task = new Data.Models.Task();
         if (request.OrderDetails != null)
@@ -107,11 +115,9 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                 new Expression<Func<Data.Models.Service, object>>[]
                 {
                     s => s.CurrentPrices,
-                    s => s.CreateByNavigation
+                    s => s.CreateByNavigation,
                 }).ToListAsync(cancellationToken);
             List<ServiceResponse> serviceResponse = _mapper.Map<List<ServiceResponse>>(services);
-            ComboResponse? comboResponse = null;
-            Data.Models.Voucher? voucher = null;
             if (request.ComboId != null)
             {
                 var combo = this._comboRepo.GetCombos(c => c.Id == (Guid)request.ComboId,
@@ -126,7 +132,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                 var rcombo = await combo.FirstOrDefaultAsync(cancellationToken: cancellationToken);
                 comboResponse = rcombo == null ? null : _mapper.Map<ComboResponse>(rcombo);
             }
-
+            
+          
             foreach (var orderDetail in orderDetails)
             {
                 orderDetail.Id = Guid.NewGuid();
@@ -168,8 +175,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
 
             if (request.VoucherCode != null)
             {
-                voucher = await this._voucherRepo.GetVouchers(v => v.Code == request.VoucherCode).FirstOrDefaultAsync();
-                totalPrice = voucher == null ? totalPrice : (totalPrice / 100) * (100 - voucher.DiscountValueVoucher);
+                totalPrice = voucherResponse == null ? totalPrice : (totalPrice / 100) * (100 - voucherResponse.DiscountValueVoucher);
             }
 
             order.OrderDetails = orderDetails;
@@ -178,7 +184,20 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         order.WeddingInformationId = weddingInformationId;
         order.TotalAmount = order.OrderDetails.Sum(od => od.Price);
         order.TotalAmountRequest = order.TotalAmount / 100 * 30;
+        order.VoucherId = voucherResponse?.Id;
+        order.Voucher = null;
+        order.Customer = null;
         order = await _orderRepo.CreateOrder(order);
+
+        order = await _orderRepo.GetOrderById(order.Id, new Expression<Func<Data.Models.Order, object>>[]
+        {
+            o => o.Combo,
+            o => o.Voucher,
+            o => o.Customer,
+            o => o.WeddingInformation,
+            o => o.OrderDetails,
+        });
+        
         return _mapper.Map<OrderResponse>(order);
     }
 }
