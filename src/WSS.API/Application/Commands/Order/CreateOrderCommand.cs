@@ -187,6 +187,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         order.VoucherId = voucherResponse?.Id;
         order.Voucher = null;
         order.Customer = null;
+        order.WeddingInformation = null;
+        order.Combo = null;
         order = await _orderRepo.CreateOrder(order);
 
         order = await _orderRepo.GetOrderById(order.Id, new Expression<Func<Data.Models.Order, object>>[]
