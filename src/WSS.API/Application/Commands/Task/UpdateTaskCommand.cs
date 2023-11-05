@@ -19,6 +19,7 @@ public class UpdateTaskCommand : IRequest<TaskResponse>
     
     public Guid Id { get; set; }
     public Guid? OrderDetailId { get; set; }
+    public string? ImageEvidence { get; set; }
     public Guid? UserId { get; set; }
     public int? Status { get; set; }
 }
@@ -26,6 +27,7 @@ public class UpdateTaskCommand : IRequest<TaskResponse>
 public class UpdateStatusTaskRequest
 {
     public TaskStatus? Status { get; set; }
+    public string? ImageEvidence { get; set; }
 }
 
 public class UpdateTaskRequest

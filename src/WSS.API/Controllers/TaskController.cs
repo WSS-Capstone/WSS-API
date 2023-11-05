@@ -79,6 +79,7 @@ public class TaskController : BaseController
         var result = await this.Mediator.Send(new UpdateTaskCommand()
         {
             Id = id,
+            ImageEvidence = request.ImageEvidence,
             Status = (int?)request.Status
         }, cancellationToken);
 
