@@ -71,7 +71,9 @@ public class ServiceController: BaseController
             PriceTo = query.PriceTo,
             PartnetId = userId,
             CategoryId = query.CategoryId,
-            Name = query.Name
+            Name = query.Name,
+            CreatedAtFrom = query.CreatedAtFrom,
+            CreatedAtTo = query.CreatedAtTo
         }, cancellationToken);
 
         return Ok(result);

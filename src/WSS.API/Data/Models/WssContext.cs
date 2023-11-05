@@ -34,6 +34,7 @@ namespace WSS.API.Data.Models
         public virtual DbSet<Service> Services { get; set; } = null!;
         public virtual DbSet<ServiceImage> ServiceImages { get; set; } = null!;
         public virtual DbSet<Task> Tasks { get; set; } = null!;
+        public virtual DbSet<TaskOrderDetail> TaskOrderDetails { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
         public virtual DbSet<WeddingInformation> WeddingInformations { get; set; } = null!;
@@ -209,6 +210,11 @@ namespace WSS.API.Data.Models
                     .WithMany(p => p.DayOffs)
                     .HasForeignKey(d => d.PartnerId)
                     .HasConstraintName("FK_DayOff_User");
+
+                entity.HasOne(d => d.Service)
+                    .WithMany(p => p.DayOffs)
+                    .HasForeignKey(d => d.ServiceId)
+                    .HasConstraintName("FK_DayOff_Service");
             });
 
             modelBuilder.Entity<Feedback>(entity =>
@@ -424,6 +430,25 @@ namespace WSS.API.Data.Models
                     .WithMany(p => p.TaskStaffs)
                     .HasForeignKey(d => d.StaffId)
                     .HasConstraintName("FK_Task_User");
+            });
+
+            modelBuilder.Entity<TaskOrderDetail>(entity =>
+            {
+                entity.ToTable("TaskOrderDetail");
+
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+
+                entity.HasOne(d => d.OrderDetail)
+                    .WithMany(p => p.TaskOrderDetails)
+                    .HasForeignKey(d => d.OrderDetailId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("TaskOrderDetail_OrderDetail_Id_fk");
+
+                entity.HasOne(d => d.Task)
+                    .WithMany(p => p.TaskOrderDetails)
+                    .HasForeignKey(d => d.TaskId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("TaskOrderDetail_Task_Id_fk");
             });
 
             modelBuilder.Entity<User>(entity =>
