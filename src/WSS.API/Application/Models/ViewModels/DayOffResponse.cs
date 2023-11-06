@@ -10,4 +10,6 @@ public class DayOffResponse
     public DateTime? Day { get; set; }
     public string? Reason { get; set; }
     public DayOffStatus? Status { get; set; }
+    public virtual UserResponse? Partner { get; set; }
+    public virtual ServiceResponse? Service { get; set; }
 }

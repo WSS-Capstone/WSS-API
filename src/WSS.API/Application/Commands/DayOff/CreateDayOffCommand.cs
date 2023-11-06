@@ -8,7 +8,7 @@ public class CreateDayOffCommand : IRequest<DayOffResponse>
 {
     // public string? Code { get; set; }
     public Guid? PartnerId { get; set; }
-
+    public Guid? ServiceId { get; set; }
     public DateTime? Day { get; set; }
     public string? Reason { get; set; }
 }
@@ -16,6 +16,7 @@ public class CreateDayOffCommand : IRequest<DayOffResponse>
 public class CreateDayOffRequest
 {
     public DateTime? Day { get; set; }
+    public Guid? ServiceId { get; set; }
     public string? Reason { get; set; }
 }
 
@@ -37,6 +38,7 @@ public class CreateDayOffCommandHandler : IRequestHandler<CreateDayOffCommand, D
 
         var exist = await _dayOffRepo.GetDayOffs(x => x.Day.Value.Date == request.Day.Value.Date
                                                       && x.PartnerId == request.PartnerId &&
+                                                      x.ServiceId == request.ServiceId &&
                                                       x.Status == (int?)DayOffStatus.Active)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
         if (exist != null)

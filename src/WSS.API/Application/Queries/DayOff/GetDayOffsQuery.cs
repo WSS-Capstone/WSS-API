@@ -57,16 +57,20 @@ public class
                 (request.ToDate == null || doff.Day <= request.ToDate);
         }
 
-        var query = _repo.GetDayOffs(predicate);
+        var query = _repo.GetDayOffs(predicate, new Expression<Func<Data.Models.DayOff, object>>[]
+        {
+            d => d.Service,
+            d => d.Partner
+        });
         query = query.Where(x => request.Status.Contains((DayOffStatus)x.Status));
         var total = await query.CountAsync(cancellationToken: cancellationToken);
 
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
 
         query = query.GetWithPaging(request.Page, request.PageSize);
+        var list = await query.ToListAsync(cancellationToken: cancellationToken);
+        var result = this._mapper.Map<List<DayOffResponse>>(list);
 
-        var result = this._mapper.ProjectTo<DayOffResponse>(query);
-
-        return new PagingResponseQuery<DayOffResponse, DayOffSortCriteria>(request, result, total);
+        return new PagingResponseQuery<DayOffResponse, DayOffSortCriteria>(request, result.AsQueryable(), total);
     }
 }

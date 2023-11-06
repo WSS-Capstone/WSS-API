@@ -66,6 +66,7 @@ public class DayOffController : BaseController
         {
             Day = request.Day,
             PartnerId = userId,
+            ServiceId = request.ServiceId,
             Reason = request.Reason
         }, cancellationToken);
         return Ok(result);

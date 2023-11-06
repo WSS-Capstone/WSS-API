@@ -13,6 +13,9 @@ public class GetServicesQuery : PagingParam<ServiceSortCriteria>, IRequest<Pagin
     public float? PriceTo { get; set; }
 
     public Guid? PartnetId { get; set; }
+
+    public DateTime? CreatedAtFrom { get; set; }
+    public DateTime? CreatedAtTo { get; set; }
 }
 
 public class GetServicesCustomer : PagingParam<ServiceSortCriteria>
@@ -32,6 +35,9 @@ public class GetServicePartnerRequest : PagingParam<ServiceSortCriteria>
     public string? Name { get; set; }
     public float? PriceFrom { get; set; }
     public float? PriceTo { get; set; }
+    
+    public DateTime? CreatedAtFrom { get; set; }
+    public DateTime? CreatedAtTo { get; set; }
 }
 
 public enum ServiceSortCriteria
@@ -90,6 +96,16 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
                 (request.PriceFrom == null || cp.Price >= request.PriceFrom) &&
                 (request.PriceTo == null || cp.Price <= request.PriceTo)
             ));
+        }
+
+        if (request.CreatedAtFrom != null)
+        {
+            query = query.Where(s => s.CreateDate.Value.Date >= request.CreatedAtFrom.Value.Date);
+        }
+
+        if (request.CreatedAtTo != null)
+        {
+            query = query.Where(s => s.CreateDate.Value.Date <= request.CreatedAtTo.Value.Date);
         }
 
         if (!string.IsNullOrEmpty(request.Name))

@@ -210,6 +210,11 @@ namespace WSS.API.Data.Models
                     .WithMany(p => p.DayOffs)
                     .HasForeignKey(d => d.PartnerId)
                     .HasConstraintName("FK_DayOff_User");
+
+                entity.HasOne(d => d.Service)
+                    .WithMany(p => p.DayOffs)
+                    .HasForeignKey(d => d.ServiceId)
+                    .HasConstraintName("FK_DayOff_Service");
             });
 
             modelBuilder.Entity<Feedback>(entity =>

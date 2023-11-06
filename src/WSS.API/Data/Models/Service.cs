@@ -9,6 +9,7 @@ namespace WSS.API.Data.Models
         {
             ComboServices = new HashSet<ComboService>();
             CurrentPrices = new HashSet<CurrentPrice>();
+            DayOffs = new HashSet<DayOff>();
             OrderDetails = new HashSet<OrderDetail>();
             ServiceImages = new HashSet<ServiceImage>();
         }
@@ -31,6 +32,7 @@ namespace WSS.API.Data.Models
         public virtual Account? CreateByNavigation { get; set; }
         public virtual ICollection<ComboService> ComboServices { get; set; }
         public virtual ICollection<CurrentPrice> CurrentPrices { get; set; }
+        public virtual ICollection<DayOff> DayOffs { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<ServiceImage> ServiceImages { get; set; }
     }
