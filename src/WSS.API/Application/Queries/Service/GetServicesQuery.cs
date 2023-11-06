@@ -43,8 +43,7 @@ public enum ServiceSortCriteria
     CreateDate
 }
 
-public class
-    GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
+public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
         PagingResponseQuery<ServiceResponse, ServiceSortCriteria>>
 {
     private readonly IMapper _mapper;

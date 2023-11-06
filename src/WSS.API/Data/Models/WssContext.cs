@@ -34,6 +34,7 @@ namespace WSS.API.Data.Models
         public virtual DbSet<Service> Services { get; set; } = null!;
         public virtual DbSet<ServiceImage> ServiceImages { get; set; } = null!;
         public virtual DbSet<Task> Tasks { get; set; } = null!;
+        public virtual DbSet<TaskOrderDetail> TaskOrderDetails { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
         public virtual DbSet<WeddingInformation> WeddingInformations { get; set; } = null!;
@@ -43,7 +44,7 @@ namespace WSS.API.Data.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=20.189.117.242;Database=WSS;User Id=sa;Password=29327Cab@456789;TrustServerCertificate=True;Connect Timeout=120");
+                optionsBuilder.UseSqlServer("Server=20.189.117.242;Database=WSS;User Id=sa;Password=29327Cab@456789;TrustServerCertificate=True;");
             }
         }
 
@@ -424,6 +425,25 @@ namespace WSS.API.Data.Models
                     .WithMany(p => p.TaskStaffs)
                     .HasForeignKey(d => d.StaffId)
                     .HasConstraintName("FK_Task_User");
+            });
+
+            modelBuilder.Entity<TaskOrderDetail>(entity =>
+            {
+                entity.ToTable("TaskOrderDetail");
+
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+
+                entity.HasOne(d => d.OrderDetail)
+                    .WithMany(p => p.TaskOrderDetails)
+                    .HasForeignKey(d => d.OrderDetailId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("TaskOrderDetail_OrderDetail_Id_fk");
+
+                entity.HasOne(d => d.Task)
+                    .WithMany(p => p.TaskOrderDetails)
+                    .HasForeignKey(d => d.TaskId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("TaskOrderDetail_Task_Id_fk");
             });
 
             modelBuilder.Entity<User>(entity =>

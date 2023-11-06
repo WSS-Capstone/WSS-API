@@ -17,6 +17,8 @@ public class ServiceResponse
     public int? Used { get; set; }
     public double? Rating { get; set; }
     public string? Reason { get; set; }
+    public DateTime? CreateDate { get; set; }
+    public DateTime? UpdateDate { get; set; }
     public virtual Account? CreateByNavigation { get; set; }
 }
 
