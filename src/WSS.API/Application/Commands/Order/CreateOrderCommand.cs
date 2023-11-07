@@ -169,7 +169,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             var totalPrice = orderDetails.Sum(od => od.Price);
             if (request.ComboId != null)
             {
-                var discountCombo = comboResponse.TotalAmount / 100 * (100 - comboResponse.DiscountValueCombo);
+                var discountCombo = comboResponse.TotalAmount - comboResponse.DisountPrice;
                 totalPrice = totalPrice - discountCombo;
             }
 
@@ -179,11 +179,12 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             }
 
             order.OrderDetails = orderDetails;
+            order.TotalAmount = totalPrice;
+            order.TotalAmountRequest = order.TotalAmount / 100 * 30;
         }
 
         order.WeddingInformationId = weddingInformationId;
-        order.TotalAmount = order.OrderDetails.Sum(od => od.Price);
-        order.TotalAmountRequest = order.TotalAmount / 100 * 30;
+      
         order.VoucherId = voucherResponse?.Id;
         order.Voucher = null;
         order.Customer = null;
