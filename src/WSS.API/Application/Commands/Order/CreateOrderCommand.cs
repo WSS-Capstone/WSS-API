@@ -195,7 +195,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         {
             o => o.Combo,
             o => o.Voucher,
-            o => o.Customer,
+            // o => o.Customer,
             o => o.WeddingInformation,
             o => o.OrderDetails,
         });
