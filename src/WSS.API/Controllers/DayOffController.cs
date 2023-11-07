@@ -83,6 +83,7 @@ public class DayOffController : BaseController
             Id = id, 
             PartnerId = userId,
             Day = request.Day,
+            ServiceId = request.ServiceId,
             Reason = request.Reason
         }, cancellationToken);
 

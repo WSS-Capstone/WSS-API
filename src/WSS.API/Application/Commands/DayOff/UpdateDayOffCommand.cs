@@ -7,6 +7,7 @@ public class UpdateDayOffCommand : IRequest<DayOffResponse>
 {
     public Guid Id { get; set; }
     public Guid? PartnerId { get; set; }
+    public Guid? ServiceId { get; set; }
     public DateTime? Day { get; set; }
     public string? Reason { get; set; }
 }
@@ -14,6 +15,7 @@ public class UpdateDayOffCommand : IRequest<DayOffResponse>
 public class UpdateDayOffRequest
 {
     public DateTime? Day { get; set; }
+    public Guid? ServiceId { get; set; }
     public string? Reason { get; set; }
 }
 

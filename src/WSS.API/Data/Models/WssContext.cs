@@ -359,6 +359,8 @@ namespace WSS.API.Data.Models
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.ApprovalDate).HasColumnType("datetime");
+
                 entity.Property(e => e.Code)
                     .HasMaxLength(50)
                     .IsUnicode(false);

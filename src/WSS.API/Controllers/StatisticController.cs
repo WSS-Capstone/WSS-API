@@ -19,6 +19,18 @@ public class StatisticController : BaseController
 
         return Ok(result);
     }
+    
+        
+    [HttpGet("revenue")]
+    public async Task<IActionResult> GetStatisticRevenue([FromQuery] CountStatusTaskQuery query,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(query, cancellationToken);
+
+        return Ok(result);
+    }
+    
+    
 
 
    

@@ -27,6 +27,7 @@ namespace WSS.API.Data.Models
         public string? Reason { get; set; }
         public Guid? CreateBy { get; set; }
         public int? Quantity { get; set; }
+        public DateTime? ApprovalDate { get; set; }
 
         public virtual Category? Category { get; set; }
         public virtual Account? CreateByNavigation { get; set; }
