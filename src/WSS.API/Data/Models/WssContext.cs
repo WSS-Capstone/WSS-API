@@ -277,6 +277,7 @@ namespace WSS.API.Data.Models
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.CustomerId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Order_User");
 
                 entity.HasOne(d => d.Voucher)
