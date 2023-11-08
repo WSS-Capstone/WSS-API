@@ -258,7 +258,11 @@ public class MappingProfile : Profile
                         ? 0
                         : src.OrderDetails.Average(o =>
                             o.Feedbacks.Count == 0 ? 0 : o.Feedbacks.Average(f => f.Rating))))
-            ;
+            .ForMember(dto => dto.TotalRenenue,
+                opt => opt.MapFrom(src =>
+                    src.OrderDetails.Count == 0
+                        ? 0
+                        : src.OrderDetails.Sum(o => o.Price)));
 
         this.CreateMap<Service, CreateServiceCommand>().ReverseMap();
         this.CreateMap<Service, UpdateServiceCommand>().ReverseMap();

@@ -15,6 +15,7 @@ public class ServiceResponse
     public string? Description { get; set; }
     public ServiceStatus? Status { get; set; }
     public int? Used { get; set; }
+    public double? TotalRenenue { get; set; }
     public double? Rating { get; set; }
     public string? Reason { get; set; }
     public DateTime? CreateDate { get; set; }
