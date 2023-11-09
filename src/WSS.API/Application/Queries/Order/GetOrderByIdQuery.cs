@@ -31,6 +31,8 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
             o => o.WeddingInformation,
             o => o.Combo,
             o => o.Voucher,
+            o => o.PaymentHistories,
+            o => o.PartnerPaymentHistories
         });
         query = query
             .Include(o => o.OrderDetails)

@@ -21,8 +21,6 @@ public class VnPayPaymentService : IVnPayPaymentService
 
     private const string Locale = "vn";
 
-    private const string DefaultPaymentInfo = "Thanh toán với VnPay";
-
     public VnPayPaymentService(VnPaySettings vnPaySettings, IHttpContextAccessor contextAccessor,
         IPaymentHistoryRepo paymentHistoryRepo, IOrderRepo orderRepo)
     {
@@ -44,7 +42,7 @@ public class VnPayPaymentService : IVnPayPaymentService
         var orderInDb = await _orderRepo.GetOrderById(payment.OrderReferenceId);
         if (orderInDb == null)
             throw new Exception("Order not found");
-        var urlCallBack = $"{_vnPaySettings.CallbackUrl}/{payment.OrderReferenceId}";
+        var urlCallBack = $"{_vnPaySettings.CallbackUrl}";
 
         pay.AddRequestData("vnp_Version", _vnPaySettings.Version);
         pay.AddRequestData("vnp_Command", PayCommand);
@@ -54,7 +52,7 @@ public class VnPayPaymentService : IVnPayPaymentService
         pay.AddRequestData("vnp_CurrCode", CurrCode);
         pay.AddRequestData("vnp_IpAddr", pay.GetIpAddress(context));
         pay.AddRequestData("vnp_Locale", Locale);
-        pay.AddRequestData("vnp_OrderInfo", DefaultPaymentInfo);
+        pay.AddRequestData("vnp_OrderInfo", payment.CustomerId.ToString());
         pay.AddRequestData("vnp_OrderType", payment.OrderType.ToString());
         pay.AddRequestData("vnp_ReturnUrl", urlCallBack);
         pay.AddRequestData("vnp_TxnRef", payment.OrderReferenceId.ToString());
@@ -97,7 +95,7 @@ public class VnPayPaymentService : IVnPayPaymentService
             string orderType = vnpay.GetResponseData("vnp_OrderType");
             String vnpSecureHash = context.Request.Query["vnp_SecureHash"];
             bool checkSignature = vnpay.ValidateSignature(vnpSecureHash, vnpHashSecret);
-            var vnp_OrderInfo = vnpay.GetResponseData("vnp_OrderInfo");
+            var customerId = vnpay.GetResponseData("vnp_OrderInfo");
 
             if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
             {
@@ -117,6 +115,7 @@ public class VnPayPaymentService : IVnPayPaymentService
                 {
                     Id = Guid.NewGuid(),
                     OrderId = Guid.Parse(orderId),
+                    CreateBy = Guid.Parse(customerId),
                     TotalAmount = totalAmount,
                     CreateDate = DateTime.UtcNow,
                     PaymentType = orderType,

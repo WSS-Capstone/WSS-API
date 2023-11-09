@@ -8,6 +8,10 @@ public class PaymentHistoryResponse
     public Guid? RequestUserid { get; set; }
     public double? TotalAmount { get; set; }
     public DateTime? CreateDate { get; set; }
+    public Guid? CreateBy { get; set; }
+    public virtual OrderResponse? Order { get; set; }
+    public virtual UserResponse? Customer { get; set; }
+    
 }
 
 public enum PaymentHistoryStatus

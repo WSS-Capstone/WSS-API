@@ -18,10 +18,10 @@ public class PaymentHistoryController : BaseController
         return Ok(result);
     }
     
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetPaymentHistorys([FromRoute] Guid id, CancellationToken cancellationToken = default)
+    [HttpGet("{customerId}")]
+    public async Task<IActionResult> GetPaymentHistoryByCustomerId([FromRoute] Guid customerId, CancellationToken cancellationToken = default)
     {
-        PaymentHistoryResponse? result = await this.Mediator.Send(new GetPaymentHistoryByIdQuery(id), cancellationToken);
+        PaymentHistoryResponse? result = await this.Mediator.Send(new GetPaymentHistoryByCustomerIdQuery(customerId), cancellationToken);
 
         return result != null ? Ok(result) : NotFound();
     }
