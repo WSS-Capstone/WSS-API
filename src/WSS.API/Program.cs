@@ -31,7 +31,7 @@ builder.Services.AddControllers(config =>
     config.Filters.Add<UserFireFilter>();
 }).AddNewtonsoftJson(o =>
 {
-    o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+    // o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
     o.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
     o.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
     o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;

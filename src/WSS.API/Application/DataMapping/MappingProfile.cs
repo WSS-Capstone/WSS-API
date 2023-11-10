@@ -47,12 +47,12 @@ public class MappingProfile : Profile
     {
         this.CreateMap<User, UserResponse>()
             .ForMember(dto => dto.Gender,
-                opt => opt.MapFrom(src => (Gender)src.Gender))
+                opt => opt.MapFrom(src => src.Gender ?? null))
             .ReverseMap();
 
         this.CreateMap<Account, AccountResponse>()
             .ForMember(dto => dto.Status,
-                opt => opt.MapFrom(src => (AccountStatus)src.Status))
+                opt => opt.MapFrom(src => src.Status ?? null))
             .ForMember(dto => dto.User, opt => opt.MapFrom(src => src.User))
             .ReverseMap();
 

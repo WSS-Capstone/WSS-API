@@ -78,6 +78,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             {
                 a => a.User
             }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        Guid userId = user.Id;
         // Create Order
         var code = await _orderRepo.GetOrders().OrderByDescending(x => x.Code).Select(x => x.Code)
             .FirstOrDefaultAsync(cancellationToken);
@@ -105,9 +106,6 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             var voucherInDb = await this._voucherRepo.GetVouchers(v => v.Code == request.VoucherCode).FirstOrDefaultAsync();
             voucherResponse = voucherInDb == null ? null : _mapper.Map<VoucherResponse>(voucherInDb);
         }
-
-
-        Data.Models.Task task = new Data.Models.Task();
         if (request.OrderDetails != null)
         {
             var orderDetails = _mapper.Map<List<OrderDetail>>(request.OrderDetails);
@@ -146,6 +144,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                     }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
                 if (userCreate.RoleName == RoleName.PARTNER)
                 {
+                    Data.Models.Task task = new Data.Models.Task();
                     var codeTask = await _taskRepo.GetTasks().OrderByDescending(x => x.Code).Select(x => x.Code)
                         .FirstOrDefaultAsync(cancellationToken);
                     task.Id = Guid.NewGuid();
@@ -155,7 +154,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                     task.Status = (int)TaskStatus.EXPECTED;
                     task.Code = GenCode.NextId(codeTask);
                     task.CreateDate = DateTime.UtcNow;
-                    task.CreateBy = user.Id;
+                    task.CreateBy = userId;
+                    
                     await _taskRepo.CreateTask(task);
                 }
 
