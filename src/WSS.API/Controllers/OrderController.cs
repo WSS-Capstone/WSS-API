@@ -73,4 +73,15 @@ public class OrderController : BaseController
 
         return Ok(result);
     }
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> ApprovalOrder([FromBody] ApprovalOrderByOwnerCommand request,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(request, cancellationToken);
+
+        return Ok(result);
+    }
 }
