@@ -38,7 +38,7 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
         var query = _repo.GetOrders(null, new Expression<Func<Data.Models.Order, object>>[]
         {
             o => o.OrderDetails,
-            o => o.Customer,
+            // o => o.Customer,
             o => o.WeddingInformation,
             o => o.Combo,
             o => o.Voucher,
@@ -46,7 +46,12 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
         query = query
             .Include(o => o.OrderDetails)
             .ThenInclude(p => p.Service);
-        
+
+        query = query.Include(o => o.Customer);
+        // query = query
+        //     .Include(o => o.Combo)
+        //     .ThenInclude(p => p.ComboServices);
+        //
         query = query
             .Include(o => o.OrderDetails)
             .ThenInclude(p => p.Service).ThenInclude(l => l.CurrentPrices);

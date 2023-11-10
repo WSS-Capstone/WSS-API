@@ -28,7 +28,7 @@ public class TaskController : BaseController
     [ApiVersion("2")]
     public async Task<IActionResult> GetTasksOwner([FromQuery] GetTaskOwnerRequest query, CancellationToken cancellationToken = default)
     {
-        var userId = Guid.Parse(this._identitySvc.GetUserRefId());
+        var userId = await this._identitySvc.GetUserId();
         var result = await this.Mediator.Send(new GetTasksQuery()
         {
             Page = query.Page,

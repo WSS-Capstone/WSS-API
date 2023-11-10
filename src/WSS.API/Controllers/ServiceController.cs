@@ -57,7 +57,7 @@ public class ServiceController: BaseController
     public async Task<IActionResult> GetServicesPartner([FromQuery] GetServicePartnerRequest query,
         CancellationToken cancellationToken = default)
     {
-        var userId = Guid.Parse(this._identitySvc.GetUserRefId());
+        var userId = await this._identitySvc.GetUserId();;
 
         var result = await this.Mediator.Send(new GetServicesQuery()
         {

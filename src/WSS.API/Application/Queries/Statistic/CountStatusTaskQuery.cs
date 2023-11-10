@@ -50,7 +50,7 @@ public class CountStatusTaskQueryHandler : IRequestHandler<CountStatusTaskQuery,
                 t.EndDate.Value.Date <= request.ToDate.Value.Date ||
                 t.StartDate.Value.Date <= request.ToDate.Value.Date);
         }
-        var userId = Guid.Parse(this._identitySvc.GetUserRefId());
+        var userId = await this._identitySvc.GetUserId();
 
         query = query.Where(x => x.StaffId == userId || x.PartnerId == userId);
 
