@@ -8,20 +8,20 @@ namespace WSS.API.Application.Commands.Order;
 
 public class ApprovalOrderByOwnerCommand : IRequest<OrderResponse>
 {
-     public ApprovalOrderByOwnerCommand(Guid id, ApprovalServiceRequest request)
+     public ApprovalOrderByOwnerCommand(Guid id, StatusOrder request)
     {
         Id = id;
-        Status = request.Status;
+        StatusOrder = request;
     }
 
     public Guid Id { get; set; }
-    public StatusOrder Status { get; set; }
+    public StatusOrder StatusOrder { get; set; }
 }
-
-public class ApprovalServiceRequest
-{
-    public StatusOrder Status { get; set; }
-}
+//
+// public class ApprovalServiceRequest
+// {
+//     public StatusOrder StatusOrder { get; set; }
+// }
 
 public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderByOwnerCommand, OrderResponse>
 {
@@ -57,28 +57,32 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
         var order = await this._orderRepo.GetOrderById(request.Id,
             new Expression<Func<Data.Models.Order, object>>[]
             {
+                o => o.OrderDetails,
             });
 
-        if (order == null)
+        if (order == null || order.OrderDetails.Count == 0)
         {
             throw new Exception("Order not found");
         }
 
-        if (request.Status == StatusOrder.CONFIRM)
+        if (request.StatusOrder == StatusOrder.CONFIRM)
         {
-            var task = new Data.Models.Task();
-            task.Id = Guid.NewGuid();
-            task.OrderDetailId = order.OrderDetails.FirstOrDefault().Id;
-            task.Status = (int)TaskStatus.TO_DO;
-            task.CreateDate = DateTime.Now;
-            task.CreateBy = user.User?.Id;
-            task.TaskName = "Tạo task cho order";
-            await _taskRepo.CreateTask(task);
+            foreach (var orderDetail in order.OrderDetails)
+            {
+                var task = new Data.Models.Task();
+                task.Id = Guid.NewGuid();
+                task.OrderDetailId = orderDetail.Id;
+                task.Status = (int)TaskStatus.TO_DO;
+                task.CreateDate = DateTime.Now;
+                task.CreateBy = user.User?.Id;
+                task.TaskName = "Tạo task cho order";
+                await _taskRepo.CreateTask(task);
+            }
         }
 
         order = _mapper.Map(request, order);
         order.UpdateDate = DateTime.Now;
-        order.StatusOrder = (int?)request.Status;
+        order.StatusOrder = (int?)request.StatusOrder;
         var query = await _orderRepo.UpdateOrder(order);
 
         var result = this._mapper.Map<OrderResponse>(query);

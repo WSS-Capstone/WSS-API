@@ -75,10 +75,10 @@ public class OrderController : BaseController
     }
     [ApiVersion("1")]
     [HttpPut("approval")]
-    public async Task<IActionResult> ApprovalOrder([FromRoute] ApprovalOrderByOwnerCommand request,
+    public async Task<IActionResult> ApprovalOrder(Guid id, StatusOrder  request,
         CancellationToken cancellationToken = default)
     {
-        var result = await this.Mediator.Send(request, cancellationToken);
+        var result = await this.Mediator.Send(new ApprovalOrderByOwnerCommand(id, request), cancellationToken);
 
         return Ok(result);
     }

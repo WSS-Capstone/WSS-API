@@ -208,6 +208,8 @@ public class MappingProfile : Profile
 
             .ReverseMap();
         this.CreateMap<Order, CreateOrderCommand>().ReverseMap();
+        this.CreateMap<Order, ApprovalOrderByOwnerCommand>().ForMember(dto => dto.StatusOrder,
+            opt => opt.MapFrom(src => (StatusOrder)src.StatusOrder)).ReverseMap();
         this.CreateMap<Order, UpdateOrderCommand>().ReverseMap();
     }
 
