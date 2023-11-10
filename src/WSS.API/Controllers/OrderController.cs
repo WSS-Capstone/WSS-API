@@ -76,7 +76,7 @@ public class OrderController : BaseController
     [ApiVersion("1")]
     [ApiVersion("2")]
     [ApiVersion("3")]
-    [HttpPut("{id}")]
+    [HttpPut("{approval}")]
     public async Task<IActionResult> ApprovalOrder([FromBody] ApprovalOrderByOwnerCommand request,
         CancellationToken cancellationToken = default)
     {
