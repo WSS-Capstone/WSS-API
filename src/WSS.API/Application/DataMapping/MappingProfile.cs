@@ -47,12 +47,12 @@ public class MappingProfile : Profile
     {
         this.CreateMap<User, UserResponse>()
             .ForMember(dto => dto.Gender,
-                opt => opt.MapFrom(src => src.Gender ?? null))
+                opt => opt.MapFrom(src => src.Gender == null ? Gender.Other : (Gender)src.Gender))
             .ReverseMap();
 
         this.CreateMap<Account, AccountResponse>()
             .ForMember(dto => dto.Status,
-                opt => opt.MapFrom(src => src.Status ?? null))
+                opt => opt.MapFrom(src => src.Status == null ? AccountStatus.InActive : (AccountStatus)src.Status))
             .ForMember(dto => dto.User, opt => opt.MapFrom(src => src.User))
             .ReverseMap();
 
@@ -258,7 +258,7 @@ public class MappingProfile : Profile
                         ? 0
                         : src.OrderDetails.Average(o =>
                             o.Feedbacks.Count == 0 ? 0 : o.Feedbacks.Average(f => f.Rating))))
-            .ForMember(dto => dto.TotalRenenue,
+            .ForMember(dto => dto.TotalRevenue,
                 opt => opt.MapFrom(src =>
                     src.OrderDetails.Count == 0
                         ? 0
