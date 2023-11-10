@@ -69,6 +69,7 @@ public class ApprovalServiceCommandHandler : IRequestHandler<ApprovalServiceComm
         service.UpdateDate = DateTime.Now;
         service.Status = (int?)request.Status;
         service.Reason = request.Reason;
+        service.ApprovalDate = request.Status == ServiceStatus.Active ? DateTime.Now : null;
         var query = await _serviceRepo.UpdateService(service);
 
         var result = this._mapper.Map<ServiceResponse>(query);
