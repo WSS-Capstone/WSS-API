@@ -11,8 +11,8 @@ public class GetTasksQuery : PagingParam<TaskSortCriteria>,
     public DateTime? EndDate { get; set; }
     public string? TaskName { get; set; }
 
-    public DateTime? DueDateFrom { get; set; }
-    public DateTime? DueDateTo { get; set; }
+    public DateTime? StartDateFrom { get; set; }
+    public DateTime? StartDateTo { get; set; }
 
     public TaskStatus[]? Status { get; set; } = new[]
         { TaskStatus.EXPECTED, TaskStatus.TO_DO, TaskStatus.DONE, TaskStatus.IN_PROGRESS };
@@ -54,15 +54,15 @@ public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagingRespons
     {
         var query = _categoryRepo.GetTasks(null, new Expression<Func<Data.Models.Task, object>>[]
         {
-            t => t.OrderDetail,
+            t => t.TaskOrderDetails,
             t => t.Partner,
             t => t.Staff,
             t => t.Comments,
             t => t.CreateByNavigation
         });
 
-        query = query.Include(t => t.OrderDetail.Service);
-        query = query.Include(t => t.OrderDetail.Order);
+        query = query.Include(t => t.TaskOrderDetails).ThenInclude(k => k.OrderDetail).ThenInclude(o => o.Order);
+        query = query.Include(t => t.TaskOrderDetails).ThenInclude(k => k.OrderDetail).ThenInclude(o => o.Service);
 
         if (request.UserId != null)
         {
@@ -81,14 +81,14 @@ public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagingRespons
             query = query.Where(t => t.TaskName.Contains(request.TaskName));
         }
         
-        if (request.DueDateFrom != null)
+        if (request.StartDateFrom != null)
         {
-            query = query.Where(t => t.EndDate != null && t.EndDate.Value.Date >= request.DueDateFrom.Value.Date);
+            query = query.Where(t => t.StartDate != null && t.StartDate.Value.Date >= request.StartDateFrom.Value.Date);
         }
 
-        if (request.DueDateTo != null)
+        if (request.StartDateTo != null)
         {
-            query = query.Where(t => t.EndDate != null && t.EndDate.Value.Date <= request.DueDateTo.Value.Date);
+            query = query.Where(t => t.StartDate != null && t.StartDate.Value.Date <= request.StartDateTo.Value.Date);
         }
 
         if (request.Status != null && request.Status.Length > 0)
@@ -103,11 +103,14 @@ public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagingRespons
 
         query = query.GetWithPaging(request.Page, request.PageSize);
         var list = await query.ToListAsync(cancellationToken: cancellationToken);
-
+        
         var result = this._mapper.Map<List<TaskResponse>>(list);
         result.ForEach(t =>
         {
-            t.Order?.OrderDetails.Clear();
+            t.OrderDetails = t.TaskOrderDetails.Select(x => _mapper.Map<OrderDetailResponse>(x.OrderDetail))
+                .ToList();
+            t.TaskOrderDetails.Clear();
+            // t.Order?.OrderDetails.Clear();
             // t.OrderDetail.Order = null;
             // t.OrderDetail.Service = null;
         });

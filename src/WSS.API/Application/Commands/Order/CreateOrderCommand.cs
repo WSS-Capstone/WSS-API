@@ -152,6 +152,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                     task.OrderDetailId = orderDetail.Id;
                     task.TaskName = "Dịch vụ " + serviceDetail.Name + " của " + userCreate.User?.Fullname;
                     task.Status = (int)TaskStatus.EXPECTED;
+                    task.StartDate = orderDetail.StartTime;
+                    
                     task.Code = GenCode.NextId(codeTask);
                     task.CreateDate = DateTime.UtcNow;
                     task.CreateBy = userId;

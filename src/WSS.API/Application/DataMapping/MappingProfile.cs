@@ -283,16 +283,19 @@ public class MappingProfile : Profile
         this.CreateMap<Task, TaskResponse>()
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src => (TaskStatus)src.Status))
-            .ForMember(dto => dto.Service,
-                opt => opt.MapFrom(src => src.OrderDetail.Service))
-            .ForMember(dto => dto.Order,
-                opt => opt.MapFrom(src => src.OrderDetail.Order))
             .ForMember(dto => dto.CreateBy,
                 opt => opt.MapFrom(src => src.CreateByNavigation))
+            // .ForMember(dto => dto.OrderDetail,
+            //     opt => opt.MapFrom(src => new List<OrderDetailResponse>(){ src.OrderDetail }))
+
             .ReverseMap();
 
         this.CreateMap<Task, CreateTaskCommand>().ReverseMap();
         this.CreateMap<Task, UpdateTaskCommand>().ReverseMap();
+
+        this.CreateMap<TaskOrderDetail, TaskOrderDetailsResponse>()
+            .ForMember(dto => dto.OrderDetail, opt => opt.MapFrom(src => src.OrderDetail))
+            .ReverseMap();
     }
 
     private void VoucherProfile()
