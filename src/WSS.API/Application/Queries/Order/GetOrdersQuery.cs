@@ -48,9 +48,9 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
             .ThenInclude(p => p.Service);
 
         query = query.Include(o => o.Customer);
-        // query = query
-        //     .Include(o => o.Combo)
-        //     .ThenInclude(p => p.ComboServices);
+        query = query
+            .Include(o => o.Combo)
+            .ThenInclude(p => p.ComboServices);
         //
         query = query
             .Include(o => o.OrderDetails)
