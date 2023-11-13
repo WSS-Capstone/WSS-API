@@ -75,6 +75,10 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
             S => S.OrderDetails.Select(o => o.Feedbacks)
         });
         
+        query = query
+            .Include(s => s.Category)
+            .ThenInclude(c => c.Commision);
+        
         if(request.Status != null || request.Status?.Length > 0)
         {
             query = query.Where(s => request.Status.Contains((ServiceStatus)s.Status));

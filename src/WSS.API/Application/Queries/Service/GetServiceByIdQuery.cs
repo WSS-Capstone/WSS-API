@@ -25,7 +25,7 @@ public class GetServiceByIdQueryHandler : IRequestHandler<GetServiceByIdQuery, S
 
     public async Task<ServiceResponse> Handle(GetServiceByIdQuery request, CancellationToken cancellationToken)
     {
-        var query = await _repo.GetServiceById(request.Id, new Expression<Func<Data.Models.Service, object>>[]
+        var query =  _repo.GetServices( s => s.Id == request.Id, new Expression<Func<Data.Models.Service, object>>[]
         {
             s => s.Category,
             s => s.CurrentPrices,
@@ -33,13 +33,18 @@ public class GetServiceByIdQueryHandler : IRequestHandler<GetServiceByIdQuery, S
             s => s.OrderDetails.Select(o => o.Order),
             S => S.OrderDetails.Select(o => o.Feedbacks)
         });
+        
+        query = query
+            .Include(s => s.Category)
+            .ThenInclude(c => c.Commision);
 
         if (query == null)
         {
             throw new Exception("Service not found");
         }
+        var service = await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-        var result = this._mapper.Map<ServiceResponse>(query);
+        var result = this._mapper.Map<ServiceResponse>(service);
 
         return result;
     }
