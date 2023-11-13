@@ -10,7 +10,7 @@ public class GetOrdersQuery : PagingParam<OrderSortCriteria>, IRequest<PagingRes
 
 public class GetOrderCustomerQuery : PagingParam<OrderSortCriteria>
 {
-    public StatusOrder[]? Status { get; set; }
+    public StatusOrder[]? Status { get; set; } = new []{ StatusOrder.PENDING, StatusOrder.CONFIRM, StatusOrder.DOING, StatusOrder.CANCEL, StatusOrder.DONE };
 }
 
 public enum OrderSortCriteria
