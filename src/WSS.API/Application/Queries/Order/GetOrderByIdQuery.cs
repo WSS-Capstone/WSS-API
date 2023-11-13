@@ -37,6 +37,10 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
         query = query
             .Include(o => o.OrderDetails)
             .ThenInclude(p => p.Service);
+
+        query = query
+            .Include(o => o.Combo)
+            .ThenInclude(p => p.ComboServices);
         
         query = query
             .Include(o => o.OrderDetails)
