@@ -8,7 +8,7 @@ namespace WSS.API.Application.Commands.Order;
 
 public class ApprovalOrderByOwnerCommand : IRequest<OrderResponse>
 {
-     public ApprovalOrderByOwnerCommand(Guid id, StatusOrder request)
+    public ApprovalOrderByOwnerCommand(Guid id, StatusOrder request)
     {
         Id = id;
         StatusOrder = request;
@@ -58,12 +58,14 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
             new Expression<Func<Data.Models.Order, object>>[]
             {
                 o => o.OrderDetails,
+                o => o.OrderDetails.Select(od => od.Service),
             });
 
         if (order == null || order.OrderDetails.Count == 0)
         {
             throw new Exception("Order not found");
         }
+
 
         if (request.StatusOrder == StatusOrder.CONFIRM)
         {
@@ -72,11 +74,16 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
                 var task = new Data.Models.Task();
                 task.Id = Guid.NewGuid();
                 task.OrderDetailId = orderDetail.Id;
+                task.StartDate = orderDetail.StartTime;
+                task.EndDate = orderDetail.EndTime;
+                task.PartnerId = orderDetail?.Service?.ApprovalDate != null ? orderDetail.Service.CreateBy : null;
                 task.Status = (int)TaskStatus.TO_DO;
                 task.CreateDate = DateTime.Now;
                 task.CreateBy = user.User?.Id;
-                task.TaskName = "Tạo task cho order";
-                await _taskRepo.CreateTask(task);
+                task.TaskName = "Tạo task cho order " + orderDetail?.Service?.Name;
+                order.OrderDetails.FirstOrDefault().Tasks.Add(task);
+                task.CreateBy = user.Id;
+                // await _taskRepo.CreateTask(task);
             }
         }
 

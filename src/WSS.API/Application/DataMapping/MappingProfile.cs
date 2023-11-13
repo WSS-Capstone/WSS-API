@@ -282,7 +282,7 @@ public class MappingProfile : Profile
     {
         this.CreateMap<Task, TaskResponse>()
             .ForMember(dto => dto.Status,
-                opt => opt.MapFrom(src => (TaskStatus)src.Status))
+                opt => opt.MapFrom(src => src.Status != null ? (TaskStatus)src.Status : TaskStatus.TO_DO))
             .ForMember(dto => dto.CreateBy,
                 opt => opt.MapFrom(src => src.CreateByNavigation))
             // .ForMember(dto => dto.OrderDetail,
