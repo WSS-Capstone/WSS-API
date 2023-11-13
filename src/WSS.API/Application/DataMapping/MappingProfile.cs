@@ -116,13 +116,13 @@ public class MappingProfile : Profile
 
         this.CreateMap<ComboService, ServiceResponse>()
             .ForMember(dto => dto.Id, opt => opt.MapFrom(src => src.ServiceId))
-            .ForMember(dto => dto.Name, opt => opt.MapFrom(src => src.Service.Name))
-            .ForMember(dto => dto.Quantity, opt => opt.MapFrom(src => src.Service.Quantity))
-            .ForMember(dto => dto.Unit, opt => opt.MapFrom(src => src.Service.Unit))
-            .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(src => src.Service.CategoryId))
-            .ForMember(dto => dto.CoverUrl, opt => opt.MapFrom(src => src.Service.CoverUrl))
-            .ForMember(dto => dto.ServiceImages, opt => opt.MapFrom(src => src.Service.ServiceImages))
-            .ForMember(dto => dto.CurrentPrices, opt => opt.MapFrom(src => src.Service.CurrentPrices.FirstOrDefault()))
+            .ForMember(dto => dto.Name, opt => opt.MapFrom(src => src.Service != null ? src.Service.Name : string.Empty))
+            .ForMember(dto => dto.Quantity, opt => opt.MapFrom(src => src.Service != null ? src.Service.Quantity : 0))
+            .ForMember(dto => dto.Unit, opt => opt.MapFrom(src => src.Service != null ? src.Service.Unit : string.Empty))
+            .ForMember(dto => dto.CategoryId, opt => opt.MapFrom(src => src.Service != null ? src.Service.CategoryId : Guid.Empty))
+            .ForMember(dto => dto.CoverUrl, opt => opt.MapFrom(src => src.Service != null ? src.Service.CoverUrl : string.Empty))
+            .ForMember(dto => dto.ServiceImages, opt => opt.MapFrom(src => src.Service != null ? src.Service.ServiceImages : new List<ServiceImage>()))
+            .ForMember(dto => dto.CurrentPrices, opt => opt.MapFrom(src => src.Service != null ? src.Service.CurrentPrices.FirstOrDefault() : new CurrentPrice()))
             .ReverseMap();
     }
 
@@ -198,9 +198,9 @@ public class MappingProfile : Profile
     {
         this.CreateMap<Order, OrderResponse>()
             .ForMember(dto => dto.StatusOrder,
-                opt => opt.MapFrom(src => (StatusOrder)src.StatusOrder))
+                opt => opt.MapFrom(src => src.StatusOrder != null ? (StatusOrder)src.StatusOrder : StatusOrder.CANCEL))
             .ForMember(dto => dto.StatusPayment,
-                opt => opt.MapFrom(src => (StatusPayment)src.StatusPayment))
+                opt => opt.MapFrom(src => src.StatusPayment != null ? (StatusPayment)src.StatusPayment : StatusPayment.CANCEL))
             .ForMember(opt => opt.OrderDetails,
                 opt => opt.MapFrom(src => src.OrderDetails))
             .ForMember(opt => opt.Customer,
@@ -209,7 +209,7 @@ public class MappingProfile : Profile
             .ReverseMap();
         this.CreateMap<Order, CreateOrderCommand>().ReverseMap();
         this.CreateMap<Order, ApprovalOrderByOwnerCommand>().ForMember(dto => dto.StatusOrder,
-            opt => opt.MapFrom(src => (StatusOrder)src.StatusOrder)).ReverseMap();
+            opt => opt.MapFrom(src => src.StatusOrder != null ? (StatusOrder)src.StatusOrder : StatusOrder.PENDING)).ReverseMap();
         this.CreateMap<Order, UpdateOrderCommand>().ReverseMap();
     }
 
@@ -217,7 +217,7 @@ public class MappingProfile : Profile
     {
         this.CreateMap<OrderDetail, OrderDetailResponse>()
             .ForMember(dto => dto.Status,
-                opt => opt.MapFrom(src => (OrderDetailStatus)src.Status))
+                opt => opt.MapFrom(src => src.Status != null ? (OrderDetailStatus)src.Status : OrderDetailStatus.INACTIVE))
             .ReverseMap();
 
         this.CreateMap<OrderDetail, OrderDetailRequest>().ReverseMap();
@@ -243,7 +243,7 @@ public class MappingProfile : Profile
     {
         this.CreateMap<Service, ServiceResponse>()
             .ForMember(dto => dto.Status,
-                opt => opt.MapFrom(src => (ServiceStatus)src.Status))
+                opt => opt.MapFrom(src => src.Status != null ? (ServiceStatus)src.Status : ServiceStatus.InActive))
             .ForMember(dto => dto.Category,
                 opt => opt.MapFrom(src => src.Category))
             .ForMember(dto => dto.CurrentPrices,
@@ -252,8 +252,8 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src =>
                     src.OrderDetails.Count == 0
                         ? 0
-                        : src.OrderDetails.DistinctBy(od => od.OrderId)
-                            .Count(o => o.Order.StatusOrder == (int)StatusOrder.DONE)))
+                        :  src.OrderDetails.DistinctBy(od => od.OrderId)
+                            .Count(o => o.Order != null && o.Order.StatusOrder == (int)StatusOrder.DONE)))
             .ForMember(dto => dto.Rating,
                 opt => opt.MapFrom(src =>
                     src.OrderDetails.Count == 0
