@@ -5,7 +5,7 @@ namespace WSS.API.Application.Queries.Order;
 public class GetOrdersQuery : PagingParam<OrderSortCriteria>, IRequest<PagingResponseQuery<OrderResponse, OrderSortCriteria>>
 {
     public Guid? CustomerId { get; set; }
-    public StatusOrder[]? Status { get; set; }
+    public StatusOrder[]? Status { get; set; } = new []{ StatusOrder.PENDING, StatusOrder.CONFIRM, StatusOrder.DOING, StatusOrder.CANCEL, StatusOrder.DONE };
 }
 
 public class GetOrderCustomerQuery : PagingParam<OrderSortCriteria>
