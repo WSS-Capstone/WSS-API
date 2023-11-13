@@ -122,6 +122,19 @@ public class ServiceController: BaseController
         return result != null ? Ok(result) : BadRequest();
     }
     
+    [HttpPut("status/{id}")]
+    [ApiVersion("2")]
+    public async Task<IActionResult> StatusService([FromRoute] Guid id, [FromBody] StatusServiceRequest command,
+        CancellationToken cancellationToken = default)
+    {
+        ServiceResponse? result = await this.Mediator.Send(new StatusServiceCommand()
+        {
+            Id = id, Status = command.Status
+        }, cancellationToken);
+
+        return result != null ? Ok(result) : BadRequest();
+    }
+    
     [ApiVersion("1")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> InactiveService([FromRoute] Guid id, CancellationToken cancellationToken = default)
