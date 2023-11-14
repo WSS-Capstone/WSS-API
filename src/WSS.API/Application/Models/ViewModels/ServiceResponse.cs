@@ -10,6 +10,7 @@ public class ServiceResponse
     public CategoryResponse? Category { get; set; }
     public CurrentPriceResponse? CurrentPrices { get; set; }
     public virtual ICollection<ServiceImageResponse> ServiceImages { get; set; }
+    public virtual ICollection<ComboServicesResponse> ComboServices { get; set; }
     public Guid? CategoryId { get; set; }
     public string? Unit { get; set; }
     public string? Description { get; set; }

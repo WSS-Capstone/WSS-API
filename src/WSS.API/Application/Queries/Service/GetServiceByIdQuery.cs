@@ -37,6 +37,8 @@ public class GetServiceByIdQueryHandler : IRequestHandler<GetServiceByIdQuery, S
         query = query
             .Include(s => s.Category)
             .ThenInclude(c => c.Commision);
+        query = query.Include(s => s.ComboServices)
+            .ThenInclude(c => c.Combo);
 
         if (query == null)
         {

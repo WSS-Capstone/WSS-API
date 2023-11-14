@@ -72,12 +72,14 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
             s => s.CurrentPrices,
             s => s.ServiceImages,
             s => s.OrderDetails.Select(o => o.Order),
-            S => S.OrderDetails.Select(o => o.Feedbacks)
+            s => s.OrderDetails.Select(o => o.Feedbacks)
         });
         
         query = query
             .Include(s => s.Category)
             .ThenInclude(c => c.Commision);
+        query = query.Include(s => s.ComboServices)
+            .ThenInclude(c => c.Combo);
         
         if(request.Status != null || request.Status?.Length > 0)
         {
