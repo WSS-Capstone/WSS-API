@@ -21,8 +21,8 @@ public class GetTasksQuery : PagingParam<TaskSortCriteria>,
 public class GetTaskOwnerRequest : PagingParam<TaskSortCriteria>
 {
     public string? TaskName { get; set; }
-    public DateTime? DueDateFrom { get; set; }
-    public DateTime? DueDateTo { get; set; }
+    public DateTime? StartDateFrom { get; set; }
+    public DateTime? StartDateTo { get; set; }
 
     public TaskStatus[]? Status { get; set; } = new[]
         { TaskStatus.EXPECTED, TaskStatus.TO_DO, TaskStatus.DONE, TaskStatus.IN_PROGRESS };

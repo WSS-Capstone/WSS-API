@@ -38,8 +38,8 @@ public class TaskController : BaseController
             UserId = userId,
             Status = query.Status,
             TaskName = query.TaskName,
-            StartDateFrom = query.DueDateFrom,
-            StartDateTo = query.DueDateTo
+            StartDateFrom = query.StartDateFrom,
+            StartDateTo = query.StartDateTo
         }, cancellationToken);
 
         return Ok(result);
