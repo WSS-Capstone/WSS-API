@@ -137,6 +137,7 @@ public class DbContextFactory : IDbContextFactory, IDisposable
     {
         DbContextOptionsBuilder<TContext> optionsBuilder = new DbContextOptionsBuilder<TContext>();
         optionsBuilder.UseSqlServer(connectionString);
+        optionsBuilder.EnableSensitiveDataLogging();
         return optionsBuilder;
     }
 }

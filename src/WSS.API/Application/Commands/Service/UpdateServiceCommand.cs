@@ -113,7 +113,7 @@ public class UpdateServiceCommandHandler : IRequestHandler<UpdateServiceCommand,
         var query = await _serviceRepo.UpdateService(service);
         
         var result = this._mapper.Map<ServiceResponse>(query);
-        
+        result.IsOwnerService = user.RoleName == "Owner";
         return result;
     }
 }

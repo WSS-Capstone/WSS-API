@@ -9,8 +9,8 @@ public class ServiceResponse
     public int? Quantity { get; set; }
     public virtual CategoryResponse? Category { get; set; }
     public CurrentPriceResponse? CurrentPrices { get; set; }
-    public virtual ICollection<ServiceImageResponse> ServiceImages { get; set; }
-    public virtual ICollection<ComboServicesResponse> ComboServices { get; set; }
+    public virtual List<ServiceImageResponse> ServiceImages { get; set; }
+    public virtual List<ComboServicesResponse> ComboServices { get; set; }
     public Guid? CategoryId { get; set; }
     public string? Unit { get; set; }
     public string? Description { get; set; }
@@ -21,7 +21,9 @@ public class ServiceResponse
     public string? Reason { get; set; }
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
-    public virtual Account? CreateByNavigation { get; set; }
+    public virtual AccountResponse? CreateByNavigation { get; set; }
+  
+    public bool? IsOwnerService { get; set; }
 }
 
 public enum ServiceStatus

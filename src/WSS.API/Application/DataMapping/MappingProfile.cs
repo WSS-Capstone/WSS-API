@@ -11,6 +11,7 @@ using WSS.API.Application.Commands.Task;
 using WSS.API.Application.Commands.Voucher;
 using WSS.API.Application.Feedback;
 using WSS.API.Application.Queries.DayOff;
+using WSS.API.Infrastructure.Config;
 using Task = WSS.API.Data.Models.Task;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
@@ -261,9 +262,11 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.Category))
             .ForMember(dto => dto.CurrentPrices,
                 opt => opt.MapFrom(src => src.CurrentPrices.OrderByDescending(s => s.DateOfApply).FirstOrDefault()))
+            .ForMember(dto => dto.IsOwnerService,
+                opt => opt.MapFrom(src => src.CreateByNavigation.RoleName == RoleName.OWNER))
             .ForMember(dto => dto.ComboServices,
                 opt => opt.MapFrom(src => src.ComboServices))
-            
+
             .ForMember(dto => dto.Used,
                 opt => opt.MapFrom(src =>
                     src.OrderDetails.Count == 0

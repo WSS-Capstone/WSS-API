@@ -1,5 +1,6 @@
 using WSS.API.Data.Repositories.OrderDetail;
 using WSS.API.Data.Repositories.Service;
+using WSS.API.Infrastructure.Config;
 
 namespace WSS.API.Application.Queries.Service;
 
@@ -72,7 +73,8 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
             s => s.CurrentPrices,
             s => s.ServiceImages,
             s => s.OrderDetails.Select(o => o.Order),
-            s => s.OrderDetails.Select(o => o.Feedbacks)
+            s => s.OrderDetails.Select(o => o.Feedbacks),
+            s => s.CreateByNavigation,
         });
         
         query = query
@@ -142,9 +144,20 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
             });
         }
         
-        list.ForEach(s => s.Category?.Services.Clear());
+        list.ForEach(s =>
+        {
+            s.Category?.Services.Clear();
+        });
         
         var result = this._mapper.Map<List<ServiceResponse>>(list);
+        result.ForEach(r =>
+        {
+            // r.IsOwnerService = r.CreateByNavigation?.RoleName == RoleName.OWNER;
+            r.ComboServices?.ForEach(c =>
+            {
+                c.Combo?.ComboServices.Clear();
+            });
+        });
         
         return new PagingResponseQuery<ServiceResponse, ServiceSortCriteria>(request, result.AsQueryable(), total);
     }

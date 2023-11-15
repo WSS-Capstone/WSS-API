@@ -62,7 +62,7 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
         service.CreateDate = DateTime.Now;
         
         service.Status = (int?)(user.RoleName == "Owner" ? ServiceStatus.Active : ServiceStatus.Pending);
-        service.CreateBy = user.RoleName != "Owner" ? user.Id : null;
+        service.CreateBy = user.Id;
         if (request.ImageUrls is { Length: > 0 })
         {
             service.CoverUrl = request.ImageUrls?.FirstOrDefault();
@@ -99,6 +99,8 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
 
         var result = this._mapper.Map<ServiceResponse>(query);
 
+         result.IsOwnerService = user.RoleName == "Owner";
+        
         return result;
     }
 }

@@ -7,6 +7,7 @@ public class AccountResponse
     public string? Username { get; set; }
     public AccountStatus? Status { get; set; }
     public string? RoleName { get; set; }
+    public string? RefId { get; set; }
     public virtual UserResponse? User { get; set; }
 }
 
