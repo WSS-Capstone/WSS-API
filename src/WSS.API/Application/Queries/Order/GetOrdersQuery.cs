@@ -73,7 +73,7 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
         query = query.GetWithPaging(request.Page, request.PageSize);
         var list = await query.ToListAsync(cancellationToken: cancellationToken);
         var result = this._mapper.Map<List<OrderResponse>>(list).AsQueryable();
-
+        
         return new PagingResponseQuery<OrderResponse, OrderSortCriteria>(request, result, total);
     }
 }

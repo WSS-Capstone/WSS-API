@@ -17,6 +17,7 @@ public class OrderDetailResponse
     public ServiceResponse? Service { get; set; }
     public ICollection<FeedbackResponse> Feedbacks { get; set; }
     public ICollection<TaskResponse> Tasks { get; set; }
+    public bool InCombo { get; set; } = false;
 }
 
 public enum OrderDetailStatus
