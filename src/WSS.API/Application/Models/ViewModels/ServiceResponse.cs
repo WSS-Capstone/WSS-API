@@ -7,7 +7,7 @@ public class ServiceResponse
     public string? Name { get; set; }
     public string? CoverUrl { get; set; }
     public int? Quantity { get; set; }
-    public CategoryResponse? Category { get; set; }
+    public virtual CategoryResponse? Category { get; set; }
     public CurrentPriceResponse? CurrentPrices { get; set; }
     public virtual ICollection<ServiceImageResponse> ServiceImages { get; set; }
     public virtual ICollection<ComboServicesResponse> ComboServices { get; set; }

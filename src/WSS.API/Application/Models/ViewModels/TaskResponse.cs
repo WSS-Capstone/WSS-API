@@ -16,6 +16,7 @@ public class TaskResponse
     public DateTime? EndDate { get; set; }
 
     public string? ImageEvidence { get; set; }
+    public DateTime? CreateDate { get; set; }
 
     public TaskStatus? Status { get; set; }
     public virtual UserResponse? CreateBy { get; set; }

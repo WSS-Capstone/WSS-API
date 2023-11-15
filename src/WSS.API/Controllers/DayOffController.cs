@@ -42,7 +42,8 @@ public class DayOffController : BaseController
             PageSize = query.PageSize,
             SortKey = query.SortKey,
             SortOrder = query.SortOrder,
-            Status = query.Status
+            Status = query.Status,
+            ServiceId = query.ServiceId
         }, cancellationToken);
 
         return Ok(result);

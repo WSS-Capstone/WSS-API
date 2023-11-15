@@ -9,6 +9,7 @@ public class DayOffResponse
     public Guid? PartnerId { get; set; }
     public DateTime? Day { get; set; }
     public string? Reason { get; set; }
+    public Guid? ServiceId { get; set; }
     public DayOffStatus? Status { get; set; }
     public virtual UserResponse? Partner { get; set; }
     public virtual ServiceResponse? Service { get; set; }

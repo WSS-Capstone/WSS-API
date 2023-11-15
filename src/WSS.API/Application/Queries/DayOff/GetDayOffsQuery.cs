@@ -8,6 +8,7 @@ public class GetDayOffsQuery : PagingParam<DayOffSortCriteria>,
     public Guid? UserId { get; set; }
     public DateTime? FromDate { get; set; }
     public DateTime? ToDate { get; set; }
+    public Guid? ServiceId { get; set; }
     public DayOffStatus[]? Status { get; set; } = new []{ DayOffStatus.Active, DayOffStatus.InActive };
 }
 
@@ -15,6 +16,7 @@ public class UserDayOffRequest : PagingParam<DayOffSortCriteria>
 {
     public DateTime? FromDate { get; set; }
     public DateTime? ToDate { get; set; }
+    public Guid? ServiceId { get; set; }
     public DayOffStatus[]? Status { get; set; } = new []{ DayOffStatus.Active, DayOffStatus.InActive };
 }
 
@@ -63,6 +65,10 @@ public class
             d => d.Partner
         });
         query = query.Where(x => request.Status.Contains((DayOffStatus)x.Status));
+        if (request.ServiceId != null)
+        {
+            query = query.Where(x => x.ServiceId == request.ServiceId);
+        }
         var total = await query.CountAsync(cancellationToken: cancellationToken);
 
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);

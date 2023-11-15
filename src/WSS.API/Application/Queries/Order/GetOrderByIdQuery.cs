@@ -49,6 +49,8 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
         query = query
             .Include(o => o.OrderDetails)
             .ThenInclude(p => p.Service).ThenInclude(l => l.CurrentPrices);
+        query = query.Include(o => o.OrderDetails)
+            .ThenInclude(od => od.Service).ThenInclude(s => s.Category).ThenInclude(c => c.Commision);
         var order = await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
         var result = this._mapper.Map<OrderResponse>(order);
 
