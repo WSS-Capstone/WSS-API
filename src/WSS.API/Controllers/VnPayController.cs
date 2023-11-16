@@ -31,6 +31,7 @@ public class VnPayController : BaseController
     }
     
     [HttpGet]
+    [ApiVersion("1")]
     [ApiVersion("3")]
     public async Task<IActionResult> GetLink([FromQuery] VNPayRequest payment)
     {
@@ -51,6 +52,10 @@ public class VnPayController : BaseController
     /// <response code="403">Return if token is access denied</response>
     [HttpGet("confirm")]
     [AllowAnonymous]
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
+
     public async Task<IActionResult> Get()
     {
         var result = await _vnPayPaymentService.Confirm();

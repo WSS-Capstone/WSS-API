@@ -35,7 +35,7 @@ public class CreateVoucherCommandHandler : IRequestHandler<CreateVoucherCommand,
             .FirstOrDefaultAsync(cancellationToken);
         var voucher = _mapper.Map<Data.Models.Voucher>(request);
         voucher.Id = Guid.NewGuid();
-        voucher.Code = GenCode.NextId(code);
+        voucher.Code = GenCode.NextId(code, "V");
         voucher.CreateBy = await this._identitySvc.GetUserId();
         voucher.CreateDate = DateTime.Now;
         voucher = await _repo.CreateVoucher(voucher);
