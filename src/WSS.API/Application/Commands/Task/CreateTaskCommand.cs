@@ -1,5 +1,6 @@
 using WSS.API.Data.Repositories.Task;
 using WSS.API.Infrastructure.Utilities;
+using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
 namespace WSS.API.Application.Commands.Task;
 
@@ -41,34 +42,10 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskR
         task.Id = Guid.NewGuid();
         task.Code = GenCode.NextId(code);
         task.CreateDate = DateTime.UtcNow;
+        task.Status = (int)TaskStatus.EXPECTED;
         
         task = await _taskRepo.CreateTask(task);
-
-        var result = _taskRepo.GetTasks(t => t.Id == task.Id, new Expression<Func<Data.Models.Task, object>>[]
-        {
-            t => t.TaskOrderDetails,
-            t => t.Partner,
-            t => t.Staff,
-            t => t.Comments,
-            t => t.CreateByNavigation
-        });
         
-        result = result.Include(t => t.OrderDetail.Service);
-        result = result.Include(t => t.OrderDetail.Order);
-        result = result.Include(t => t.OrderDetail.Order).ThenInclude(o => o.WeddingInformation);
-        result = result.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Customer);
-        result = result.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Combo);
-        result = result.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Voucher);
-        result = result.Include(t => t.TaskOrderDetails).ThenInclude(k => k.OrderDetail).ThenInclude(o => o.Order);
-        result = result.Include(t => t.TaskOrderDetails).ThenInclude(k => k.OrderDetail).ThenInclude(o => o.Service);
-
-
-        var newTask =await  result.FirstOrDefaultAsync(cancellationToken: cancellationToken);
-        var map = _mapper.Map<TaskResponse>(newTask);
-        map.OrderDetails = map.TaskOrderDetails.Select(x => _mapper.Map<OrderDetailResponse>(x.OrderDetail))
-            .ToList();
-        map.TaskOrderDetails.Clear();
-        
-        return _mapper.Map<TaskResponse>(newTask);
+        return _mapper.Map<TaskResponse>(task);
     }
 }

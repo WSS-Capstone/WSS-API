@@ -58,7 +58,8 @@ public class TaskController : BaseController
     public async Task<IActionResult> CreateTask([FromBody] CreateTaskCommand request, CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(request, cancellationToken);
-        return Ok(result);
+        var result2 = await this.Mediator.Send(new GetTaskByIdQuery(result.Id), cancellationToken);
+        return Ok(result2);
     }
     
     [HttpPut("{id}")]
