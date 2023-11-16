@@ -2,6 +2,7 @@ using WSS.API.Application.Models.Requests;
 using WSS.API.Data.Repositories.Order;
 using WSS.API.Data.Repositories.PaymentHistory;
 using WSS.API.Infrastructure.Config;
+using WSS.API.Infrastructure.Services.Identity;
 using WSS.API.Infrastructure.Utilities;
 using Task = System.Threading.Tasks.Task;
 
@@ -14,6 +15,7 @@ public class VnPayPaymentService : IVnPayPaymentService
     private readonly IHttpContextAccessor _contextAccessor;
     private readonly IPaymentHistoryRepo _paymentHistoryRepo;
     private readonly IOrderRepo _orderRepo;
+    private readonly IIdentitySvc _identitySvc;
 
     private const string PayCommand = "pay";
 
@@ -22,12 +24,13 @@ public class VnPayPaymentService : IVnPayPaymentService
     private const string Locale = "vn";
 
     public VnPayPaymentService(VnPaySettings vnPaySettings, IHttpContextAccessor contextAccessor,
-        IPaymentHistoryRepo paymentHistoryRepo, IOrderRepo orderRepo)
+        IPaymentHistoryRepo paymentHistoryRepo, IOrderRepo orderRepo, IIdentitySvc identitySvc)
     {
         _vnPaySettings = vnPaySettings;
         _contextAccessor = contextAccessor;
         _paymentHistoryRepo = paymentHistoryRepo;
         _orderRepo = orderRepo;
+        _identitySvc = identitySvc;
     }
 
     public async Task<PaymentResponse> CreatePayment(VnPayPayment payment)
@@ -38,10 +41,16 @@ public class VnPayPaymentService : IVnPayPaymentService
             throw new Exception("Http Context not found");
         }
 
+        Guid userId = await _identitySvc.GetUserId();
+
         var pay = new VnPayLibrary();
         var orderInDb = await _orderRepo.GetOrderById(payment.OrderReferenceId);
         if (orderInDb == null)
             throw new Exception("Order not found");
+        
+        payment.Amount = payment.OrderType == OrderType.Payment ? orderInDb.TotalAmountRequest : orderInDb.TotalAmount;
+        payment.CustomerId = userId;
+        
         var urlCallBack = $"{_vnPaySettings.CallbackUrl}";
 
         pay.AddRequestData("vnp_Version", _vnPaySettings.Version);

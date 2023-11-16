@@ -39,10 +39,10 @@ public class StatusServiceCommandHandler : IRequestHandler<StatusServiceCommand,
                 a => a.User
             }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-        if (user.RoleName != "Owner")
-        {
-            throw new Exception("You are not allowed to create service");
-        }
+        // if (user.RoleName != "Owner")
+        // {
+        //     throw new Exception("You are not allowed to create service");
+        // }
 
         var serviceQuery = this._serviceRepo.GetServices(s => s.Id == request.Id,
             new Expression<Func<Data.Models.Service, object>>[]

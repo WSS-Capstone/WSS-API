@@ -29,6 +29,18 @@ public class VnPayController : BaseController
         var result = await _vnPayPaymentService.CreatePayment(payment);
         return result != null ? Ok(result) : NotFound();
     }
+    
+    [HttpGet]
+    [ApiVersion("3")]
+    public async Task<IActionResult> GetLink([FromQuery] VNPayRequest payment)
+    {
+        var result = await _vnPayPaymentService.CreatePayment(new VnPayPayment()
+        {
+            OrderReferenceId = payment.OrderReferenceId,
+            OrderType = payment.OrderType
+        });
+        return result != null ? Ok(result) : NotFound();
+    }
     // <summary>
     /// [Guest] Endpoint for company create url payment with condition
     /// 
