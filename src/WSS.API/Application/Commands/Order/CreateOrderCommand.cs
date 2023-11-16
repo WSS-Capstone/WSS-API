@@ -177,7 +177,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
 
             if (request.VoucherCode != null)
             {
-                totalPrice = voucherResponse == null ? totalPrice : (totalPrice / 100) * (100 - voucherResponse.DiscountValueVoucher);
+                totalPrice = voucherResponse == null ? totalPrice : totalPrice - voucherResponse.DiscountValueVoucher;
             }
 
             order.OrderDetails = orderDetails;
