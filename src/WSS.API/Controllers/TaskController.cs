@@ -63,12 +63,13 @@ public class TaskController : BaseController
     }
     
     [HttpPut("{id}")]
+    [ApiVersion("1")]
     public async Task<IActionResult> UpdateTask([FromRoute] Guid id, [FromBody] UpdateTaskRequest request,
         CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(new UpdateTaskCommand(id, request), cancellationToken);
-
-        return Ok(result);
+        var result2 = await this.Mediator.Send(new GetTaskByIdQuery(result.Id), cancellationToken);
+        return Ok(result2);
     }
     
     [ApiVersion("1")]

@@ -1,4 +1,5 @@
 using WSS.API.Data.Repositories.Task;
+using WSS.API.Data.Repositories.User;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
 namespace WSS.API.Application.Commands.Task;
@@ -42,22 +43,24 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
 {
     private IMapper _mapper;
     private ITaskRepo _repo;
+    private IUserRepo _userRepo;
 
-    public UpdateTaskCommandHandler(IMapper mapper, ITaskRepo repo)
+    public UpdateTaskCommandHandler(IMapper mapper, ITaskRepo repo, IUserRepo userRepo)
     {
         _mapper = mapper;
         _repo = repo;
+        _userRepo = userRepo;
     }
 
     public async Task<TaskResponse> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
     {
-        var feedback = await _repo.GetTaskById(request.Id);
-        if (feedback == null)
+        var task = await _repo.GetTaskById(request.Id);
+        if (task == null)
         {
             throw new Exception("Task not found");
         }
        
-        feedback = this._mapper.Map(request, feedback, o =>
+        task = this._mapper.Map(request, task, o =>
         {
             o.BeforeMap((o1, o2) =>
             {
@@ -69,8 +72,24 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
             });
         });
         
-        await _repo.UpdateTask(feedback);
-        var result = this._mapper.Map<TaskResponse>(feedback);
+        var user = await this._userRepo.GetUsers(u => u.Id == request.UserId, new Expression<Func<User, object>>[]
+        {
+            u => u.IdNavigation
+        }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
+   
+        if(user.IdNavigation.RoleName == "Partner")
+        {
+            task.PartnerId = request.UserId;
+            task.StaffId = null;
+        }
+        else
+        {
+            task.StaffId = request.UserId;
+            task.PartnerId = null;
+        }
+        
+        await _repo.UpdateTask(task);
+        var result = this._mapper.Map<TaskResponse>(task);
 
         return result;
     }
