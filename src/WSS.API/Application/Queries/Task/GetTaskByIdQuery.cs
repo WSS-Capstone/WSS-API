@@ -32,10 +32,10 @@ public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, TaskRes
             t => t.Comments
         });
         
-        query = query.Include(t => t.OrderDetail.Service);
+        query = query.Include(t => t.OrderDetail.Service).ThenInclude(s => s.ServiceImages);
         query = query.Include(t => t.OrderDetail.Order);
         query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.WeddingInformation);
-        query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Customer);
+        query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Customer).ThenInclude(a => a.IdNavigation);
         query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Combo);
         query = query.Include(t => t.OrderDetail.Order).ThenInclude(o => o.Voucher);
         query = query.Include(t => t.TaskOrderDetails).ThenInclude(k => k.OrderDetail).ThenInclude(o => o.Order);

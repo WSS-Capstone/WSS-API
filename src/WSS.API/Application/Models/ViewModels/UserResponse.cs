@@ -9,4 +9,5 @@ public class UserResponse
     public string? ImageUrl { get; set; }
     public Guid? CategoryId { get; set; }
     public Gender? Gender { get; set; }
+    public virtual AccountResponse IdNavigation { get; set; }
 }
