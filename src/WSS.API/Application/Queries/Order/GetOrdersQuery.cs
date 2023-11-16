@@ -72,8 +72,35 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
         
         query = query.GetWithPaging(request.Page, request.PageSize);
         var list = await query.ToListAsync(cancellationToken: cancellationToken);
-        var result = this._mapper.Map<List<OrderResponse>>(list).AsQueryable();
-        
-        return new PagingResponseQuery<OrderResponse, OrderSortCriteria>(request, result, total);
+        var result = this._mapper.Map<List<OrderResponse>>(list);
+        result.ForEach(o =>
+        {
+            o.ComboOrderDetails = new List<OrderDetailResponse>();
+            o.OrderDetails.ForEach(od =>
+            {
+                if (od.ServiceId != null)
+                {
+                    var service = o.Combo?.ComboServices?.FirstOrDefault(s => s.Id == od.ServiceId);
+                    if (service != null)
+                    {
+                        od.InCombo = true;
+                        o.ComboOrderDetails.Add(od);
+                    }
+                }
+            });
+            o.OrderDetails = o.OrderDetails.Where(od => !od.InCombo).ToList();
+            o.Combo?.ComboServices?.Clear();
+            o.ComboOrderDetails.ForEach(od =>
+            {
+                od.Service?.Category?.Services.Clear();
+                od.Service?.ComboServices.Clear();
+            });
+            o.OrderDetails.ForEach(od =>
+            {
+                od.Service?.Category?.Services.Clear();
+                od.Service?.ComboServices.Clear();
+            });
+        });
+        return new PagingResponseQuery<OrderResponse, OrderSortCriteria>(request, result.AsQueryable(), total);
     }
 }

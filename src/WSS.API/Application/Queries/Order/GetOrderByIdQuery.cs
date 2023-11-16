@@ -68,11 +68,35 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
             od.Service.Category.Services.Clear();
             od.Service.ComboServices.Clear();
         });
-        
         result.Combo?.ComboServices.Clear();
         
-        
-        
+        result.ComboOrderDetails = result.OrderDetails.Where(od => od.InCombo).ToList();
+        result.OrderDetails = result.OrderDetails.Where(od => !od.InCombo).ToList();
+        result.ComboOrderDetails = new List<OrderDetailResponse>();
+        result.OrderDetails.ForEach(od =>
+        {
+            if (od.ServiceId != null)
+            {
+                var service = result.Combo?.ComboServices?.FirstOrDefault(s => s.Id == od.ServiceId);
+                if (service != null)
+                {
+                    od.InCombo = true;
+                    result.ComboOrderDetails.Add(od);
+                }
+            }
+        });
+        result.OrderDetails = result.OrderDetails.Where(od => !od.InCombo).ToList();
+        result.Combo?.ComboServices?.Clear();
+        result.ComboOrderDetails.ForEach(od =>
+        {
+            od.Service?.Category?.Services.Clear();
+            od.Service?.ComboServices.Clear();
+        });
+        result.OrderDetails.ForEach(od =>
+        {
+            od.Service?.Category?.Services.Clear();
+            od.Service?.ComboServices.Clear();
+        });
         
 
         return result;

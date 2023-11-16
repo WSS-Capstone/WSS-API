@@ -23,6 +23,7 @@ public class OrderResponse
     public virtual VoucherResponse? Voucher { get; set; }
     public virtual WeddingInformationResponse? WeddingInformation { get; set; }
     public virtual List<OrderDetailResponse> OrderDetails { get; set; }
+    public virtual List<OrderDetailResponse>? ComboOrderDetails { get; set; }
 }
 
 public enum StatusOrder
