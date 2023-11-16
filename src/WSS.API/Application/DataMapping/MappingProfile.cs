@@ -281,9 +281,10 @@ public class MappingProfile : Profile
                             o.Feedbacks.Count == 0 ? 0 : o.Feedbacks.Average(f => f.Rating))))
             .ForMember(dto => dto.TotalRevenue,
                 opt => opt.MapFrom(src =>
+                    
                     src.OrderDetails.Count == 0
                         ? 0
-                        : src.OrderDetails.Sum(o => o.Price)));
+                        : src.OrderDetails.Sum(o => o.Order != null && o.Order.StatusPayment == (int)OrderDetailStatus.DONE ? o.Price / 100 * (100 - o.Service.Category.Commision.CommisionValue) : 0)));
 
         this.CreateMap<Service, CreateServiceCommand>().ReverseMap();
         this.CreateMap<Service, UpdateServiceCommand>().ReverseMap();

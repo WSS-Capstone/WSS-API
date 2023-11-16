@@ -10,6 +10,7 @@ public class GetTasksQuery : PagingParam<TaskSortCriteria>,
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public string? TaskName { get; set; }
+    public bool? OfPartner { get; set; } = null;
 
     public DateTime? StartDateFrom { get; set; }
     public DateTime? StartDateTo { get; set; }
@@ -63,7 +64,7 @@ public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagingRespons
 
         query = query.Include(t => t.TaskOrderDetails).ThenInclude(k => k.OrderDetail).ThenInclude(o => o.Order);
         query = query.Include(t => t.TaskOrderDetails).ThenInclude(k => k.OrderDetail).ThenInclude(o => o.Service);
-
+        
         if (request.UserId != null)
         {
             query = query.Where(x => x.StaffId == request.UserId || x.PartnerId == request.UserId);
@@ -94,6 +95,19 @@ public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagingRespons
         if (request.Status != null && request.Status.Length > 0)
         {
             query = query.Where(t => t.Status != null && request.Status.Contains((TaskStatus)t.Status));
+        }
+
+        if (request.OfPartner != null)
+        {
+            if ((bool)request.OfPartner)
+            {
+                query = query.Where(t => t.PartnerId != null && t.StaffId == null);
+            }
+            else
+            {
+                query = query.Where(t =>
+                    t.StaffId != null && t.PartnerId == null || t.StaffId == null && t.PartnerId == null);
+            }
         }
 
 
