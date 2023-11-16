@@ -100,7 +100,13 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
                 od.Service?.Category?.Services.Clear();
                 od.Service?.ComboServices.Clear();
             });
+            
+            o.ComboOrderStatus = o.ComboOrderDetails.Any(od => od.Status == OrderDetailStatus.DONE) ? OrderDetailStatus.DONE : OrderDetailStatus.INPROCESS;
+            o.ComboOrderStatus = o.ComboOrderDetails.Any(od => od.Status == OrderDetailStatus.PENDING) ? OrderDetailStatus.PENDING : o.ComboOrderStatus;
         });
+        
+        
+        
         return new PagingResponseQuery<OrderResponse, OrderSortCriteria>(request, result.AsQueryable(), total);
     }
 }

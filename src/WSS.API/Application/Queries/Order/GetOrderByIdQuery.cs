@@ -82,6 +82,8 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
             od.Service?.Category?.Services.Clear();
             od.Service?.ComboServices.Clear();
         });
+        result.ComboOrderStatus = result.ComboOrderDetails.Any(od => od.Status == OrderDetailStatus.DONE) ? OrderDetailStatus.DONE : OrderDetailStatus.INPROCESS;
+        result.ComboOrderStatus = result.ComboOrderDetails.Any(od => od.Status == OrderDetailStatus.PENDING) ? OrderDetailStatus.PENDING : result.ComboOrderStatus;
         
 
         return result;

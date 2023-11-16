@@ -24,6 +24,7 @@ public class OrderResponse
     public virtual WeddingInformationResponse? WeddingInformation { get; set; }
     public virtual List<OrderDetailResponse> OrderDetails { get; set; }
     public virtual List<OrderDetailResponse>? ComboOrderDetails { get; set; }
+    public OrderDetailStatus? ComboOrderStatus { get; set; }
 }
 
 public enum StatusOrder
