@@ -42,7 +42,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskR
         task.Id = Guid.NewGuid();
         task.Code = GenCode.NextId(code);
         task.CreateDate = DateTime.UtcNow;
-        task.Status = (int)TaskStatus.EXPECTED;
+        task.Status = (int)TaskStatus.TO_DO;
         
         task = await _taskRepo.CreateTask(task);
         
