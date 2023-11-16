@@ -61,7 +61,9 @@ public class OrderController : BaseController
     public async Task<IActionResult> CreateOrder([FromBody] CreateOrderCommand request, CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(request, cancellationToken);
-        return Ok(result);
+        
+        var result2 = await this.Mediator.Send(new GetOrderByIdQuery(result.Id), cancellationToken);
+        return Ok(result2);
     }
     
     [ApiVersion("3")]

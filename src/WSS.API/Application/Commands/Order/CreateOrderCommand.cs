@@ -193,15 +193,6 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         order.WeddingInformation = null;
         order.Combo = null;
         order = await _orderRepo.CreateOrder(order);
-
-        order = await _orderRepo.GetOrderById(order.Id, new Expression<Func<Data.Models.Order, object>>[]
-        {
-            o => o.Combo,
-            o => o.Voucher,
-            // o => o.Customer,
-            o => o.WeddingInformation,
-            o => o.OrderDetails,
-        });
         
         return _mapper.Map<OrderResponse>(order);
     }

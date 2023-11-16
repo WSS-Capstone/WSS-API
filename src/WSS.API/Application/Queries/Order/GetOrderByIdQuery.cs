@@ -54,22 +54,7 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
         var order = await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
         var result = this._mapper.Map<OrderResponse>(order);
         var comboS = result.Combo?.ComboServices?.ToList() ?? new List<ServiceResponse>();
-        result.OrderDetails.ForEach(od =>
-        {
-            if (od.ServiceId != null)
-            {
-                var service = comboS.FirstOrDefault(s => s.Id == od.ServiceId);
-                if (service != null)
-                {
-                    od.InCombo = true;
-                }
-            }
-            
-            od.Service.Category.Services.Clear();
-            od.Service.ComboServices.Clear();
-        });
-        result.Combo?.ComboServices.Clear();
-        
+   
         result.ComboOrderDetails = result.OrderDetails.Where(od => od.InCombo).ToList();
         result.OrderDetails = result.OrderDetails.Where(od => !od.InCombo).ToList();
         result.ComboOrderDetails = new List<OrderDetailResponse>();
