@@ -15,6 +15,8 @@ public class GetServicesQuery : PagingParam<ServiceSortCriteria>, IRequest<Pagin
 
     public Guid? PartnetId { get; set; }
 
+    public bool? OwnerService { get; set; } = null;
+
     public DateTime? CreatedAtFrom { get; set; }
     public DateTime? CreatedAtTo { get; set; }
 }
@@ -119,6 +121,19 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
         if (!string.IsNullOrEmpty(request.Name))
         {
             query = query.Where(s => s.Name.Contains(request.Name));
+        }
+
+        if (request.OwnerService != null)
+        {
+            if ((bool)request.OwnerService)
+            {
+                query = query.Where(s => s.CreateByNavigation != null && s.CreateByNavigation.RoleName == RoleName.OWNER);
+            }
+
+            if (!(bool)request.OwnerService)
+            {
+                query = query.Where(s => s.CreateByNavigation == null || s.CreateByNavigation.RoleName == RoleName.PARTNER);
+            }
         }
         
         var total = await query.CountAsync(cancellationToken: cancellationToken);

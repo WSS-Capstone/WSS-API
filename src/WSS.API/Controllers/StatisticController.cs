@@ -22,7 +22,7 @@ public class StatisticController : BaseController
     
         
     [HttpGet("revenue")]
-    public async Task<IActionResult> GetStatisticRevenue([FromQuery] CountStatusTaskQuery query,
+    public async Task<IActionResult> GetStatisticRevenue([FromQuery] GetRevenueQuery query,
         CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(query, cancellationToken);

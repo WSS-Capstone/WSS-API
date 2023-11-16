@@ -4,6 +4,7 @@ namespace WSS.API.Application.Queries.Statistic;
 
 public class GetRevenueQuery : IRequest<RevenueProfixRespponse>
 {
+    public DateTime FromDate { get; set; }
     public TypeStatistic Type { get; set; } = TypeStatistic.Day;
 }
 
