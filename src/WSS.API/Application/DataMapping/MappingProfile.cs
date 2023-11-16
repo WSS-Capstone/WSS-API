@@ -231,7 +231,7 @@ public class MappingProfile : Profile
         this.CreateMap<OrderDetail, OrderDetailResponse>()
             .ForMember(dto => dto.Status,
                 opt => opt.MapFrom(src =>
-                    src.Status != null ? (OrderDetailStatus)src.Status : OrderDetailStatus.INACTIVE))
+                    src.Status != null ? (OrderDetailStatus)src.Status : OrderDetailStatus.INPROCESS))
             .ReverseMap();
 
         this.CreateMap<OrderDetail, OrderDetailRequest>().ReverseMap();

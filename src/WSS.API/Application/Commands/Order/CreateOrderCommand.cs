@@ -165,7 +165,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                 orderDetail.EndTime = orderDetail.StartTime.Value.AddDays(1);
                 orderDetail.OrderId = order.Id;
                 orderDetail.Price = serviceDetail?.CurrentPrices?.Price;
-                orderDetail.Status = (int)OrderDetailStatus.ACTIVE;
+                orderDetail.Status = (int)OrderDetailStatus.PENDING;
             }
 
             var totalPrice = orderDetails.Sum(od => od.Price);

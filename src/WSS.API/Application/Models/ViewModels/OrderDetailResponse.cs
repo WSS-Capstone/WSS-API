@@ -18,11 +18,12 @@ public class OrderDetailResponse
     public ICollection<FeedbackResponse> Feedbacks { get; set; }
     public ICollection<TaskResponse> Tasks { get; set; }
     public bool InCombo { get; set; } = false;
+    
 }
 
 public enum OrderDetailStatus
 {
-    ACTIVE = 1,
-    INACTIVE = 2,
-    DELETED = 3,
+    PENDING = 1,
+    INPROCESS = 2,
+    DONE = 3,
 }
