@@ -61,7 +61,7 @@ public class VnPayPaymentService : IVnPayPaymentService
         pay.AddRequestData("vnp_CurrCode", CurrCode);
         pay.AddRequestData("vnp_IpAddr", pay.GetIpAddress(context));
         pay.AddRequestData("vnp_Locale", Locale);
-        pay.AddRequestData("vnp_OrderInfo", payment.CustomerId.ToString());
+        pay.AddRequestData("vnp_OrderInfo", payment.CustomerId + "|" + payment.OrderType);
         pay.AddRequestData("vnp_OrderType", payment.OrderType.ToString());
         pay.AddRequestData("vnp_ReturnUrl", urlCallBack);
         pay.AddRequestData("vnp_TxnRef", payment.OrderReferenceId.ToString());
@@ -97,14 +97,15 @@ public class VnPayPaymentService : IVnPayPaymentService
                 }
             }
 
+            var orderRequest = vnpay.GetResponseData("vnp_OrderInfo");
+            var customerId = orderRequest.Split("|")[0];
+            var orderType = orderRequest.Split("|")[1];
             var orderId = Convert.ToString(vnpay.GetResponseData("vnp_TxnRef"));
             var totalAmount = Convert.ToInt64(vnpay.GetResponseData("vnp_Amount")) / 100;
             string vnpResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
             string vnpTransactionStatus = vnpay.GetResponseData("vnp_TransactionStatus");
-            string orderType = vnpay.GetResponseData("vnp_OrderType");
             String vnpSecureHash = context.Request.Query["vnp_SecureHash"];
             bool checkSignature = vnpay.ValidateSignature(vnpSecureHash, vnpHashSecret);
-            var customerId = vnpay.GetResponseData("vnp_OrderInfo");
             var order = await _orderRepo.GetOrderById(Guid.Parse(orderId));
             if (order == null) throw new Exception("Order not found");
             if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
