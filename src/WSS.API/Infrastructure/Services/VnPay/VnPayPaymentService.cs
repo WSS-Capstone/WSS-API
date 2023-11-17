@@ -48,7 +48,7 @@ public class VnPayPaymentService : IVnPayPaymentService
         if (orderInDb == null)
             throw new Exception("Order not found");
         
-        payment.Amount = payment.OrderType == OrderType.Payment ? orderInDb.TotalAmountRequest : orderInDb.TotalAmount;
+        payment.Amount = payment.OrderType == OrderType.Deposit ? orderInDb.TotalAmountRequest : orderInDb.TotalAmount;
         payment.CustomerId = userId;
         
         var urlCallBack = $"{_vnPaySettings.CallbackUrl}";
@@ -140,7 +140,7 @@ public class VnPayPaymentService : IVnPayPaymentService
                     response.Status = PaymentStatus.Success;
                     
                     order.StatusOrder = (int)StatusOrder.CONFIRM;
-                    order.StatusPayment = (int)StatusPayment.DONE;
+                    order.StatusPayment = (int)StatusPayment.DOING;
                     await _orderRepo.UpdateOrder(order);
                 
                     var code = await _paymentHistoryRepo.GetPaymentHistorys().OrderByDescending(x => x.Code)
