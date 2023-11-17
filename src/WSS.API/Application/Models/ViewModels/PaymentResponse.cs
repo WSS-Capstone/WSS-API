@@ -6,7 +6,7 @@ public class PaymentResponse
 {
     public string? LinkPay { get; set; }
     public PaymentStatus Status { get; set; }
-    public OrderType OrderType { get; set; }
+    public string OrderType { get; set; }
 }
 public enum PaymentStatus
 {

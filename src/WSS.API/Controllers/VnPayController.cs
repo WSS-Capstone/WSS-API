@@ -14,21 +14,21 @@ public class VnPayController : BaseController
         _vnPayPaymentService = vnPayPaymentService;
     }
 
-    // <summary>
-    /// [Guest] Endpoint for company create url payment with condition
-    /// 
-    /// <param name="payment">An object payment</param>
-    /// <returns>List of user</returns>
-    /// <response code="200">Returns the list of user</response>
-    /// <response code="204">Returns if list of user is empty</response>
-    /// <response code="403">Return if token is access denied</response>
-    [HttpGet]
-    [AllowAnonymous]
-    public async Task<IActionResult> Get([FromQuery] VnPayPayment payment)
-    {
-        var result = await _vnPayPaymentService.CreatePayment(payment);
-        return result != null ? Ok(result) : NotFound();
-    }
+    // // <summary>
+    // /// [Guest] Endpoint for company create url payment with condition
+    // /// 
+    // /// <param name="payment">An object payment</param>
+    // /// <returns>List of user</returns>
+    // /// <response code="200">Returns the list of user</response>
+    // /// <response code="204">Returns if list of user is empty</response>
+    // /// <response code="403">Return if token is access denied</response>
+    // [HttpGet]
+    // [AllowAnonymous]
+    // public async Task<IActionResult> Get([FromQuery] VnPayPayment payment)
+    // {
+    //     var result = await _vnPayPaymentService.CreatePayment(payment);
+    //     return result != null ? Ok(result) : NotFound();
+    // }
     
     [HttpGet]
     [ApiVersion("1")]
@@ -42,7 +42,7 @@ public class VnPayController : BaseController
         });
         return result != null ? Ok(result) : NotFound();
     }
-    // <summary>
+    //  <summary>
     /// [Guest] Endpoint for company create url payment with condition
     /// 
     /// <param name="businessPayment">An object payment</param>
@@ -53,7 +53,6 @@ public class VnPayController : BaseController
     [HttpGet("confirm")]
     [AllowAnonymous]
     [ApiVersion("1")]
-    [ApiVersion("2")]
     [ApiVersion("3")]
 
     public async Task<IActionResult> Get()

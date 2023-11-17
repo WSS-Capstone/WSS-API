@@ -72,7 +72,7 @@ public class VnPayPaymentService : IVnPayPaymentService
 
         var pm = new PaymentResponse
         {
-            OrderType = payment.OrderType,
+            OrderType = payment.OrderType.ToString(),
             Status = PaymentStatus.Pending,
             LinkPay = paymentUrl
         };
@@ -105,36 +105,63 @@ public class VnPayPaymentService : IVnPayPaymentService
             String vnpSecureHash = context.Request.Query["vnp_SecureHash"];
             bool checkSignature = vnpay.ValidateSignature(vnpSecureHash, vnpHashSecret);
             var customerId = vnpay.GetResponseData("vnp_OrderInfo");
-
+            var order = await _orderRepo.GetOrderById(Guid.Parse(orderId));
+            if (order == null) throw new Exception("Order not found");
             if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
             {
-                response.OrderType = OrderType.Deposit;
-                response.Status = PaymentStatus.Success;
-                
-                var order = await _orderRepo.GetOrderById(Guid.Parse(orderId));
-                if (order == null) throw new Exception("Order not found");
-                order.StatusOrder = (int)StatusOrder.DONE;
-                order.StatusPayment = (int)StatusPayment.DONE;
-                await _orderRepo.UpdateOrder(order);
-                
-                var code = await _paymentHistoryRepo.GetPaymentHistorys().OrderByDescending(x => x.Code)
-                    .Select(x => x.Code)
-                    .FirstOrDefaultAsync();
-                var paymentHistory = new PaymentHistory()
+                if (orderType == OrderType.Payment.ToString())
                 {
-                    Id = Guid.NewGuid(),
-                    OrderId = Guid.Parse(orderId),
-                    CreateBy = Guid.Parse(customerId),
-                    TotalAmount = totalAmount,
-                    CreateDate = DateTime.UtcNow,
-                    PaymentType = orderType,
-                    Code = GenCode.NextId(code)
-                };
-                await _paymentHistoryRepo.CreatePaymentHistory(paymentHistory);
+                    response.OrderType = orderType;
+                    response.Status = PaymentStatus.Success;
+                    
+                    order.StatusOrder = (int)StatusOrder.DONE;
+                    order.StatusPayment = (int)StatusPayment.DONE;
+                    await _orderRepo.UpdateOrder(order);
+                
+                    var code = await _paymentHistoryRepo.GetPaymentHistorys().OrderByDescending(x => x.Code)
+                        .Select(x => x.Code)
+                        .FirstOrDefaultAsync();
+                    var paymentHistory = new PaymentHistory()
+                    {
+                        Id = Guid.NewGuid(),
+                        OrderId = Guid.Parse(orderId),
+                        CreateBy = Guid.Parse(customerId),
+                        TotalAmount = totalAmount,
+                        CreateDate = DateTime.UtcNow,
+                        PaymentType = orderType,
+                        Code = GenCode.NextId(code)
+                    };
+                    await _paymentHistoryRepo.CreatePaymentHistory(paymentHistory);
+                }
+                else if (orderType == OrderType.Deposit.ToString())
+                {
+                    response.OrderType = orderType;
+                    response.Status = PaymentStatus.Success;
+                    
+                    order.StatusOrder = (int)StatusOrder.CONFIRM;
+                    order.StatusPayment = (int)StatusPayment.DONE;
+                    await _orderRepo.UpdateOrder(order);
+                
+                    var code = await _paymentHistoryRepo.GetPaymentHistorys().OrderByDescending(x => x.Code)
+                        .Select(x => x.Code)
+                        .FirstOrDefaultAsync();
+                    var paymentHistory = new PaymentHistory()
+                    {
+                        Id = Guid.NewGuid(),
+                        OrderId = Guid.Parse(orderId),
+                        CreateBy = Guid.Parse(customerId),
+                        TotalAmount = totalAmount,
+                        CreateDate = DateTime.UtcNow,
+                        PaymentType = orderType,
+                        Code = GenCode.NextId(code)
+                    };
+                    await _paymentHistoryRepo.CreatePaymentHistory(paymentHistory);
+                }
+                
             }
             else
             {
-                response.OrderType = OrderType.Deposit;
+                response.OrderType = orderType;
                 response.Status = PaymentStatus.Failed;
             }
         }
