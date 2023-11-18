@@ -44,7 +44,7 @@ public class VnPayController : BaseController
         return result != null ? Ok(result) : NotFound();
     }
     
-    [HttpGet("partner")]
+    [HttpPost]
     [ApiVersion("2")]
     public async Task<IActionResult> GetLinkPartner([FromForm] VNPayRequestPartner payment)
     {
