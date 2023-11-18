@@ -29,7 +29,8 @@ public class UpdateComboCommandHandler : IRequestHandler<UpdateComboCommand, Com
     private readonly IServiceRepo _serviceRepo;
     private readonly IComboServiceRepo _comboServiceRepo;
 
-    public UpdateComboCommandHandler(IComboRepo comboRepo, IMapper mapper, IServiceRepo serviceRepo, IComboServiceRepo comboServiceRepo)
+    public UpdateComboCommandHandler(IComboRepo comboRepo, IMapper mapper, IServiceRepo serviceRepo,
+        IComboServiceRepo comboServiceRepo)
     {
         _comboRepo = comboRepo;
         _mapper = mapper;
@@ -43,18 +44,19 @@ public class UpdateComboCommandHandler : IRequestHandler<UpdateComboCommand, Com
         {
             c => c.ComboServices
         });
-        
+
         if (comboInDb == null)
         {
             throw new Exception("Combo not found");
         }
-        
+
         var combo = _mapper.Map(request, comboInDb);
-        
-        var serviceInCombo = await this._serviceRepo.GetServices(s => request.ComboServicesId.Contains(s.Id), new Expression<Func<Data.Models.Service, object>>[]
-        {
-            s => s.CurrentPrices
-        }).ToListAsync(cancellationToken: cancellationToken);
+
+        var serviceInCombo = await this._serviceRepo.GetServices(s => request.ComboServicesId.Contains(s.Id),
+            new Expression<Func<Data.Models.Service, object>>[]
+            {
+                s => s.CurrentPrices
+            }).ToListAsync(cancellationToken: cancellationToken);
         serviceInCombo.ForEach(s => s.Category?.Services.Clear());
         var serviceWprice = this._mapper.ProjectTo<ServiceResponse>(serviceInCombo.AsQueryable()).ToList();
         var serviceCombos = serviceWprice.Select(s => new ComboService()
@@ -64,16 +66,16 @@ public class UpdateComboCommandHandler : IRequestHandler<UpdateComboCommand, Com
             ComboId = comboInDb.Id,
             CreateDate = DateTime.Now
         }).ToList();
-        
+
         var totalAmount = serviceWprice.Sum(s => s.CurrentPrices?.Price ?? 0);
-        
+
         combo.ComboServices = serviceWprice.Count != 0 ? serviceCombos : null;
         combo.TotalAmount = totalAmount;
 
         var query = await _comboRepo.UpdateCombo(combo);
-        
+
         var result = this._mapper.Map<ComboResponse>(query);
-        
+
         return result;
     }
 }

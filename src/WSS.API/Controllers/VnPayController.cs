@@ -3,6 +3,7 @@ using WSS.API.Application.Models.Requests;
 using WSS.API.Infrastructure.Services.VnPay;
 
 namespace WSS.API.Controllers;
+
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class VnPayController : BaseController
@@ -29,7 +30,7 @@ public class VnPayController : BaseController
     //     var result = await _vnPayPaymentService.CreatePayment(payment);
     //     return result != null ? Ok(result) : NotFound();
     // }
-    
+
     [HttpGet]
     [ApiVersion("1")]
     [ApiVersion("3")]
@@ -42,11 +43,24 @@ public class VnPayController : BaseController
         });
         return result != null ? Ok(result) : NotFound();
     }
+    
+    [HttpGet("partner")]
+    [ApiVersion("2")]
+    public async Task<IActionResult> GetLinkPartner([FromForm] VNPayRequestPartner payment)
+    {
+        var result = await _vnPayPaymentService.CreatePaymentPartner(new VnPayPayment()
+        {
+            OrderReferenceId = payment.OrderReferenceId,
+            OrderType = payment.OrderType,
+            Image = payment.Image
+        });
+        return result != null ? Ok(result) : NotFound();
+    }
+
     //  <summary>
-    /// [Guest] Endpoint for company create url payment with condition
+    /// [Guest] Endpoint confirm payment
     /// 
-    /// <param name="businessPayment">An object payment</param>
-    /// <returns>List of user</returns>
+    /// <returns>Status payment</returns>
     /// <response code="200">Returns the list of user</response>
     /// <response code="204">Returns if list of user is empty</response>
     /// <response code="403">Return if token is access denied</response>
@@ -54,10 +68,25 @@ public class VnPayController : BaseController
     [AllowAnonymous]
     [ApiVersion("1")]
     [ApiVersion("3")]
-
     public async Task<IActionResult> Get()
     {
         var result = await _vnPayPaymentService.Confirm();
+        return result != null ? Ok(result) : NotFound();
+    }
+    
+    //  <summary>
+    /// [Guest] Endpoint confirm payment
+    /// 
+    /// <returns>Status payment</returns>
+    /// <response code="200">Returns the list of user</response>
+    /// <response code="204">Returns if list of user is empty</response>
+    /// <response code="403">Return if token is access denied</response>
+    [HttpGet("partner/confirm")]
+    [AllowAnonymous]
+    [ApiVersion("2")]
+    public async Task<IActionResult> Confirm()
+    {
+        var result = await _vnPayPaymentService.PartnerConfirm();
         return result != null ? Ok(result) : NotFound();
     }
 }

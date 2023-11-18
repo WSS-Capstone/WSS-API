@@ -20,4 +20,7 @@ public class VnPaySettings
 
     [Required]
     public string CallbackUrl { get; set; } = default!;
+    
+    [Required]
+    public string CallbackUrlPartner { get; set; } = default!;
 }
