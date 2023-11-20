@@ -2,6 +2,7 @@ namespace WSS.API.Application.Models.ViewModels;
 
 public class UserResponse
 {
+    public Guid Id { get; set; }
     public string? Fullname { get; set; }
     public DateTime? DateOfBirth { get; set; }
     public string? Phone { get; set; }
