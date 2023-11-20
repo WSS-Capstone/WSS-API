@@ -102,4 +102,19 @@ public class FeedbackController : BaseController
 
         return Ok(result);
     }
+    
+    [ApiVersion("1")]
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> UpdateStatusFeedback([FromRoute] Guid id, FeedbackStatus status,
+        CancellationToken cancellationToken = default)
+    {
+        var userId = await this._identitySvc.GetUserId();
+        var result = await this.Mediator.Send(new UpdateStatusFeedbackCommand()
+        {
+            Id = id,
+            Status = status
+        }, cancellationToken);
+
+        return Ok(result);
+    }
 }

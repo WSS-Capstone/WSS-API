@@ -71,19 +71,19 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
     {
         var query = _repo.GetServices(null, new Expression<Func<Data.Models.Service, object>>[]
         {
-            s => s.Category,
+            // s => s.Category,
             s => s.CurrentPrices,
             s => s.ServiceImages,
-            s => s.OrderDetails.Select(o => o.Order),
-            s => s.OrderDetails.Select(o => o.Feedbacks),
+            // s => s.OrderDetails.Select(o => o.Order),
+            // s => s.OrderDetails.Select(o => o.Feedbacks),
             s => s.CreateByNavigation,
         });
         
         query = query
             .Include(s => s.Category)
             .ThenInclude(c => c.Commision);
-        query = query.Include(s => s.ComboServices)
-            .ThenInclude(c => c.Combo);
+        // query = query.Include(s => s.ComboServices)
+        //     .ThenInclude(c => c.Combo);
         
         if(request.Status != null || request.Status?.Length > 0)
         {
@@ -170,7 +170,7 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
             // r.IsOwnerService = r.CreateByNavigation?.RoleName == RoleName.OWNER;
             r.ComboServices?.ForEach(c =>
             {
-                c.Combo?.ComboServices.Clear();
+                c.Combo?.ComboServices?.Clear();
             });
         });
         
