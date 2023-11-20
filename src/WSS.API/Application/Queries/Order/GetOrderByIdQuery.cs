@@ -26,17 +26,17 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
     {
         var query = _repo.GetOrders(o => o.Id == request.Id, new Expression<Func<Data.Models.Order, object>>[]
         {
-            o => o.OrderDetails,
+            // o => o.OrderDetails,
             o => o.Customer,
             o => o.WeddingInformation,
-            o => o.Combo,
+            // o => o.Combo,
             o => o.Voucher,
             o => o.PaymentHistories,
             o => o.PartnerPaymentHistories
         });
-        query = query
-            .Include(o => o.OrderDetails)
-            .ThenInclude(p => p.Service);
+        // query = query
+        //     .Include(o => o.OrderDetails)
+        //     .ThenInclude(p => p.Service);
 
         query = query
             .Include(o => o.Combo)

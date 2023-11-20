@@ -9,6 +9,7 @@ public class AddNewComboCommand : IRequest<ComboResponse>
     public string? Name { get; set; }
     public double? DiscountValueCombo { get; set; }
     public string? Description { get; set; }
+    public string? ImageUrl { get; set; }
     public Guid[] ComboServicesId { get; set; }
 }
 
@@ -39,8 +40,8 @@ public class AddNewComboCommandHandler : IRequestHandler<AddNewComboCommand, Com
             {
                 s => s.CurrentPrices
             }).ToListAsync(cancellationToken: cancellationToken);
-        serviceInCombo.ForEach(s => s.Category?.Services.Clear());
-        var serviceWprice = this._mapper.ProjectTo<ServiceResponse>(serviceInCombo.AsQueryable()).ToList();
+        
+        var serviceWprice = this._mapper.Map<List<ServiceResponse>>(serviceInCombo);
         var serviceCombos = serviceWprice.Select(s => new ComboService()
         {
             ServiceId = s.Id,
