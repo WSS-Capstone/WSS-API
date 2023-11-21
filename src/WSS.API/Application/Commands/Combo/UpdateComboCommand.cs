@@ -12,12 +12,14 @@ public class UpdateComboCommand : IRequest<ComboResponse>
         Name = command.Name;
         DiscountValueCombo = command.DiscountValueCombo;
         Description = command.Description;
+        ImageUrl = command.ImageUrl;
         ComboServicesId = command.ComboServicesId;
     }
 
     public Guid Id { get; set; }
     public string? Name { get; set; }
     public double? DiscountValueCombo { get; set; }
+    public string? ImageUrl { get; set; }
     public string? Description { get; set; }
     public Guid[] ComboServicesId { get; set; }
 }
@@ -57,8 +59,8 @@ public class UpdateComboCommandHandler : IRequestHandler<UpdateComboCommand, Com
             {
                 s => s.CurrentPrices
             }).ToListAsync(cancellationToken: cancellationToken);
-        serviceInCombo.ForEach(s => s.Category?.Services.Clear());
-        var serviceWprice = this._mapper.ProjectTo<ServiceResponse>(serviceInCombo.AsQueryable()).ToList();
+        // serviceInCombo.ForEach(s => s.Category?.Services.Clear());
+        var serviceWprice = this._mapper.Map<List<ServiceResponse>>(serviceInCombo);
         var serviceCombos = serviceWprice.Select(s => new ComboService()
         {
             Id = Guid.NewGuid(),
