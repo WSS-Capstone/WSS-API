@@ -131,7 +131,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                 comboResponse = rcombo == null ? null : _mapper.Map<ComboResponse>(rcombo);
             }
             
-          
+            
             foreach (var orderDetail in orderDetails)
             {
                 orderDetail.Id = Guid.NewGuid();
@@ -157,8 +157,11 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                     task.Code = GenCode.NextId(codeTask);
                     task.CreateDate = DateTime.UtcNow;
                     task.CreateBy = userId;
-                    
-                    await _taskRepo.CreateTask(task);
+                    orderDetail.Tasks = new List<Data.Models.Task>()
+                    {
+                        task
+                    };
+                    // await _taskRepo.CreateTask(task);
                 }
 
                 orderDetail.StartTime = orderDetail.StartTime;
