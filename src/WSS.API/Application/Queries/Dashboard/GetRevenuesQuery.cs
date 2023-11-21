@@ -11,14 +11,12 @@ public class GetDashboardQuery : IRequest<DashboardResponse>
 {
     public DateTime? Month { get; set; }
     public DateTime? Year { get; set; }
-    public Guid? ServiceId { get; set; }
 }
 
 public class RevenueRequest
 {
     public DateTime? Month { get; set; }
     public DateTime? Year { get; set; }
-    public Guid? ServiceId { get; set; }
 }
 
 public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, DashboardResponse>

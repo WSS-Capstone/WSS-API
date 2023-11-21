@@ -22,8 +22,7 @@ public class DashboardController : BaseController
         var result = await this.Mediator.Send(new GetDashboardQuery()
         {
             Month = query.Month,
-            Year = query.Year,
-            ServiceId = query.ServiceId
+            Year = query.Year
         }, cancellationToken);
 
         return Ok(result);
