@@ -173,6 +173,8 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
                 c.Combo?.ComboServices?.Clear();
             });
         });
+
+        result = result.OrderBy(o => o.Status).ToList();
         
         return new PagingResponseQuery<ServiceResponse, ServiceSortCriteria>(request, result.AsQueryable(), total);
     }

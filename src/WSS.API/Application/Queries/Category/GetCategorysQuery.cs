@@ -19,6 +19,7 @@ public enum CategorySortCriteria
     Id,
     Name,
     Description,
+    Status,
     CreateDate
 }
 
