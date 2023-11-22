@@ -9,6 +9,9 @@ public class PartnerPaymentHistoryResponse
     public double? Total { get; set; }
     public string? ImageUrl { get; set; }
     public DateTime? CreateDate { get; set; }
+    
+    public virtual OrderResponse? Order { get; set; }
+    public virtual UserResponse? Partner { get; set; }
 }
 
 public enum PartnerPaymentHistoryStatus

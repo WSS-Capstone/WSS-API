@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using WSS.API.Application.Commands.PaymentHistory;
 using WSS.API.Application.Queries.PaymentHistory;
 
@@ -11,6 +12,16 @@ public class PaymentHistoryController : BaseController
     
     [HttpGet]
     public async Task<IActionResult> GetPaymentHistorys([FromQuery] GetPaymentHistoriesQuery query,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(query, cancellationToken);
+
+        return Ok(result);
+    }
+    
+    
+    [HttpGet("partner")]
+    public async Task<IActionResult> GetPaymentHistoryPartners([FromQuery] GetPartnerPaymentHistoryQuery query,
         CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(query, cancellationToken);
