@@ -3,6 +3,7 @@ namespace WSS.API.Application.Models.ViewModels;
 public class PartnerPaymentHistoryResponse
 {
     public Guid Id { get; set; }
+    public string? Code { get; set; }
     public Guid? PartnerId { get; set; }
     public Guid? OrderId { get; set; }
     public PartnerPaymentHistoryStatus? Status { get; set; }
