@@ -5,7 +5,14 @@ namespace WSS.API.Application.Queries.PaymentHistory;
 public class GetPartnerPaymentHistoryQuery : PagingParam<PartnerPaymentHistorySortCriteria>,
     IRequest<PagingResponseQuery<PartnerPaymentHistoryResponse, PartnerPaymentHistorySortCriteria>>
 {
+    public Guid? PartnerId { get; set; }
 }
+
+public class PartnerPaymentHistoryPartnerRequest : PagingParam<PartnerPaymentHistorySortCriteria>
+{
+}
+
+
 
 public enum PartnerPaymentHistorySortCriteria
 {
@@ -40,6 +47,9 @@ public class GetPartnerPaymentHistoryQueryHandler : IRequestHandler<GetPartnerPa
         });
         var total = await query.CountAsync(cancellationToken: cancellationToken);
 
+        if(request.PartnerId != null)
+            query = query.Where(p => p.PartnerId == request.PartnerId);
+        
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
 
         query = query.GetWithPaging(request.Page, request.PageSize);
