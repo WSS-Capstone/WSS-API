@@ -15,6 +15,9 @@ public class PaymentHistoryController : BaseController
     }
     
     [HttpGet]
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     public async Task<IActionResult> GetPaymentHistorys([FromQuery] GetPaymentHistoriesQuery query,
         CancellationToken cancellationToken = default)
     {
@@ -50,7 +53,7 @@ public class PaymentHistoryController : BaseController
     }
     
     [HttpPatch("partner/{id}/status")]
-    [AllowAnonymous]
+    [ApiVersion("1")]
     public async Task<IActionResult> UpdatePaymentHistoryPartnerStatus([FromRoute] Guid id, PartnerPaymentHistoryStatus status,
         CancellationToken cancellationToken = default)
     {
@@ -64,6 +67,9 @@ public class PaymentHistoryController : BaseController
     }
     
     [HttpGet("{customerId}")]
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     public async Task<IActionResult> GetPaymentHistoryByCustomerId([FromRoute] Guid customerId, CancellationToken cancellationToken = default)
     {
         PaymentHistoryResponse? result = await this.Mediator.Send(new GetPaymentHistoryByCustomerIdQuery(customerId), cancellationToken);
@@ -71,6 +77,9 @@ public class PaymentHistoryController : BaseController
         return result != null ? Ok(result) : NotFound();
     }
     [HttpPost]
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     public async Task<IActionResult> CreatePaymentHistory([FromBody] CreatePaymentHistoryCommand request, CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(request, cancellationToken);
@@ -78,6 +87,9 @@ public class PaymentHistoryController : BaseController
     }
     
     [HttpPut("{id}")]
+    [ApiVersion("1")]
+    [ApiVersion("2")]
+    [ApiVersion("3")]
     public async Task<IActionResult> UpdatePaymentHistory([FromRoute] Guid id, [FromBody] UpdatePaymentHistoryRequest request,
         CancellationToken cancellationToken = default)
     {
