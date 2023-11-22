@@ -164,4 +164,17 @@ public class ServiceController: BaseController
 
         return result != null ? Ok(result) : BadRequest();
     }
+    
+    [HttpPatch("{id}/status")]
+    public async Task<IActionResult> UpdateServiceStatus([FromRoute] Guid id, ServiceStatus status,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(new UpdateServiceStatusCommand()
+        {
+            Id = id,
+            Status = status
+        }, cancellationToken);
+
+        return Ok(result);
+    }
 }

@@ -83,4 +83,17 @@ public class CategoryController : BaseController
 
         return Ok(result);
     }
+    
+    [HttpPatch("{id}/status")]
+    public async Task<IActionResult> UpdateCategoryStatus([FromRoute] Guid id, CategoryStatus status,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(new UpdateCategoryStatusCommand()
+        {
+            Id = id,
+            Status = status
+        }, cancellationToken);
+
+        return Ok(result);
+    }
 }
