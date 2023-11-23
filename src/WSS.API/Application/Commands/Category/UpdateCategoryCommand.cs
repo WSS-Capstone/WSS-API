@@ -12,7 +12,6 @@ public class UpdateCategoryCommand : IRequest<CategoryResponse>
         Description = command.Description;
         CommissionValue = command.CommissionValue;
         IsOrderLimit = command.IsOrderLimit;
-        Status = command.Status;
     }
 
     public Guid Id { get; set; }
@@ -21,7 +20,6 @@ public class UpdateCategoryCommand : IRequest<CategoryResponse>
     public string? Description { get; set; }
     public bool? IsOrderLimit { get; set; }
     public float? CommissionValue { get; set; }
-    public CategoryStatus? Status { get; set; }
 }
 
 public class UpdateCategoryRequest
@@ -32,7 +30,6 @@ public class UpdateCategoryRequest
     public string? Description { get; set; }
     public float? CommissionValue { get; set; }
     public bool? IsOrderLimit { get; set; }
-    public CategoryStatus? Status { get; set; }
 }
 
 
