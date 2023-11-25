@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using WSS.API.Application.Commands.Task;
 using WSS.API.Application.Queries.Task;
 using WSS.API.Infrastructure.Services.Identity;
@@ -16,6 +17,7 @@ public class TaskController : BaseController
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetTasks([FromQuery] GetTasksQuery query,
         CancellationToken cancellationToken = default)
     {

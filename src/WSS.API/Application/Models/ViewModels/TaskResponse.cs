@@ -7,8 +7,7 @@ public class TaskResponse
     public UserResponse? Staff { get; set; }
     public UserResponse? Partner { get; set; }
 
-    public List<OrderDetailResponse?>? OrderDetails { get; set; }
-    public virtual ICollection<TaskOrderDetailsResponse> TaskOrderDetails { get; set; }
+    public virtual OrderDetailResponse? OrderDetail { get; set; }
     public string? TaskName { get; set; }
 
     public DateTime? StartDate { get; set; }

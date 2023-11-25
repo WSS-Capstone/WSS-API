@@ -55,15 +55,15 @@ public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagingRespons
     {
         var query = _categoryRepo.GetTasks(null, new Expression<Func<Data.Models.Task, object>>[]
         {
-            t => t.TaskOrderDetails,
+            t => t.OrderDetail,
             t => t.Partner,
             t => t.Staff,
             t => t.Comments,
-            t => t.CreateByNavigation
+            t => t.CreateByNavigation,
         });
 
-        query = query.Include(t => t.TaskOrderDetails).ThenInclude(k => k.OrderDetail).ThenInclude(o => o.Order);
-        query = query.Include(t => t.TaskOrderDetails).ThenInclude(k => k.OrderDetail).ThenInclude(o => o.Service);
+        query = query.Include(t => t.OrderDetail).ThenInclude(k => k.Order).ThenInclude(o => o.Customer);
+        query = query.Include(t => t.OrderDetail).ThenInclude(k => k.Service);
         
         if (request.UserId != null)
         {
@@ -121,9 +121,10 @@ public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagingRespons
         var result = this._mapper.Map<List<TaskResponse>>(list);
         result.ForEach(t =>
         {
-            t.OrderDetails = t.TaskOrderDetails.Select(x => _mapper.Map<OrderDetailResponse>(x.OrderDetail))
-                .ToList();
-            t.TaskOrderDetails.Clear();
+            t.OrderDetail.Tasks.Clear();
+            // t.OrderDetails = t.TaskOrderDetails.Select(x => _mapper.Map<OrderDetailResponse>(x.OrderDetail))
+            //     .ToList();
+            // t.TaskOrderDetails.Clear();
             // t.Order?.OrderDetails.Clear();
             // t.OrderDetail.Order = null;
             // t.OrderDetail.Service = null;

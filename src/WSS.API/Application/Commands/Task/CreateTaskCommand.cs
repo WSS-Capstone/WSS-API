@@ -31,14 +31,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskR
         var code = await _taskRepo.GetTasks().OrderByDescending(x => x.Code).Select(x => x.Code)
             .FirstOrDefaultAsync(cancellationToken);
         var task = _mapper.Map<Data.Models.Task>(request);
-        task.TaskOrderDetails = new List<TaskOrderDetail>()
-        {
-            new TaskOrderDetail()
-            {
-                OrderDetailId = (Guid)request.OrderDetailId,
-                
-            }
-        };
+        task.OrderDetailId = (Guid)request.OrderDetailId;
         task.Id = Guid.NewGuid();
         task.Code = GenCode.NextId(code);
         task.CreateDate = DateTime.UtcNow;

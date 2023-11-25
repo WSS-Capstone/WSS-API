@@ -305,8 +305,8 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.Status != null ? (TaskStatus)src.Status : TaskStatus.TO_DO))
             .ForMember(dto => dto.CreateBy,
                 opt => opt.MapFrom(src => src.CreateByNavigation))
-            // .ForMember(dto => dto.OrderDetail,
-            //     opt => opt.MapFrom(src => new List<OrderDetailResponse>(){ src.OrderDetail }))
+            .ForMember(dto => dto.OrderDetail,
+                opt => opt.MapFrom(src => src.OrderDetail))
             .ReverseMap();
 
         this.CreateMap<Task, CreateTaskCommand>().ReverseMap();

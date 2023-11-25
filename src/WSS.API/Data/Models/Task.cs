@@ -8,7 +8,6 @@ namespace WSS.API.Data.Models
         public Task()
         {
             Comments = new HashSet<Comment>();
-            TaskOrderDetails = new HashSet<TaskOrderDetail>();
         }
 
         public string? Code { get; set; }
@@ -32,6 +31,5 @@ namespace WSS.API.Data.Models
         public virtual User? Partner { get; set; }
         public virtual User? Staff { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
-        public virtual ICollection<TaskOrderDetail> TaskOrderDetails { get; set; }
     }
 }

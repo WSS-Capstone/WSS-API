@@ -8,7 +8,6 @@ namespace WSS.API.Data.Models
         public OrderDetail()
         {
             Feedbacks = new HashSet<Feedback>();
-            TaskOrderDetails = new HashSet<TaskOrderDetail>();
             Tasks = new HashSet<Task>();
         }
 
@@ -25,7 +24,6 @@ namespace WSS.API.Data.Models
         public virtual Order? Order { get; set; }
         public virtual Service? Service { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
-        public virtual ICollection<TaskOrderDetail> TaskOrderDetails { get; set; }
         public virtual ICollection<Task> Tasks { get; set; }
     }
 }
