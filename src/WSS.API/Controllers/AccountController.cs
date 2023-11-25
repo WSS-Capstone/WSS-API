@@ -19,10 +19,11 @@ public class AccountController : BaseController
     [HttpGet]
     [ApiVersion("1")]
     [ApiVersion("2")]
-    public async Task<IActionResult> GetAccountByRoleName([FromQuery] List<RoleEnum> roleNames,
+    [AllowAnonymous]
+    public async Task<IActionResult> GetAccountByRoleName([FromQuery] GetAccountsByRoleNameQuery query,
         CancellationToken cancellationToken = default)
     {
-        var result = await this.Mediator.Send(new GetAccountsByRoleNameQuery(roleNames), cancellationToken);
+        var result = await this.Mediator.Send(query, cancellationToken);
         return Ok(result);
     }
 
