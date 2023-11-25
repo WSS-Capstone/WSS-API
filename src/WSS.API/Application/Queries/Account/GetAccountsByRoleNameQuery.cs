@@ -7,6 +7,8 @@ namespace WSS.API.Application.Queries.Account;
 public class GetAccountsByRoleNameQuery : PagingParam<AccountSortCriteria>,
     IRequest<PagingResponseQuery<AccountResponse, AccountSortCriteria>>
 {
+    public string? Name { get; set; }
+    
     public List<RoleEnum> RoleNames { get; set; } = new List<RoleEnum>()
         { RoleEnum.Customer, RoleEnum.Owner, RoleEnum.Partner, RoleEnum.Staff };
 }
@@ -36,10 +38,22 @@ public class GetAccountByRoleNameQueryHandler : IRequestHandler<GetAccountsByRol
     public async Task<PagingResponseQuery<AccountResponse, AccountSortCriteria>> Handle(
         GetAccountsByRoleNameQuery request, CancellationToken cancellationToken)
     {
-        var roleNames = request.RoleNames.Select(role => role.ToString()).ToList();
-        var query = _accountRepo.GetAccounts(a => roleNames.Contains(a.RoleName));
-        var total = await query.CountAsync(cancellationToken: cancellationToken);
+        var query = _accountRepo.GetAccounts(null, new Expression<Func<Data.Models.Account, object>>[]
+        {
+            a => a.User
+        });
 
+        if (request?.RoleNames.Count != 0)
+        {
+            query = query.Where(a => request.RoleNames.Select(k => k.ToString()).Contains(a.RoleName));
+        }
+
+        if (!string.IsNullOrEmpty(request.Name))
+        {
+            query = query.Where(a => a.User.Fullname.Contains(request.Name) || a.Username.Contains(request.Name));
+        }
+        
+        var total = await query.CountAsync(cancellationToken: cancellationToken);
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
 
         query = query.GetWithPaging(request.Page, request.PageSize);
