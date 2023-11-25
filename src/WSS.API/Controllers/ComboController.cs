@@ -63,4 +63,19 @@ public class ComboController : BaseController
 
         return Ok(result);
     }
+    
+    [HttpPatch("{id}/status")]
+    public async Task<IActionResult> UpdateComboStatus([FromRoute] Guid id, ComboStatus status,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(new UpdateComboStatusCommand()
+        {
+            Id = id,
+            Status = status
+        }, cancellationToken);
+
+        var result2 = await this.Mediator.Send(new GetComboDetailQuery(result.Id));
+
+        return Ok(result2);
+    }
 }
