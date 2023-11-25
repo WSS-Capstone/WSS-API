@@ -51,6 +51,10 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
             .ThenInclude(p => p.Service).ThenInclude(l => l.CurrentPrices);
         query = query.Include(o => o.OrderDetails)
             .ThenInclude(od => od.Service).ThenInclude(s => s.Category).ThenInclude(c => c.Commision);
+
+        query = query.Include(o => o.OrderDetails)
+            .ThenInclude(od => od.Service).ThenInclude(s => s.CreateByNavigation);
+        
         var order = await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
         var result = this._mapper.Map<OrderResponse>(order);
         var comboS = result.Combo?.ComboServices?.ToList() ?? new List<ServiceResponse>();
@@ -62,6 +66,7 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
         {
             if (od.ServiceId != null)
             {
+                od.Service.IsOwnerService = od.Service?.CreateByNavigation?.RoleName == "Owner";
                 var service = result.Combo?.ComboServices?.FirstOrDefault(s => s.Id == od.ServiceId);
                 if (service != null)
                 {
