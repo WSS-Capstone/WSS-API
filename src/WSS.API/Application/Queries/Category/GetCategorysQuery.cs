@@ -60,10 +60,10 @@ public class GetCategorysQueryHandler : IRequestHandler<GetCategorysQuery,
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
 
         query = query.GetWithPaging(request.Page, request.PageSize);
+        var list = await query.ToListAsync(cancellationToken: cancellationToken);
 
+        var result = this._mapper.Map<List<CategoryResponse>>(list);
 
-        var result = this._mapper.ProjectTo<CategoryResponse>(query.ToList().AsQueryable());
-
-        return new PagingResponseQuery<CategoryResponse, CategorySortCriteria>(request, result, total);
+        return new PagingResponseQuery<CategoryResponse, CategorySortCriteria>(request, result.AsQueryable(), total);
     }
 }
