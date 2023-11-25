@@ -32,7 +32,7 @@ public class DayOffController : BaseController
     public async Task<IActionResult> GetDayOffsForPartner([FromQuery] UserDayOffRequest query,
         CancellationToken cancellationToken = default)
     {
-        var userId = await this._identitySvc.GetUserId();;
+        var userId = await this._identitySvc.GetUserId();
         var result = await this.Mediator.Send(new GetDayOffsQuery()
         {
             UserId = userId,
@@ -62,7 +62,7 @@ public class DayOffController : BaseController
     public async Task<IActionResult> CreateDayOff([FromBody] CreateDayOffRequest request,
         CancellationToken cancellationToken = default)
     {
-        var userId = await this._identitySvc.GetUserId();;
+        var userId = await this._identitySvc.GetUserId();
         var result = await this.Mediator.Send(new CreateDayOffCommand()
         {
             Day = request.Day,
@@ -78,7 +78,7 @@ public class DayOffController : BaseController
     public async Task<IActionResult> UpdateDayOff([FromRoute] Guid id, [FromBody] UpdateDayOffRequest request,
         CancellationToken cancellationToken = default)
     {
-        var userId = await this._identitySvc.GetUserId();;
+        var userId = await this._identitySvc.GetUserId();
         var result = await this.Mediator.Send(new UpdateDayOffCommand()
         {
             Id = id, 
@@ -102,7 +102,7 @@ public class DayOffController : BaseController
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteDayOff([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
-        var userId = await this._identitySvc.GetUserId();;
+        var userId = await this._identitySvc.GetUserId();
         var result = await this.Mediator.Send(new DeleteDayOffCommand()
         {
             Id = id, 

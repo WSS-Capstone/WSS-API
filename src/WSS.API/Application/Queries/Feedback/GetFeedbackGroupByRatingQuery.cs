@@ -25,8 +25,8 @@ namespace WSS.API.Application.Queries.Feedback
 
         public async Task<Dictionary<int?, List<FeedbackResponse>?>> Handle(GetFeedbackGroupByRatingQuery request, CancellationToken cancellationToken)
         {
-            var listOrderDetailId = _orderDetailRepo.GetOrderDetails(od => od.ServiceId == request.ServiceId)
-                .Select(od => od.Id).ToList();
+            var listOrderDetailId = await _orderDetailRepo.GetOrderDetails(od => od.ServiceId == request.ServiceId)
+                .Select(od => od.Id).ToListAsync(cancellationToken: cancellationToken);
             
             
             var query = _repo.GetFeedbacks(f => f.Status == (int?)FeedbackStatus.Approved, new Expression<Func<Data.Models.Feedback, object>>[]

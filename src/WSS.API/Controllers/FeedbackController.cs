@@ -71,7 +71,7 @@ public class FeedbackController : BaseController
     public async Task<IActionResult> CreateFeedback([FromBody] CreateFeedbackRequest request,
         CancellationToken cancellationToken = default)
     {
-        var userId = await this._identitySvc.GetUserId();;
+        var userId = await this._identitySvc.GetUserId();
         var result = await this.Mediator.Send(new CreateFeedbackCommand()
         {
             Content = request.Content,
@@ -89,7 +89,7 @@ public class FeedbackController : BaseController
     public async Task<IActionResult> UpdateFeedback([FromRoute] Guid id, [FromBody] UpdateFeedbackRequest request,
         CancellationToken cancellationToken = default)
     {
-        var userId = await this._identitySvc.GetUserId();;
+        var userId = await this._identitySvc.GetUserId();
         var result = await this.Mediator.Send(new UpdateFeedbackCommand()
         {
             OrderDetailId = request.OrderDetailId,
