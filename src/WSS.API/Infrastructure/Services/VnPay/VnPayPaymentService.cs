@@ -190,7 +190,7 @@ public class VnPayPaymentService : IVnPayPaymentService
                         od.Status = (int)OrderDetailStatus.INPROCESS;
                         foreach (var task in od.Tasks)
                         {
-                            task.Status = (int)TaskStatus.IN_PROGRESS;
+                            task.Status = (int)TaskStatus.TO_DO;
                         }
                     }
 
