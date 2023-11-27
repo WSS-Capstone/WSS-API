@@ -72,7 +72,7 @@ public class VnPayPaymentService : IVnPayPaymentService
         pay.AddRequestData("vnp_OrderInfo", payment.CustomerId + "|" + payment.OrderType);
         pay.AddRequestData("vnp_OrderType", payment.OrderType.ToString());
         pay.AddRequestData("vnp_ReturnUrl", urlCallBack);
-        pay.AddRequestData("vnp_TxnRef", payment.OrderReferenceId.ToString());
+        pay.AddRequestData("vnp_TxnRef", payment.OrderReferenceId + "|" + DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
         pay.AddRequestData("vnp_BankCode", string.Empty);
 
         var paymentUrl =
@@ -120,7 +120,7 @@ public class VnPayPaymentService : IVnPayPaymentService
         pay.AddRequestData("vnp_OrderInfo", payment.CustomerId + "|" + payment.OrderType + "|" + linkImage);
         pay.AddRequestData("vnp_OrderType", payment.OrderType.ToString());
         pay.AddRequestData("vnp_ReturnUrl", urlCallBack);
-        pay.AddRequestData("vnp_TxnRef", payment.OrderReferenceId.ToString());
+        pay.AddRequestData("vnp_TxnRef", payment.OrderReferenceId + "|" + DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
         pay.AddRequestData("vnp_BankCode", string.Empty);
 
         var paymentUrl =
@@ -156,7 +156,8 @@ public class VnPayPaymentService : IVnPayPaymentService
             var orderRequest = vnpay.GetResponseData("vnp_OrderInfo");
             var customerId = orderRequest.Split("|")[0];
             var orderType = orderRequest.Split("|")[1];
-            var orderId = Convert.ToString(vnpay.GetResponseData("vnp_TxnRef"));
+            var txnRef = vnpay.GetResponseData("vnp_TxnRef");
+            var orderId = txnRef.Split("|")[0];
             var totalAmount = Convert.ToInt64(vnpay.GetResponseData("vnp_Amount")) / 100;
             string vnpResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
             string vnpTransactionStatus = vnpay.GetResponseData("vnp_TransactionStatus");
@@ -230,7 +231,8 @@ public class VnPayPaymentService : IVnPayPaymentService
             var customerId = orderRequest.Split("|")[0];
             var orderType = orderRequest.Split("|")[1];
             var linkImage = orderRequest.Split("|")[2];
-            var orderId = Convert.ToString(vnpay.GetResponseData("vnp_TxnRef"));
+            var txnRef = vnpay.GetResponseData("vnp_TxnRef");
+            var orderId = txnRef.Split("|")[0];
             var totalAmount = Convert.ToInt64(vnpay.GetResponseData("vnp_Amount")) / 100;
             string vnpResponseCode = vnpay.GetResponseData("vnp_ResponseCode");
             string vnpTransactionStatus = vnpay.GetResponseData("vnp_TransactionStatus");
