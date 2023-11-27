@@ -54,7 +54,10 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
 
     public async Task<TaskResponse> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
     {
-        var task = await _repo.GetTaskById(request.Id);
+        var task = await _repo.GetTasks(t => t.Id == request.Id, new Expression<Func<Data.Models.Task, object>>[]
+        {
+            t => t.OrderDetail
+        }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
         if (task == null)
         {
             throw new Exception("Task not found");
@@ -87,6 +90,22 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
             task.StaffId = request.UserId;
             task.PartnerId = null;
         }
+
+        if (task.Status == (int)TaskStatus.EXPECTED || task.Status == (int)TaskStatus.TO_DO)
+        {
+            task.OrderDetail.Status = (int)OrderDetailStatus.PENDING;
+        }
+        
+        if(task.Status == (int)TaskStatus.IN_PROGRESS)
+        {
+            task.OrderDetail.Status = (int)OrderDetailStatus.INPROCESS;
+        }
+        
+        if(task.Status == (int)TaskStatus.DONE)
+        {
+            task.OrderDetail.Status = (int)OrderDetailStatus.DONE;
+        }
+        
         
         await _repo.UpdateTask(task);
         var result = this._mapper.Map<TaskResponse>(task);
