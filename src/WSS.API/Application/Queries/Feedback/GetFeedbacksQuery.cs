@@ -1,4 +1,5 @@
 using WSS.API.Data.Repositories.Feedback;
+using WSS.API.Infrastructure.Services.Identity;
 
 namespace WSS.API.Application.Queries.Feedback;
 
@@ -21,11 +22,13 @@ public class GetFeedbacksQueryHandler : IRequestHandler<GetFeedbacksQuery,
 {
     private IMapper _mapper;
     private IFeedbackRepo _repo;
+    private IIdentitySvc _identitySvc;
 
-    public GetFeedbacksQueryHandler(IMapper mapper, IFeedbackRepo repo)
+    public GetFeedbacksQueryHandler(IMapper mapper, IFeedbackRepo repo, IIdentitySvc identitySvc)
     {
         _mapper = mapper;
         _repo = repo;
+        _identitySvc = identitySvc;
     }
 
     public async Task<PagingResponseQuery<FeedbackResponse, FeedbackSortCriteria>> Handle(GetFeedbacksQuery request,
@@ -33,11 +36,10 @@ public class GetFeedbacksQueryHandler : IRequestHandler<GetFeedbacksQuery,
     {
         var query = _repo.GetFeedbacks(null, new Expression<Func<Data.Models.Feedback, object>>[]
         {
-            f => f.OrderDetail,
-            f => f.CreateByNavigation
+            f => f.CreateByNavigation,
         });
 
-        query = query.Include(l => l.OrderDetail.Service);
+        query = query.Include(l => l.OrderDetail).ThenInclude(s => s.Service);
         var total = await query.CountAsync(cancellationToken: cancellationToken);
 
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);

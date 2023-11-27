@@ -29,16 +29,16 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
 
     public async Task<CommentResponse> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
     {
-        var user = await this._accountRepo.GetAccounts(a => a.RefId == this._identitySvc.GetUserRefId(),
-            new Expression<Func<Data.Models.Account, object>>[]
-            {
-                a => a.User
-            }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
-        
+        // var user = await this._accountRepo.GetAccounts(a => a.RefId == this._identitySvc.GetUserRefId(),
+        //     new Expression<Func<Data.Models.Account, object>>[]
+        //     {
+        //         a => a.User
+        //     }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        //
         var newId = Guid.NewGuid();
         var comment = _mapper.Map<Data.Models.Comment>(request);
         comment.Id = newId;
-        comment.CreateBy = user.Id;
+        comment.CreateBy = await this._identitySvc.GetUserId();
         comment.CreateDate = DateTime.UtcNow;
         
         var query = await _commentRepo.CreateComment(comment);

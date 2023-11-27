@@ -1,4 +1,5 @@
 using WSS.API.Data.Repositories.Feedback;
+using WSS.API.Infrastructure.Services.Identity;
 using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Feedback;
@@ -23,11 +24,13 @@ public class CreateFeedbackCommandHandler : IRequestHandler<CreateFeedbackComman
 {
     private readonly IMapper _mapper;
     private readonly IFeedbackRepo _feedbackRepo;
+    private IIdentitySvc _identitySvc;
 
-    public CreateFeedbackCommandHandler(IMapper mapper, IFeedbackRepo feedbackRepo)
+    public CreateFeedbackCommandHandler(IMapper mapper, IFeedbackRepo feedbackRepo, IIdentitySvc identitySvc)
     {
         _mapper = mapper;
         _feedbackRepo = feedbackRepo;
+        _identitySvc = identitySvc;
     }
 
     public async Task<FeedbackResponse> Handle(CreateFeedbackCommand request, CancellationToken cancellationToken)
@@ -38,6 +41,7 @@ public class CreateFeedbackCommandHandler : IRequestHandler<CreateFeedbackComman
         feedback.Id = Guid.NewGuid();
         feedback.Code = GenCode.NextId(code);
         feedback.CreateDate = DateTime.UtcNow;
+        feedback.CreateBy = await _identitySvc.GetUserId();
         
         feedback = await _feedbackRepo.CreateFeedback(feedback);
         
