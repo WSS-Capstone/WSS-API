@@ -169,7 +169,6 @@ public class VnPayPaymentService : IVnPayPaymentService
                 o => o.OrderDetails,
                 o => o.OrderDetails.Select(od => od.Tasks),
                 o => o.PartnerPaymentHistories
-                
             });
             query = query.Include(x => x.OrderDetails).ThenInclude(s => s.Service)
                 .ThenInclude(c => c.CreateByNavigation);
@@ -193,23 +192,31 @@ public class VnPayPaymentService : IVnPayPaymentService
                     {
                         if (od.Service.CreateByNavigation.RoleName == RoleName.PARTNER)
                         {
-                            var price = od.Service.CurrentPrices.OrderByDescending(cp => cp.DateOfApply).FirstOrDefault().Price;
+                            var price = od.Service.CurrentPrices.OrderByDescending(cp => cp.DateOfApply)
+                                .FirstOrDefault().Price;
                             var commission = od.Service.Category.Commision.CommisionValue;
-                            var partnerPH = new PartnerPaymentHistory()
+                            var existPPH = order.PartnerPaymentHistories.FirstOrDefault(x =>
+                                x.PartnerId == od.Service.CreateBy && x.OrderId == order.Id);
+                            if (existPPH != null)
                             {
-                                Id = Guid.NewGuid(),
-                                OrderId = order.Id,
-                                PartnerId = od.Service.CreateBy,
-                                CreateDate = DateTime.Now,
-                                Status = (int)PartnerPaymentHistoryStatus.INACTIVE,
-                                Total = price - commission,
-                                Code = GenCode.NextId(pphCode),
-
-                            };
-                            pphCode = partnerPH.Code;
-                            order.PartnerPaymentHistories.Add(partnerPH);
+                                existPPH.Total += (price - commission);
+                            }
+                            else
+                            {
+                                var partnerPH = new PartnerPaymentHistory()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    OrderId = order.Id,
+                                    PartnerId = od.Service.CreateBy,
+                                    CreateDate = DateTime.Now,
+                                    Status = (int)PartnerPaymentHistoryStatus.INACTIVE,
+                                    Total = price - commission,
+                                    Code = GenCode.NextId(pphCode),
+                                };
+                                pphCode = partnerPH.Code;
+                                order.PartnerPaymentHistories.Add(partnerPH);
+                            }
                         }
-                        
                     }
                 }
                 else if (orderType == OrderType.Deposit.ToString())
@@ -303,8 +310,8 @@ public class VnPayPaymentService : IVnPayPaymentService
 
                     order.StatusOrder = (int)StatusOrder.CONFIRM;
                     order.StatusPayment = (int)StatusPayment.DOING;
-                    
                 }
+
                 await _orderRepo.UpdateOrder(order);
                 var code = await _partnerPaymentHistoryRepo.GetPartnerPaymentHistorys()
                     .OrderByDescending(x => x.Code)
