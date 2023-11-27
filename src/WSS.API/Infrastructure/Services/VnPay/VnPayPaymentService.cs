@@ -178,7 +178,8 @@ public class VnPayPaymentService : IVnPayPaymentService
                 .ThenInclude(c => c.Category).ThenInclude(c => c.Commision);
             var order = await query.FirstOrDefaultAsync();
             if (order == null) throw new Exception("Order not found");
-            var pphCode = order.PartnerPaymentHistories.MaxBy(o => o.Code).Code;
+            var pphCode = order.PartnerPaymentHistories == null || order.PartnerPaymentHistories.Count == 0 ? null : order.PartnerPaymentHistories.OrderByDescending(o => o.Code).FirstOrDefault().Code;
+            if(order.PartnerPaymentHistories == null) order.PartnerPaymentHistories = new List<PartnerPaymentHistory>();
             if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
             {
                 if (orderType == OrderType.Payment.ToString())
