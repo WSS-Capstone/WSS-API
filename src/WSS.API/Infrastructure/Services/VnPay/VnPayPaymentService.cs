@@ -8,6 +8,7 @@ using WSS.API.Infrastructure.Services.File;
 using WSS.API.Infrastructure.Services.Identity;
 using WSS.API.Infrastructure.Utilities;
 using Task = System.Threading.Tasks.Task;
+using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
 namespace WSS.API.Infrastructure.Services.VnPay;
 
@@ -163,7 +164,11 @@ public class VnPayPaymentService : IVnPayPaymentService
             string vnpTransactionStatus = vnpay.GetResponseData("vnp_TransactionStatus");
             String vnpSecureHash = context.Request.Query["vnp_SecureHash"];
             bool checkSignature = vnpay.ValidateSignature(vnpSecureHash, vnpHashSecret);
-            var order = await _orderRepo.GetOrderById(Guid.Parse(orderId));
+            var order = await _orderRepo.GetOrders(o => o.Id == Guid.Parse(orderId), new Expression<Func<Order, object>>[]
+            {
+                o => o.OrderDetails,
+                o => o.OrderDetails.Select(od => od.Tasks),
+            }).FirstOrDefaultAsync();
             if (order == null) throw new Exception("Order not found");
             if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
             {
@@ -179,6 +184,15 @@ public class VnPayPaymentService : IVnPayPaymentService
                 {
                     response.OrderType = orderType;
                     response.Status = PaymentStatus.Success;
+
+                    foreach (var od in order.OrderDetails)
+                    {
+                        od.Status = (int)OrderDetailStatus.INPROCESS;
+                        foreach (var task in od.Tasks)
+                        {
+                            task.Status = (int)TaskStatus.IN_PROGRESS;
+                        }
+                    }
 
                     order.StatusOrder = (int)StatusOrder.CONFIRM;
                     order.StatusPayment = (int)StatusPayment.DOING;
