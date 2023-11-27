@@ -164,12 +164,22 @@ public class VnPayPaymentService : IVnPayPaymentService
             string vnpTransactionStatus = vnpay.GetResponseData("vnp_TransactionStatus");
             String vnpSecureHash = context.Request.Query["vnp_SecureHash"];
             bool checkSignature = vnpay.ValidateSignature(vnpSecureHash, vnpHashSecret);
-            var order = await _orderRepo.GetOrders(o => o.Id == Guid.Parse(orderId), new Expression<Func<Order, object>>[]
+            var query = _orderRepo.GetOrders(o => o.Id == Guid.Parse(orderId), new Expression<Func<Order, object>>[]
             {
                 o => o.OrderDetails,
                 o => o.OrderDetails.Select(od => od.Tasks),
-            }).FirstOrDefaultAsync();
+                o => o.PartnerPaymentHistories
+                
+            });
+            query = query.Include(x => x.OrderDetails).ThenInclude(s => s.Service)
+                .ThenInclude(c => c.CreateByNavigation);
+            query = query.Include(x => x.OrderDetails).ThenInclude(s => s.Service)
+                .ThenInclude(c => c.CurrentPrices);
+            query = query.Include(x => x.OrderDetails).ThenInclude(s => s.Service)
+                .ThenInclude(c => c.Category).ThenInclude(c => c.Commision);
+            var order = await query.FirstOrDefaultAsync();
             if (order == null) throw new Exception("Order not found");
+            var pphCode = order.PartnerPaymentHistories.MaxBy(o => o.Code).Code;
             if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
             {
                 if (orderType == OrderType.Payment.ToString())
@@ -179,6 +189,28 @@ public class VnPayPaymentService : IVnPayPaymentService
 
                     order.StatusOrder = (int)StatusOrder.DONE;
                     order.StatusPayment = (int)StatusPayment.DONE;
+                    foreach (var od in order.OrderDetails)
+                    {
+                        if (od.Service.CreateByNavigation.RoleName == RoleName.PARTNER)
+                        {
+                            var price = od.Service.CurrentPrices.OrderByDescending(cp => cp.DateOfApply).FirstOrDefault().Price;
+                            var commission = od.Service.Category.Commision.CommisionValue;
+                            var partnerPH = new PartnerPaymentHistory()
+                            {
+                                Id = Guid.NewGuid(),
+                                OrderId = order.Id,
+                                PartnerId = od.Service.CreateBy,
+                                CreateDate = DateTime.Now,
+                                Status = (int)PartnerPaymentHistoryStatus.INACTIVE,
+                                Total = price - commission,
+                                Code = GenCode.NextId(pphCode),
+
+                            };
+                            pphCode = partnerPH.Code;
+                            order.PartnerPaymentHistories.Add(partnerPH);
+                        }
+                        
+                    }
                 }
                 else if (orderType == OrderType.Deposit.ToString())
                 {
