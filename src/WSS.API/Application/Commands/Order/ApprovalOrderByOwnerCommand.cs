@@ -71,18 +71,18 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
         {
             foreach (var orderDetail in order.OrderDetails)
             {
-                var task = new Data.Models.Task();
-                task.Id = Guid.NewGuid();
-                task.OrderDetailId = orderDetail.Id;
-                task.StartDate = orderDetail.StartTime;
-                task.EndDate = orderDetail.EndTime;
-                task.PartnerId = orderDetail?.Service?.ApprovalDate != null ? orderDetail.Service.CreateBy : null;
-                task.Status = (int)TaskStatus.TO_DO;
-                task.CreateDate = DateTime.Now;
-                task.CreateBy = user.User?.Id;
-                task.TaskName = "Tạo task cho order " + orderDetail?.Service?.Name;
-                order.OrderDetails.FirstOrDefault().Tasks.Add(task);
-                task.CreateBy = user.Id;
+                // var task = new Data.Models.Task();
+                // task.Id = Guid.NewGuid();
+                // task.OrderDetailId = orderDetail.Id;
+                // task.StartDate = orderDetail.StartTime;
+                // task.EndDate = orderDetail.EndTime;
+                // task.PartnerId = orderDetail?.Service?.ApprovalDate != null ? orderDetail.Service.CreateBy : null;
+                // task.Status = (int)TaskStatus.TO_DO;
+                // task.CreateDate = DateTime.Now;
+                // task.CreateBy = user.User?.Id;
+                // task.TaskName = "Tạo task cho order " + orderDetail?.Service?.Name;
+                // order.OrderDetails.FirstOrDefault().Tasks.Add(task);
+                // task.CreateBy = user.Id;
                 // await _taskRepo.CreateTask(task);
             }
         }

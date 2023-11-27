@@ -130,7 +130,10 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                 var rcombo = await combo.FirstOrDefaultAsync(cancellationToken: cancellationToken);
                 comboResponse = rcombo == null ? null : _mapper.Map<ComboResponse>(rcombo);
             }
-            
+            var codeLastTask = await _taskRepo.GetTasks().OrderByDescending(x => x.Code).Select(x => x.Code)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var codeLTask = codeLastTask;
             
             foreach (var orderDetail in orderDetails)
             {
@@ -145,8 +148,6 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                 if (userCreate.RoleName == RoleName.PARTNER)
                 {
                     Data.Models.Task task = new Data.Models.Task();
-                    var codeTask = await _taskRepo.GetTasks().OrderByDescending(x => x.Code).Select(x => x.Code)
-                        .FirstOrDefaultAsync(cancellationToken);
                     task.Id = Guid.NewGuid();
                     task.PartnerId = userCreate.Id;
                     task.OrderDetailId = orderDetail.Id;
@@ -154,7 +155,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                     task.Status = (int)TaskStatus.EXPECTED;
                     task.StartDate = orderDetail.StartTime;
                     
-                    task.Code = GenCode.NextId(codeTask);
+                    task.Code = GenCode.NextId(codeLTask);
+                    codeLTask = task.Code;
                     task.CreateDate = DateTime.UtcNow;
                     task.CreateBy = userId;
                     orderDetail.Tasks = new List<Data.Models.Task>()
