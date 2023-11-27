@@ -37,7 +37,8 @@ public class GetCommentsQueryHandler : IRequestHandler<GetCommentsQuery,
     {
         var query = _commentRepo.GetComments(null, new Expression<Func<Data.Models.Comment, object>>[]
         {
-            c => c.Task
+            c => c.Task,
+            c => c.CreateByNavigation,
         });
         
         if(request.TaskId != null)
