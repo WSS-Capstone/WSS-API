@@ -36,7 +36,8 @@ public enum TaskSortCriteria
     Content,
     StartDate,
     EndDate,
-    CreateDate
+    CreateDate,
+    Status
 }
 
 public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagingResponseQuery<TaskResponse, TaskSortCriteria>>
