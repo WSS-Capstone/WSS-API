@@ -32,6 +32,7 @@ public class GetTaskOwnerRequest : PagingParam<TaskSortCriteria>
 public enum TaskSortCriteria
 {
     Id,
+    Code,
     TaskName,
     Content,
     StartDate,
