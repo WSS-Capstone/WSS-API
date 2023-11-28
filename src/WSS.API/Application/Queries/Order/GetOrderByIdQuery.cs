@@ -34,9 +34,9 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
             o => o.PaymentHistories,
             o => o.PartnerPaymentHistories
         });
-        // query = query
-        //     .Include(o => o.OrderDetails)
-        //     .ThenInclude(p => p.Service);
+        query = query
+            .Include(o => o.OrderDetails)
+            .ThenInclude(p => p.Tasks);
 
         query = query
             .Include(o => o.Combo)
