@@ -260,7 +260,9 @@ public class VnPayPaymentService : IVnPayPaymentService
                 response.Status = PaymentStatus.Failed;
             }
         }
-
+        response.OrderType = OrderType.Payment.ToString();
+        response.Status = PaymentStatus.Success;
+        response.LinkPay = "https://loveweddingservice.shop";
         return await Task.FromResult(response);
     }
 
