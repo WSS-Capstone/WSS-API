@@ -29,7 +29,8 @@ public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, TaskRes
             t => t.OrderDetail,
             t => t.Partner,
             t => t.Staff,
-            t => t.Comments
+            t => t.Comments,
+            
         });
         
         query = query.Include(t => t.OrderDetail.Service).ThenInclude(s => s.ServiceImages);

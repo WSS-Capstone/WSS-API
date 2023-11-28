@@ -28,7 +28,8 @@ public class GetCommentByIdQueryHandler : IRequestHandler<GetCommentByIdQuery, C
     {
         var result = await this._commentRepo.GetCommentById(request.Id, new Expression<Func<Data.Models.Comment, object>>[]
         {
-            c => c.Task
+            c => c.Task,
+            c => c.CreateByNavigation
         });
 
         return this._mapper.Map<CommentResponse>(result);

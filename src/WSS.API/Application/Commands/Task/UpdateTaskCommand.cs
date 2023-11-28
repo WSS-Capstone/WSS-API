@@ -1,3 +1,4 @@
+using WSS.API.Data.Repositories.Order;
 using WSS.API.Data.Repositories.Task;
 using WSS.API.Data.Repositories.User;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
@@ -44,20 +45,25 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
     private IMapper _mapper;
     private ITaskRepo _repo;
     private IUserRepo _userRepo;
+    private IOrderRepo _orderRepo;
 
-    public UpdateTaskCommandHandler(IMapper mapper, ITaskRepo repo, IUserRepo userRepo)
+    public UpdateTaskCommandHandler(IMapper mapper, ITaskRepo repo, IUserRepo userRepo, IOrderRepo orderRepo)
     {
         _mapper = mapper;
         _repo = repo;
         _userRepo = userRepo;
+        _orderRepo = orderRepo;
     }
 
     public async Task<TaskResponse> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
     {
-        var task = await _repo.GetTasks(t => t.Id == request.Id, new Expression<Func<Data.Models.Task, object>>[]
+        var query = _repo.GetTasks(t => t.Id == request.Id, new Expression<Func<Data.Models.Task, object>>[]
         {
             t => t.OrderDetail
-        }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        });
+        
+        query = query.Include(t => t.OrderDetail).ThenInclude(t => t.Order);
+        var task = await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
         if (task == null)
         {
             throw new Exception("Task not found");
@@ -104,6 +110,26 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
         if(task.Status == (int)TaskStatus.DONE)
         {
             task.OrderDetail.Status = (int)OrderDetailStatus.DONE;
+        }
+
+        
+        var order = await this._orderRepo.GetOrders(o => o.Id == task.OrderDetail.OrderId, new Expression<Func<Data.Models.Order, object>>[]
+        {
+            o => o.OrderDetails
+        }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        bool check = true;
+        foreach (var VARIABLE in order.OrderDetails)
+        {
+            if (VARIABLE.Status != (int)OrderDetailStatus.DONE)
+            {
+                check = false;
+                break;
+            }            
+        }
+
+        if (check)
+        {
+            task.OrderDetail.Order.StatusOrder = (int)StatusOrder.DONE;
         }
         
         

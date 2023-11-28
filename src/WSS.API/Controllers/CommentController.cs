@@ -44,8 +44,8 @@ public class CommentController : BaseController
         CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(command, cancellationToken);
-
-        return Ok(result);
+        var result1 = await this.Mediator.Send(new GetCommentByIdQuery(result.Id));
+        return Ok(result1);
     }
 
     [HttpPut("{id}")]
