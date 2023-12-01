@@ -6,6 +6,7 @@ using WSS.API.Data.Repositories.PaymentHistory;
 using WSS.API.Infrastructure.Config;
 using WSS.API.Infrastructure.Services.File;
 using WSS.API.Infrastructure.Services.Identity;
+using WSS.API.Infrastructure.Services.Noti;
 using WSS.API.Infrastructure.Utilities;
 using Task = System.Threading.Tasks.Task;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
@@ -333,6 +334,15 @@ public class VnPayPaymentService : IVnPayPaymentService
                     Status = (int)StatusPayment.DONE
                 };
                 await _partnerPaymentHistoryRepo.CreatePartnerPaymentHistory(paymentHistory);
+                // send notification to partner
+                Dictionary<string, string> data = new Dictionary<string, string>()
+                {
+                    { "type", "Payment" },
+                    { "userId", customerId }
+                };
+                await NotiService.PushNotification.SendMessage(customerId,
+                    $"Thông báo thanh toán.",
+                    $"Bạn đã được thanh toán đơn hàng {order.Code}.", data);
             }
             else
             {

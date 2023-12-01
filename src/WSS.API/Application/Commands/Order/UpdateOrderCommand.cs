@@ -1,4 +1,8 @@
+using WSS.API.Data.Repositories.Account;
+using WSS.API.Data.Repositories.Notification;
 using WSS.API.Data.Repositories.Order;
+using WSS.API.Data.Repositories.Service;
+using WSS.API.Infrastructure.Services.Noti;
 
 namespace WSS.API.Application.Commands.Order;
 
@@ -48,31 +52,66 @@ public class UpdateOrderRequest : UpdateOrderCommand
 
 public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, OrderResponse>
 {
-    private IMapper _mapper;
-    private IOrderRepo _repo;
+    private readonly IMapper _mapper;
+    private readonly IOrderRepo _repo;
+    private readonly INotificationRepo _notificationRepo;
+    private readonly IServiceRepo _serviceRepo;
+    private readonly IAccountRepo _accountRepo;
 
-    public UpdateOrderCommandHandler(IMapper mapper, IOrderRepo repo)
+    public UpdateOrderCommandHandler(IMapper mapper, IOrderRepo repo, INotificationRepo notificationRepo, IServiceRepo serviceRepo, IAccountRepo accountRepo)
     {
         _mapper = mapper;
         _repo = repo;
+        _notificationRepo = notificationRepo;
+        _serviceRepo = serviceRepo;
+        _accountRepo = accountRepo;
     }
 
     public async Task<OrderResponse> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
     {
-        var feedback = await _repo.GetOrderById(request.Id, new Expression<Func<Data.Models.Order, object>>[]
+        var order = await _repo.GetOrderById(request.Id, new Expression<Func<Data.Models.Order, object>>[]
         {
             order => order.WeddingInformation, 
             order => order.OrderDetails, 
         });
-        if (feedback == null)
+        if (order == null)
         {
             throw new Exception("Order not found");
         }
-       
-        feedback = this._mapper.Map(request, feedback);
         
-        await _repo.UpdateOrder(feedback);
-        var result = this._mapper.Map<OrderResponse>(feedback);
+        order = this._mapper.Map(request, order);
+        //get all service of order
+        var services = order.OrderDetails.Select(x => x.ServiceId).ToList();
+        //select all staff of service
+        var staffIds = await _serviceRepo.GetServices(x => services.Contains(x.Id)).Select(x => x.CreateBy).ToListAsync();
+        
+        if (request.Status == (int)StatusOrder.CANCEL)
+        {
+            foreach (var staffId in staffIds)
+            {
+                // send notification to staff
+                Dictionary<string, string> data = new Dictionary<string, string>()
+                {
+                    { "type", "Order" },
+                    { "staffId", staffId.ToString() }
+                };
+                await NotiService.PushNotification.SendMessage(staffId.ToString(),
+                    $"Thông báo hủy đơn hàng.",
+                    $"Đơn hàng {order.Code} đã bị huỷ.", data);
+
+                // insert notification
+                var notification = new Notification()
+                {
+                    Title = "Thông báo hủy đơn hàng.",
+                    Content = $"Đơn hàng {order.Code} đã bị hủy.",
+                    UserId = staffId
+                };
+                await _notificationRepo.CreateNotification(notification);
+            }
+        }
+        
+        await _repo.UpdateOrder(order);
+        var result = this._mapper.Map<OrderResponse>(order);
 
         return result;
     }

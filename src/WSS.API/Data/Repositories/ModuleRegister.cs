@@ -8,6 +8,7 @@ using WSS.API.Data.Repositories.CurrentPrice;
 using WSS.API.Data.Repositories.DayOff;
 using WSS.API.Data.Repositories.Feedback;
 using WSS.API.Data.Repositories.Message;
+using WSS.API.Data.Repositories.Notification;
 using WSS.API.Data.Repositories.Order;
 using WSS.API.Data.Repositories.OrderDetail;
 using WSS.API.Data.Repositories.PartnerPaymentHistory;
@@ -52,5 +53,6 @@ public static class ModuleRegister
         services.AddScoped<IUserRepo, UserRepo>();
         services.AddScoped<IDayOffRepo, DayOffRepo>();
         services.AddScoped<ICommentRepo, CommentRepo>();
+        services.AddScoped<INotificationRepo, NotificationRepo>();
     }
 }

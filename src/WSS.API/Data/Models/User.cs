@@ -10,6 +10,7 @@ namespace WSS.API.Data.Models
             Comments = new HashSet<Comment>();
             DayOffs = new HashSet<DayOff>();
             Feedbacks = new HashSet<Feedback>();
+            Notifications = new HashSet<Notification>();
             Orders = new HashSet<Order>();
             PartnerPaymentHistories = new HashSet<PartnerPaymentHistory>();
             TaskCreateByNavigations = new HashSet<Task>();
@@ -36,6 +37,7 @@ namespace WSS.API.Data.Models
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<DayOff> DayOffs { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<PartnerPaymentHistory> PartnerPaymentHistories { get; set; }
         public virtual ICollection<Task> TaskCreateByNavigations { get; set; }

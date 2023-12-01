@@ -7,6 +7,7 @@ using WSS.API.Data.Repositories.Voucher;
 using WSS.API.Data.Repositories.WeddingInformation;
 using WSS.API.Infrastructure.Config;
 using WSS.API.Infrastructure.Services.Identity;
+using WSS.API.Infrastructure.Services.Noti;
 using WSS.API.Infrastructure.Utilities;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
@@ -164,6 +165,16 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                         task
                     };
                     // await _taskRepo.CreateTask(task);
+                    
+                    // send notification to partner
+                    Dictionary<string, string> data = new Dictionary<string, string>()
+                    {
+                        { "type", "Task" },
+                        { "userId", userCreate.Id.ToString() }
+                    };
+                    await NotiService.PushNotification.SendMessage(userCreate.Id.ToString(),
+                        $"Thông báo tạo task.",
+                        $"Bạn có 1 task {task.Code} mới được tạo.", data);
                 }
 
                 orderDetail.StartTime = orderDetail.StartTime;

@@ -1,6 +1,7 @@
 ﻿using WSS.API.Data.Repositories.Account;
 using WSS.API.Data.Repositories.Service;
 using WSS.API.Infrastructure.Services.Identity;
+using WSS.API.Infrastructure.Services.Noti;
 
 namespace WSS.API.Application.Commands.Service;
 
@@ -55,6 +56,32 @@ public class StatusServiceCommandHandler : IRequestHandler<StatusServiceCommand,
         if (service == null || service.CreateBy != user.Id)
         {
             throw new Exception("Service not found");
+        }
+
+        if (request.Status == ServiceStatus.Active)
+        {
+            // send notification to partner
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "type", "Service" },
+                { "userId", service.CreateBy.ToString() }
+            };
+            await NotiService.PushNotification.SendMessage(service.CreateBy.ToString(),
+                $"Thông báo duyệt dịch vụ.",
+                $"Dịch vụ {service.Code} đã được duyệt.", data);
+        }
+
+        else if (request.Status == ServiceStatus.Reject)
+        {
+            // send notification to partner
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "type", "Service" },
+                { "userId", service.CreateBy.ToString() }
+            };
+            await NotiService.PushNotification.SendMessage(service.CreateBy.ToString(),
+                $"Thông báo từ chối dịch vụ.",
+                $"Dịch vụ {service.Code} đã bị từ chối.", data);
         }
 
         service.Status = (int)request.Status;

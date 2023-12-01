@@ -27,6 +27,7 @@ namespace WSS.API.Data.Models
         public virtual DbSet<DayOff> DayOffs { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Message> Messages { get; set; } = null!;
+        public virtual DbSet<Notification> Notifications { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
         public virtual DbSet<PartnerPaymentHistory> PartnerPaymentHistories { get; set; } = null!;
@@ -134,8 +135,6 @@ namespace WSS.API.Data.Models
                 entity.ToTable("Comment");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Content).IsUnicode(false);
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
@@ -248,6 +247,22 @@ namespace WSS.API.Data.Models
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.ToTable("Notification");
+
+                entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysdatetimeoffset())");
+
+                entity.Property(e => e.IsRead).HasDefaultValueSql("((0))");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("Notification_User_Id_fk");
             });
 
             modelBuilder.Entity<Order>(entity =>
