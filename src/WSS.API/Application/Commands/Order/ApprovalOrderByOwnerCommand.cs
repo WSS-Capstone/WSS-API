@@ -8,14 +8,16 @@ namespace WSS.API.Application.Commands.Order;
 
 public class ApprovalOrderByOwnerCommand : IRequest<OrderResponse>
 {
-    public ApprovalOrderByOwnerCommand(Guid id, StatusOrder request)
+    public ApprovalOrderByOwnerCommand(Guid id, StatusOrder request, string? reason)
     {
         Id = id;
         StatusOrder = request;
+        Reason = reason;
     }
 
     public Guid Id { get; set; }
     public StatusOrder StatusOrder { get; set; }
+    public string? Reason { get; set; }
 }
 //
 // public class ApprovalServiceRequest
@@ -117,6 +119,7 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
         order = _mapper.Map(request, order);
         order.UpdateDate = DateTime.Now;
         order.StatusOrder = (int?)request.StatusOrder;
+        order.Reason = request.Reason;
         var query = await _orderRepo.UpdateOrder(order);
         var result = this._mapper.Map<OrderResponse>(query);
 
