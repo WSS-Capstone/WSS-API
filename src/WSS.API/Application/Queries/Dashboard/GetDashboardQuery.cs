@@ -36,7 +36,8 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
         CancellationToken cancellationToken)
     {
         var result = new DashboardResponse();
-        var total = new List<Dictionary<string, double?>>();
+        var totalMonth = new List<Dictionary<string, double?>>();
+        var totalYear = new List<Dictionary<string, double?>>();
         var serviceQuantity = new List<Dictionary<string, int>>();
         var serviceOrder = new List<Dictionary<string, int>>();
         var serviceFeedback = new List<Dictionary<string, float>>();
@@ -44,10 +45,11 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
         var partnerPayment = new List<Dictionary<string, double?>>();
 
         var queryPaymentHistories = _paymentHistoryRepo.GetPaymentHistorys();
-        var queryPartnerPaymentHistories = _partnerPaymentHistoryRepo.GetPartnerPaymentHistorys(null, new Expression<Func<PartnerPaymentHistory, object>>[]
-        {
-            pph => pph.Partner
-        });
+        var queryPartnerPaymentHistories = _partnerPaymentHistoryRepo.GetPartnerPaymentHistorys(null,
+            new Expression<Func<PartnerPaymentHistory, object>>[]
+            {
+                pph => pph.Partner
+            });
         var queryServices = _serviceRepo.GetServices();
         var queryOrders = _orderRepo.GetOrders(null, new Expression<Func<Data.Models.Order, object>>[]
         {
@@ -58,62 +60,121 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
             f => f.OrderDetail
         });
         
-        var dateNow = DateTime.UtcNow;
+        // get total payment history and total partner payment history in month
+        var toDateMonth = DateTime.UtcNow;
+        var fromDateMonth = new DateTime(toDateMonth.Year, 1, 1);
+        var monthRange = Enumerable.Range(1, 12).ToList();
 
-        // revenue by month, year
-            var fromDate = new DateTime();
-            var toDate = new DateTime();
-            // if (request.Month != null)
-            // {
-            //     var lastDayOfMonth = DateTime.DaysInMonth(request.Month.Value.Year, request.Month.Value.Month);
-            //     fromDate = new DateTime(request.Month.Value.Year, request.Month.Value.Month, 1);
-            //     toDate = new DateTime(request.Month.Value.Year, request.Month.Value.Month, lastDayOfMonth);
-            // }
-            // else if (request.Year != null)
-            // {
-                fromDate = new DateTime(dateNow.Year, 1, 1);
-                toDate = new DateTime(dateNow.Year, 12, 31);
-            // }
+        // select total of payment history
+        queryPaymentHistories = queryPaymentHistories.Where(x => x.CreateDate.Value.Date >= fromDateMonth &&
+                                                                 x.CreateDate.Value.Date <= toDateMonth);
 
-            // select total of payment history
-            queryPaymentHistories = queryPaymentHistories.Where(x => x.CreateDate.Value.Date >= fromDate &&
-                                                                     x.CreateDate.Value.Date <= toDate);
+        // select total of partner payment history
+        queryPartnerPaymentHistories = queryPartnerPaymentHistories.Where(x =>
+            x.CreateDate.Value.Date >= fromDateMonth &&
+            x.CreateDate.Value.Date <= toDateMonth);
 
-            // select total of partner payment history
-            queryPartnerPaymentHistories = queryPartnerPaymentHistories.Where(x =>
-                x.CreateDate.Value.Date >= fromDate &&
-                x.CreateDate.Value.Date <= toDate);
-
-            // join total payment history and total partner payment history to total with day in month
-            var totalPaymentHistoryPerDay = await queryPaymentHistories.GroupBy(x => x.CreateDate.Value.Month)
-                .Select(x => new
-                {
-                    Month = x.Key,
-                    Total = x.Sum(y => y.TotalAmount)
-                }).ToListAsync(cancellationToken: cancellationToken);
-
-            var totalPartnerPaymentHistoryPerDay = await queryPartnerPaymentHistories
-                .GroupBy(x => x.CreateDate.Value.Month)
-                .Select(x => new
-                {
-                    Month = x.Key,
-                    Total = x.Sum(y => y.Total)
-                }).ToListAsync(cancellationToken: cancellationToken);
-
-            var totalPerDayDictionary = new Dictionary<string, double?>();
-            double? totalAmountPerDay = 0.0;
-            foreach (var item in totalPaymentHistoryPerDay)
+        // join total payment history and total partner payment history to total with month in year
+        var totalPaymentHistoryPerMonth = await queryPaymentHistories.GroupBy(x => x.CreateDate.Value.Month)
+            .Select(x => new
             {
-                var day = item.Month;
-                var totalAmount = item.Total ?? 0.0;
-                var totalPartnerAmount =
-                    totalPartnerPaymentHistoryPerDay.FirstOrDefault(x => x.Month == day)?.Total ?? 0.0;
-                totalAmountPerDay = totalAmount + totalPartnerAmount;
-                totalPerDayDictionary.Add(day + "-" + dateNow.Year, totalAmountPerDay);
-            }
+                Month = x.Key,
+                Total = x.Sum(y => y.TotalAmount)
+            }).ToListAsync(cancellationToken: cancellationToken);
 
-            total.Add(totalPerDayDictionary);
-        // }
+        var totalPartnerPaymentHistoryPerMonth = await queryPartnerPaymentHistories
+            .GroupBy(x => x.CreateDate.Value.Month)
+            .Select(x => new
+            {
+                Month = x.Key,
+                Total = x.Sum(y => y.Total)
+            }).ToListAsync(cancellationToken: cancellationToken);
+
+        var totalPerMonthDictionary = new Dictionary<string, double?>();
+        double? totalAmountPerMonth = 0.0;
+        // join month range and total payment history and total partner payment history map to totalPerMonthDictionary
+        var joinMonthRange = (from month in monthRange
+            join totalPaymentHistory in totalPaymentHistoryPerMonth on month equals totalPaymentHistory.Month into
+                totalPaymentHistoryGroup
+            from totalPaymentHistory in totalPaymentHistoryGroup.DefaultIfEmpty()
+            join totalPartnerPaymentHistory in totalPartnerPaymentHistoryPerMonth on month equals
+                totalPartnerPaymentHistory.Month into totalPartnerPaymentHistoryGroup
+            from totalPartnerPaymentHistory in totalPartnerPaymentHistoryGroup.DefaultIfEmpty()
+            select new
+            {
+                Month = month,
+                Total = totalPaymentHistory?.Total,
+                TotalPartner = totalPartnerPaymentHistory?.Total
+            }).ToList();
+        // map to totalPerMonthDictionary
+        foreach (var item in joinMonthRange)
+        {
+            var month = item.Month;
+            var totalAmount = item.Total ?? 0.0;
+            var totalPartnerAmount = item.TotalPartner ?? 0.0;
+            totalAmountPerMonth = totalAmount + totalPartnerAmount;
+            totalPerMonthDictionary.Add(month.ToString(), totalAmountPerMonth);
+        }
+
+        totalMonth.Add(totalPerMonthDictionary);
+        
+        // get total payment history and total partner payment history in year
+        var toDateYear = DateTime.UtcNow;
+        var fromDateYear = new DateTime(toDateYear.Year - 6, 1, 1);
+        var yearRange = Enumerable.Range(fromDateYear.Year, toDateYear.Year - fromDateYear.Year + 1).ToList();
+        // select total of payment history
+        queryPaymentHistories = queryPaymentHistories.Where(x => x.CreateDate.Value.Date >= fromDateYear &&
+                                                                 x.CreateDate.Value.Date <= toDateYear);
+
+        // select total of partner payment history
+        queryPartnerPaymentHistories = queryPartnerPaymentHistories.Where(x =>
+            x.CreateDate.Value.Date >= fromDateYear &&
+            x.CreateDate.Value.Date <= toDateYear);
+
+        // join total payment history and total partner payment history to total with month in year
+        var totalPaymentHistoryPerYear = await queryPaymentHistories.GroupBy(x => x.CreateDate.Value.Year)
+            .Select(x => new
+            {
+                Year = x.Key,
+                Total = x.Sum(y => y.TotalAmount)
+            }).ToListAsync(cancellationToken: cancellationToken);
+
+        var totalPartnerPaymentHistoryPerYear = await queryPartnerPaymentHistories
+            .GroupBy(x => x.CreateDate.Value.Year)
+            .Select(x => new
+            {
+                Year = x.Key,
+                Total = x.Sum(y => y.Total)
+            }).ToListAsync(cancellationToken: cancellationToken);
+
+        var totalPerYearDictionary = new Dictionary<string, double?>();
+        double? totalAmountPerYear = 0.0;
+        // join month range and total payment history and total partner payment history map to totalPerMonthDictionary
+        var joinYearRange = (from year in yearRange
+            join totalPaymentHistory in totalPaymentHistoryPerYear on year equals totalPaymentHistory.Year into
+                totalPaymentHistoryGroup
+            from totalPaymentHistory in totalPaymentHistoryGroup.DefaultIfEmpty()
+            join totalPartnerPaymentHistory in totalPartnerPaymentHistoryPerYear on year equals
+                totalPartnerPaymentHistory.Year into totalPartnerPaymentHistoryGroup
+            from totalPartnerPaymentHistory in totalPartnerPaymentHistoryGroup.DefaultIfEmpty()
+            select new
+            {
+                Year = year,
+                Total = totalPaymentHistory?.Total,
+                TotalPartner = totalPartnerPaymentHistory?.Total
+            }).ToList();
+        // map to totalPerMonthDictionary
+        foreach (var item in joinYearRange)
+        {
+            var month = item.Year;
+            var totalAmount = item.Total ?? 0.0;
+            var totalPartnerAmount = item.TotalPartner ?? 0.0;
+            totalAmountPerYear = totalAmount + totalPartnerAmount;
+            totalPerYearDictionary.Add(month.ToString(), totalAmountPerYear);
+        }
+
+        totalYear.Add(totalPerYearDictionary);
+        
 
         // service group by category id
         var services = await queryServices.ToListAsync(cancellationToken: cancellationToken);
@@ -170,7 +231,7 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
                 serviceFeedback.Add(dictionary);
             }
         }
-        
+
         // count partner with category in service
         var partnerGroupByCategoryId = services.GroupBy(x => x.CategoryId).ToList();
         foreach (var item in partnerGroupByCategoryId)
@@ -184,9 +245,10 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
                 partner.Add(dictionary);
             }
         }
-        
+
         // count total payment of partner join user select name partner
-        var partnerPaymentHistories = await queryPartnerPaymentHistories.ToListAsync(cancellationToken: cancellationToken);
+        var partnerPaymentHistories =
+            await queryPartnerPaymentHistories.ToListAsync(cancellationToken: cancellationToken);
         var partnerPaymentGroupByPartnerId = partnerPaymentHistories.GroupBy(x => x.PartnerId).ToList();
         foreach (var item in partnerPaymentGroupByPartnerId)
         {
@@ -199,15 +261,16 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
                 partnerPayment.Add(dictionary);
             }
         }
-        
 
-        result.TotalRevenue = total;
+
+        result.TotalRevenueMonth = totalMonth;
+        result.TotalRevenueYear = totalYear;
         result.ServiceQuantity = serviceQuantity;
         result.ServiceOrder = serviceOrder;
         result.ServiceFeedback = serviceFeedback;
         result.Partner = partner;
         result.PartnerPayment = partnerPayment;
-        
+
         return result;
     }
 }
