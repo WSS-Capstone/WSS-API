@@ -50,7 +50,8 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
         {
             throw new Exception("Task not found");
         }
-        // send notification to user
+        
+        // send notification to partner
         Dictionary<string, string> data1 = new Dictionary<string, string>()
         {
             { "type", "Comment" },
@@ -60,6 +61,7 @@ public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand,
             $"Thông báo bình luận.",
             $"Bạn có 1 bình luận mới.", data1);
         
+        // send notification to staff
         Dictionary<string, string> data2 = new Dictionary<string, string>()
         {
             { "type", "Comment" },

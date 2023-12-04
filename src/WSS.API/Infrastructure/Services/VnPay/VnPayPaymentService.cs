@@ -219,7 +219,17 @@ public class VnPayPaymentService : IVnPayPaymentService
                                 order.PartnerPaymentHistories.Add(partnerPH);
                             }
                         }
+                        
                     }
+                    // send notification
+                    Dictionary<string, string> data = new Dictionary<string, string>()
+                    {
+                        { "type", "Payment" },
+                        { "userId", order.CreateBy.ToString() }
+                    };
+                    await NotiService.PushNotification.SendMessage(order.CreateBy.ToString(),
+                        $"Thông báo thanh toán.",
+                        $"Bạn có 1 đơn hàng được thanh toán.", data);
                 }
                 else if (orderType == OrderType.Deposit.ToString())
                 {
@@ -237,6 +247,15 @@ public class VnPayPaymentService : IVnPayPaymentService
 
                     order.StatusOrder = (int)StatusOrder.CONFIRM;
                     order.StatusPayment = (int)StatusPayment.DOING;
+                    // send notification
+                    Dictionary<string, string> data = new Dictionary<string, string>()
+                    {
+                        { "type", "Payment" },
+                        { "userId", order.CreateBy.ToString() }
+                    };
+                    await NotiService.PushNotification.SendMessage(order.CreateBy.ToString(),
+                        $"Thông báo thanh toán.",
+                        $"Bạn có 1 đơn hàng được đặt cọc.", data);
                 }
 
                 await _orderRepo.UpdateOrder(order);
@@ -254,6 +273,7 @@ public class VnPayPaymentService : IVnPayPaymentService
                     Code = GenCode.NextId(code)
                 };
                 await _paymentHistoryRepo.CreatePaymentHistory(paymentHistory);
+                
             }
             else
             {
@@ -306,6 +326,15 @@ public class VnPayPaymentService : IVnPayPaymentService
 
                     order.StatusOrder = (int)StatusOrder.DONE;
                     order.StatusPayment = (int)StatusPayment.DONE;
+                    // send notification
+                    Dictionary<string, string> data = new Dictionary<string, string>()
+                    {
+                        { "type", "Payment" },
+                        { "userId", order.CreateBy.ToString() }
+                    };
+                    await NotiService.PushNotification.SendMessage(order.CreateBy.ToString(),
+                        $"Thông báo thanh toán.",
+                        $"Bạn có 1 đơn hàng {order.Code} được thanh toán.", data);
                 }
                 else if (orderType == OrderType.Deposit.ToString())
                 {
@@ -314,6 +343,15 @@ public class VnPayPaymentService : IVnPayPaymentService
 
                     order.StatusOrder = (int)StatusOrder.CONFIRM;
                     order.StatusPayment = (int)StatusPayment.DOING;
+                    // send notification to partner
+                    Dictionary<string, string> data = new Dictionary<string, string>()
+                    {
+                        { "type", "Payment" },
+                        { "userId", customerId }
+                    };
+                    await NotiService.PushNotification.SendMessage(customerId,
+                        $"Thông báo thanh toán.",
+                        $"Bạn có 1 đơn hàng {order.Code} được đặt cọc.", data);
                 }
 
                 await _orderRepo.UpdateOrder(order);
@@ -334,15 +372,7 @@ public class VnPayPaymentService : IVnPayPaymentService
                     Status = (int)StatusPayment.DONE
                 };
                 await _partnerPaymentHistoryRepo.CreatePartnerPaymentHistory(paymentHistory);
-                // send notification to partner
-                Dictionary<string, string> data = new Dictionary<string, string>()
-                {
-                    { "type", "Payment" },
-                    { "userId", customerId }
-                };
-                await NotiService.PushNotification.SendMessage(customerId,
-                    $"Thông báo thanh toán.",
-                    $"Bạn đã được thanh toán đơn hàng {order.Code}.", data);
+                
             }
             else
             {

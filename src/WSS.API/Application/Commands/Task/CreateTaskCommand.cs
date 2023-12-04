@@ -1,4 +1,6 @@
+using WSS.API.Data.Repositories.Notification;
 using WSS.API.Data.Repositories.Task;
+using WSS.API.Infrastructure.Services.Noti;
 using WSS.API.Infrastructure.Utilities;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
@@ -19,11 +21,13 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskR
 {
     private readonly IMapper _mapper;
     private readonly ITaskRepo _taskRepo;
+    private readonly INotificationRepo _notificationRepo;
 
-    public CreateTaskCommandHandler(IMapper mapper, ITaskRepo taskRepo)
+    public CreateTaskCommandHandler(IMapper mapper, ITaskRepo taskRepo, INotificationRepo notificationRepo)
     {
         _mapper = mapper;
         _taskRepo = taskRepo;
+        _notificationRepo = notificationRepo;
     }
 
     public async Task<TaskResponse> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
@@ -36,6 +40,48 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskR
         task.Code = GenCode.NextId(code);
         task.CreateDate = DateTime.UtcNow;
         task.Status = (int)TaskStatus.TO_DO;
+        if (request.StaffId != null)
+        {
+            // send notification to staff
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "type", "Task" },
+                { "staffId", request.StaffId.ToString() }
+            };
+            await NotiService.PushNotification.SendMessage(request.StaffId.ToString(),
+                $"Thông báo tạo task.",
+                $"Bạn có 1 task được tạo.", data);
+
+            // insert notification
+            var notification = new Notification()
+            {
+                Title = "Thông báo tạo task.",
+                Content = $"Bạn có 1 task được tạo.",
+                UserId = request.StaffId
+            };
+            await _notificationRepo.CreateNotification(notification);
+        }
+
+        if (request.PartnerId != null)
+        {
+            // send notification to partner
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "type", "Task" },
+                { "partnerId", request.PartnerId.ToString() }
+            };
+            await NotiService.PushNotification.SendMessage(request.PartnerId.ToString(),
+                $"Thông báo tạo task.",
+                $"Bạn có 1 task được tạo.", data);
+            // insert notification
+            var notification = new Notification()
+            {
+                Title = "Thông báo tạo task.",
+                Content = $"Bạn có 1 task được tạo.",
+                UserId = request.PartnerId
+            };
+            await _notificationRepo.CreateNotification(notification);
+        }
         
         task = await _taskRepo.CreateTask(task);
         

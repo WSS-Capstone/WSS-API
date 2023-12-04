@@ -209,6 +209,15 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         order.WeddingInformation = null;
         order.Combo = null;
         order = await _orderRepo.CreateOrder(order);
+        // send notification
+        Dictionary<string, string> data1 = new Dictionary<string, string>()
+        {
+            { "type", "Order" },
+            { "userId", user.Id.ToString() }
+        };
+        await NotiService.PushNotification.SendMessage(user.Id.ToString(),
+            $"Thông báo tạo đơn hàng.",
+            $"Bạn có 1 đơn hàng mới được tạo.", data1);
         
         return _mapper.Map<OrderResponse>(order);
     }

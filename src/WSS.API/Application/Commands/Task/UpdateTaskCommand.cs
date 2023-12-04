@@ -1,6 +1,7 @@
 using WSS.API.Data.Repositories.Order;
 using WSS.API.Data.Repositories.Task;
 using WSS.API.Data.Repositories.User;
+using WSS.API.Infrastructure.Services.Noti;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
 namespace WSS.API.Application.Commands.Task;
@@ -111,7 +112,35 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
         {
             task.OrderDetail.Status = (int)OrderDetailStatus.DONE;
         }
-
+        
+        if(task.Status == (int)TaskStatus.CANCEL)
+        {
+            task.OrderDetail.Status = (int)OrderDetailStatus.CANCEL;
+            if (user.IdNavigation.RoleName == "Partner")
+            {
+                // send notification to partner
+                Dictionary<string, string> data = new Dictionary<string, string>()
+                {
+                    { "type", "Task" },
+                    { "userId", task.PartnerId.ToString() }
+                };
+                await NotiService.PushNotification.SendMessage(task.PartnerId.ToString(),
+                    $"Thông báo hủy task.",
+                    $"Bạn có 1 task đã bị hủy.", data);
+            }
+            else
+            {
+                // send notification to staff
+                Dictionary<string, string> data = new Dictionary<string, string>()
+                {
+                    { "type", "Task" },
+                    { "userId", task.StaffId.ToString() }
+                };
+                await NotiService.PushNotification.SendMessage(task.StaffId.ToString(),
+                    $"Thông báo hủy task.",
+                    $"Bạn có 1 task đã bị hủy.", data);
+            }
+        }
         
         var order = await this._orderRepo.GetOrders(o => o.Id == task.OrderDetail.OrderId, new Expression<Func<Data.Models.Order, object>>[]
         {

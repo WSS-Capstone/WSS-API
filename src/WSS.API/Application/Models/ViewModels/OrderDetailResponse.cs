@@ -26,4 +26,5 @@ public enum OrderDetailStatus
     PENDING = 1,
     INPROCESS = 2,
     DONE = 3,
+    CANCEL = 4
 }
