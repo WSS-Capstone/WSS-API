@@ -147,13 +147,25 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
             o => o.OrderDetails
         }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
         bool check = true;
+        bool checkStart = true;
         foreach (var VARIABLE in order.OrderDetails)
         {
             if (VARIABLE.Status != (int)OrderDetailStatus.DONE)
             {
                 check = false;
                 break;
-            }            
+            } 
+            
+            if (VARIABLE.Status != (int)OrderDetailStatus.INPROCESS)
+            {
+                checkStart = false;
+                break;
+            }
+        }
+
+        if (checkStart)
+        {
+            task.OrderDetail.Order.StatusOrder = (int)StatusOrder.DOING;
         }
 
         if (check)
