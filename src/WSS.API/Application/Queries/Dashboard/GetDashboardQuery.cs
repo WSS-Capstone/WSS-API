@@ -13,7 +13,7 @@ public class GetDashboardQuery : IRequest<DashboardResponse>
     public DateTime? Year { get; set; }
 }
 
-public class RevenueRequest
+public class DashboardRequest
 {
     public DateTime? Month { get; set; }
     public DateTime? Year { get; set; }
@@ -164,7 +164,7 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
 
         // map service name to feedback group by service id and calculate average star
         var feedbacks = await queryFeedbacks.ToListAsync(cancellationToken: cancellationToken);
-        var feedbackGroupByServiceId = feedbacks.GroupBy(x => x.OrderDetail.ServiceId).ToList();
+        var feedbackGroupByServiceId = feedbacks.GroupBy(x => x.OrderDetail!.ServiceId).ToList();
         double? averageStar = 0.0;
         foreach (var item in feedbackGroupByServiceId)
         {

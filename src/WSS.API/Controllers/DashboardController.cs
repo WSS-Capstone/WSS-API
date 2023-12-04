@@ -16,7 +16,7 @@ public class DashboardController : BaseController
 
     [ApiVersion("1")]
     [HttpGet]
-    public async Task<IActionResult> GetDashboards([FromQuery] RevenueRequest query,
+    public async Task<IActionResult> GetDashboards([FromQuery] DashboardRequest query,
         CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(new GetDashboardQuery()
