@@ -9,14 +9,6 @@ namespace WSS.API.Application.Queries.Dashboard;
 
 public class GetDashboardQuery : IRequest<DashboardResponse>
 {
-    public DateTime? Month { get; set; }
-    public DateTime? Year { get; set; }
-}
-
-public class DashboardRequest
-{
-    public DateTime? Month { get; set; }
-    public DateTime? Year { get; set; }
 }
 
 public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, DashboardResponse>
@@ -65,23 +57,23 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
         {
             f => f.OrderDetail
         });
+        
+        var dateNow = DateTime.UtcNow;
 
         // revenue by month, year
-        if (request.Month != null || request.Year != null)
-        {
             var fromDate = new DateTime();
             var toDate = new DateTime();
-            if (request.Month != null)
-            {
-                var lastDayOfMonth = DateTime.DaysInMonth(request.Month.Value.Year, request.Month.Value.Month);
-                fromDate = new DateTime(request.Month.Value.Year, request.Month.Value.Month, 1);
-                toDate = new DateTime(request.Month.Value.Year, request.Month.Value.Month, lastDayOfMonth);
-            }
-            else if (request.Year != null)
-            {
-                fromDate = new DateTime(request.Year.Value.Year, 1, 1);
-                toDate = new DateTime(request.Year.Value.Year, 12, 31);
-            }
+            // if (request.Month != null)
+            // {
+            //     var lastDayOfMonth = DateTime.DaysInMonth(request.Month.Value.Year, request.Month.Value.Month);
+            //     fromDate = new DateTime(request.Month.Value.Year, request.Month.Value.Month, 1);
+            //     toDate = new DateTime(request.Month.Value.Year, request.Month.Value.Month, lastDayOfMonth);
+            // }
+            // else if (request.Year != null)
+            // {
+                fromDate = new DateTime(dateNow.Year, 1, 1);
+                toDate = new DateTime(dateNow.Year, 12, 31);
+            // }
 
             // select total of payment history
             queryPaymentHistories = queryPaymentHistories.Where(x => x.CreateDate.Value.Date >= fromDate &&
@@ -93,18 +85,18 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
                 x.CreateDate.Value.Date <= toDate);
 
             // join total payment history and total partner payment history to total with day in month
-            var totalPaymentHistoryPerDay = await queryPaymentHistories.GroupBy(x => x.CreateDate.Value.Day)
+            var totalPaymentHistoryPerDay = await queryPaymentHistories.GroupBy(x => x.CreateDate.Value.Month)
                 .Select(x => new
                 {
-                    Day = x.Key,
+                    Month = x.Key,
                     Total = x.Sum(y => y.TotalAmount)
                 }).ToListAsync(cancellationToken: cancellationToken);
 
             var totalPartnerPaymentHistoryPerDay = await queryPartnerPaymentHistories
-                .GroupBy(x => x.CreateDate.Value.Day)
+                .GroupBy(x => x.CreateDate.Value.Month)
                 .Select(x => new
                 {
-                    Day = x.Key,
+                    Month = x.Key,
                     Total = x.Sum(y => y.Total)
                 }).ToListAsync(cancellationToken: cancellationToken);
 
@@ -112,16 +104,16 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
             double? totalAmountPerDay = 0.0;
             foreach (var item in totalPaymentHistoryPerDay)
             {
-                var day = item.Day;
+                var day = item.Month;
                 var totalAmount = item.Total ?? 0.0;
                 var totalPartnerAmount =
-                    totalPartnerPaymentHistoryPerDay.FirstOrDefault(x => x.Day == day)?.Total ?? 0.0;
+                    totalPartnerPaymentHistoryPerDay.FirstOrDefault(x => x.Month == day)?.Total ?? 0.0;
                 totalAmountPerDay = totalAmount + totalPartnerAmount;
-                totalPerDayDictionary.Add(day.ToString(), totalAmountPerDay);
+                totalPerDayDictionary.Add(day + "-" + dateNow.Year, totalAmountPerDay);
             }
 
             total.Add(totalPerDayDictionary);
-        }
+        // }
 
         // service group by category id
         var services = await queryServices.ToListAsync(cancellationToken: cancellationToken);

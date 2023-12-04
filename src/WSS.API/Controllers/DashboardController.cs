@@ -16,14 +16,10 @@ public class DashboardController : BaseController
 
     [ApiVersion("1")]
     [HttpGet]
-    public async Task<IActionResult> GetDashboards([FromQuery] DashboardRequest query,
+    public async Task<IActionResult> GetDashboards(
         CancellationToken cancellationToken = default)
     {
-        var result = await this.Mediator.Send(new GetDashboardQuery()
-        {
-            Month = query.Month,
-            Year = query.Year
-        }, cancellationToken);
+        var result = await this.Mediator.Send(new GetDashboardQuery(), cancellationToken);
 
         return Ok(result);
     }
