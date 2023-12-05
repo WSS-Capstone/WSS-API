@@ -31,6 +31,7 @@ namespace WSS.API.Data.Models
         public Guid? UpdateBy { get; set; }
         public int? StatusPayment { get; set; }
         public string? Reason { get; set; }
+        public string? Email { get; set; }
 
         public virtual Combo? Combo { get; set; }
         public virtual User? Customer { get; set; }

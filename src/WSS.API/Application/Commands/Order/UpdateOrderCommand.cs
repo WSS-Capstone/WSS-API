@@ -17,6 +17,7 @@ public class UpdateOrderCommand : IRequest<OrderResponse>
         Fullname = request.Fullname;
         Address = request.Address;
         Phone = request.Phone;
+        Email = request.Email;
         VoucherId = request.VoucherId;
         ComboId = request.ComboId;
         TotalAmount = request.TotalAmount;
@@ -32,6 +33,7 @@ public class UpdateOrderCommand : IRequest<OrderResponse>
     public string? Fullname { get; set; }
     public string? Address { get; set; }
     public string? Phone { get; set; }
+    public string? Email { get; set; }
     public Guid? VoucherId { get; set; }
     public Guid? ComboId { get; set; }
     public double? TotalAmount { get; set; }
