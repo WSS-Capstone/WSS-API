@@ -53,7 +53,10 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
         var staff = new List<Dictionary<string, int>>();
         var partnerPayment = new List<Dictionary<string, double?>>();
 
-        var queryAccounts = await _accountRepo.GetAccounts().ToListAsync();
+        var queryAccounts = await _accountRepo.GetAccounts(null, new Expression<Func<Data.Models.Account, object>>[]
+        {
+            a => a.User
+        }).ToListAsync();
         var queryTasks = await _taskRepo.GetTasks().ToListAsync();
         var queryPaymentHistories = _paymentHistoryRepo.GetPaymentHistorys();
         var queryPartnerPaymentHistories = _partnerPaymentHistoryRepo.GetPartnerPaymentHistorys(null,
@@ -271,9 +274,9 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
         
 
         // count partner with category in service
-        var partnerGroupByCategoryId = services
-            .Where(x => x.CreateByNavigation.RoleName == RoleName.PARTNER)
-            .GroupBy(x => x.CategoryId).ToList();
+        var partnerGroupByCategoryId = queryAccounts
+            .Where(x => x.RoleName == RoleName.PARTNER)
+            .GroupBy(x => x.User.CategoryId).ToList();
         foreach (var item in partnerGroupByCategoryId)
         {
             var categoryId = item.Key;
@@ -281,14 +284,14 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
             if (categoryName != null)
             {
                 var dictionary = new Dictionary<string, int>();
-                dictionary.Add(categoryName, item.Select(x => x.CreateBy).Distinct().Count());
+                dictionary.Add(categoryName, item.Select(x => x.Id).Distinct().Count());
                 partner.Add(dictionary);
             }
         }
         
-        var staffGroupByCategoryId = services
-            .Where(x => x.CreateByNavigation.RoleName == RoleName.OWNER)
-            .GroupBy(x => x.CategoryId).ToList();
+        var staffGroupByCategoryId = queryAccounts
+            .Where(x => x.RoleName == RoleName.STAFF)
+            .GroupBy(x => x.User.CategoryId).ToList();
         foreach (var item in staffGroupByCategoryId)
         {
             var categoryId = item.Key;
@@ -296,7 +299,7 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
             if (categoryName != null)
             {
                 var dictionary = new Dictionary<string, int>();
-                dictionary.Add(categoryName, item.Select(x => x.CreateBy).Distinct().Count());
+                dictionary.Add(categoryName, item.Select(x => x.Id).Distinct().Count());
                 staff.Add(dictionary);
             }
         }
