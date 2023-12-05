@@ -77,7 +77,7 @@ public class OrderController : BaseController
     }
     [ApiVersion("1")]
     [HttpPut("approval")]
-    public async Task<IActionResult> ApprovalOrder(Guid id, StatusOrder  request,[FromBody] string reason,
+    public async Task<IActionResult> ApprovalOrder(Guid id, StatusOrder  request,[FromBody] string? reason,
         CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(new ApprovalOrderByOwnerCommand(id, request, reason), cancellationToken);
