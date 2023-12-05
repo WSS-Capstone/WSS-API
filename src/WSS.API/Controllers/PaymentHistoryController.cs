@@ -29,6 +29,7 @@ public class PaymentHistoryController : BaseController
     
     [HttpGet("partner")]
     [ApiVersion("1")]
+    [ApiVersion("2")]
     public async Task<IActionResult> GetPaymentHistoryPartners([FromQuery] GetPartnerPaymentHistoryQuery query,
         CancellationToken cancellationToken = default)
     {
