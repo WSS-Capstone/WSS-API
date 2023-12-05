@@ -45,6 +45,9 @@ public class GetPartnerPaymentHistoryQueryHandler : IRequestHandler<GetPartnerPa
             p => p.Partner,
             p => p.Order
         });
+
+        query = query.Include(q => q.Order).ThenInclude(d => d.OrderDetails);
+        
         var total = await query.CountAsync(cancellationToken: cancellationToken);
 
         if(request.PartnerId != null)
