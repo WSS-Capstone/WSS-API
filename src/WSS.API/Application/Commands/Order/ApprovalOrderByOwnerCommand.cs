@@ -19,11 +19,11 @@ public class ApprovalOrderByOwnerCommand : IRequest<OrderResponse>
     public StatusOrder StatusOrder { get; set; }
     public string? Reason { get; set; }
 }
-//
-// public class ApprovalServiceRequest
-// {
-//     public StatusOrder StatusOrder { get; set; }
-// }
+
+public class ApprovalOrderRequest
+{
+    public string? Reason { get; set; }
+}
 
 public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderByOwnerCommand, OrderResponse>
 {
