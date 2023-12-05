@@ -49,7 +49,8 @@ public enum ServiceSortCriteria
     Name,
     Quantity,
     Status,
-    CreateDate
+    CreateDate,
+    Used
 }
 
 public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,

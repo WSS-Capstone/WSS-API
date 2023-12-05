@@ -1,9 +1,13 @@
+using WSS.API.Data.Repositories.Account;
 using WSS.API.Data.Repositories.Category;
 using WSS.API.Data.Repositories.Feedback;
 using WSS.API.Data.Repositories.Order;
 using WSS.API.Data.Repositories.PartnerPaymentHistory;
 using WSS.API.Data.Repositories.PaymentHistory;
 using WSS.API.Data.Repositories.Service;
+using WSS.API.Data.Repositories.Task;
+using WSS.API.Infrastructure.Config;
+using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
 namespace WSS.API.Application.Queries.Dashboard;
 
@@ -19,10 +23,12 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
     private ICategoryRepo _categoryRepo;
     private IOrderRepo _orderRepo;
     private IFeedbackRepo _feedbackRepo;
+    private IAccountRepo _accountRepo;
+    private ITaskRepo _taskRepo;
 
     public GetDashboardQueryHandler(IPartnerPaymentHistoryRepo partnerPaymentHistoryRepo,
         IPaymentHistoryRepo paymentHistoryRepo, IServiceRepo serviceRepo, ICategoryRepo categoryRepo,
-        IOrderRepo orderRepo, IFeedbackRepo feedbackRepo)
+        IOrderRepo orderRepo, IFeedbackRepo feedbackRepo, IAccountRepo accountRepo, ITaskRepo taskRepo)
     {
         _partnerPaymentHistoryRepo = partnerPaymentHistoryRepo;
         _paymentHistoryRepo = paymentHistoryRepo;
@@ -30,6 +36,8 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
         _categoryRepo = categoryRepo;
         _orderRepo = orderRepo;
         _feedbackRepo = feedbackRepo;
+        _accountRepo = accountRepo;
+        _taskRepo = taskRepo;
     }
 
     public async Task<DashboardResponse> Handle(GetDashboardQuery request,
@@ -42,19 +50,26 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
         var serviceOrder = new List<Dictionary<string, int>>();
         var serviceFeedback = new List<Dictionary<string, float>>();
         var partner = new List<Dictionary<string, int>>();
+        var staff = new List<Dictionary<string, int>>();
         var partnerPayment = new List<Dictionary<string, double?>>();
 
+        var queryAccounts = await _accountRepo.GetAccounts().ToListAsync();
+        var queryTasks = await _taskRepo.GetTasks().ToListAsync();
         var queryPaymentHistories = _paymentHistoryRepo.GetPaymentHistorys();
         var queryPartnerPaymentHistories = _partnerPaymentHistoryRepo.GetPartnerPaymentHistorys(null,
             new Expression<Func<PartnerPaymentHistory, object>>[]
             {
                 pph => pph.Partner
             });
-        var queryServices = _serviceRepo.GetServices();
+        var queryServices = _serviceRepo.GetServices(null, new Expression<Func<Data.Models.Service, object>>[]
+        {
+            s => s.CreateByNavigation
+        });
         var queryOrders = _orderRepo.GetOrders(null, new Expression<Func<Data.Models.Order, object>>[]
         {
             o => o.OrderDetails
         });
+        queryOrders = queryOrders.Include(o => o.OrderDetails).ThenInclude(s => s.Service);
         var queryFeedbacks = _feedbackRepo.GetFeedbacks(null, new Expression<Func<Data.Models.Feedback, object>>[]
         {
             f => f.OrderDetail
@@ -80,6 +95,13 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
             {
                 Month = x.Key,
                 Total = x.Sum(y => y.TotalAmount)
+            }).ToListAsync(cancellationToken: cancellationToken);
+        
+        var totalOrderPerMonth = await queryOrders.GroupBy(x => x.CreateDate.Value.Month)
+            .Select(x => new
+            {
+                Month = x.Key,
+                Total = x.Count()
             }).ToListAsync(cancellationToken: cancellationToken);
 
         var totalPartnerPaymentHistoryPerMonth = await queryPartnerPaymentHistories
@@ -117,6 +139,16 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
         }
 
         totalMonth.Add(totalPerMonthDictionary);
+        
+        var joinMonthRangeOrder = (from month in monthRange
+            join totalOrder in totalOrderPerMonth on month equals totalOrder.Month into
+                totalOrderGroup
+            from totalOrder in totalOrderGroup.DefaultIfEmpty()
+            select new
+            {
+                Month = month,
+                Total = totalOrder?.Total,
+            }).ToList();
         
         // get total payment history and total partner payment history in year
         var toDateYear = DateTime.UtcNow;
@@ -201,12 +233,12 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
 
         // map service name to order group by service id
         var orders = await queryOrders.ToListAsync(cancellationToken: cancellationToken);
-        var orderGroupByServiceId = orders.SelectMany(x => x.OrderDetails).GroupBy(x => x.ServiceId).ToList();
+        var orderGroupByServiceId = orders.SelectMany(x => x.OrderDetails).GroupBy(x => x.Service.CategoryId).ToList();
 
         foreach (var item in orderGroupByServiceId)
         {
             var serviceId = item.Key;
-            var serviceName = services.FirstOrDefault(x => x.Id == serviceId)?.Name;
+            var serviceName = categoryNames.FirstOrDefault(x => x.Id == serviceId)?.Name;
             if (serviceName != null)
             {
                 var dictionary = new Dictionary<string, int>();
@@ -214,6 +246,8 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
                 serviceOrder.Add(dictionary);
             }
         }
+        
+        result.TotalOrderDone = orders.Count(x => x.StatusOrder == (int)StatusOrder.DONE);
 
         // map service name to feedback group by service id and calculate average star
         var feedbacks = await queryFeedbacks.ToListAsync(cancellationToken: cancellationToken);
@@ -231,9 +265,15 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
                 serviceFeedback.Add(dictionary);
             }
         }
+        result.TotalFeedback = feedbacks.Count();
+        result.NegativeFeedback = feedbacks.Count(x => x.Rating < 3);
+        
+        
 
         // count partner with category in service
-        var partnerGroupByCategoryId = services.GroupBy(x => x.CategoryId).ToList();
+        var partnerGroupByCategoryId = services
+            .Where(x => x.CreateByNavigation.RoleName == RoleName.PARTNER)
+            .GroupBy(x => x.CategoryId).ToList();
         foreach (var item in partnerGroupByCategoryId)
         {
             var categoryId = item.Key;
@@ -245,6 +285,22 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
                 partner.Add(dictionary);
             }
         }
+        
+        var staffGroupByCategoryId = services
+            .Where(x => x.CreateByNavigation.RoleName == RoleName.OWNER)
+            .GroupBy(x => x.CategoryId).ToList();
+        foreach (var item in staffGroupByCategoryId)
+        {
+            var categoryId = item.Key;
+            var categoryName = categoryNames.FirstOrDefault(x => x.Id == categoryId)?.Name;
+            if (categoryName != null)
+            {
+                var dictionary = new Dictionary<string, int>();
+                dictionary.Add(categoryName, item.Select(x => x.CreateBy).Distinct().Count());
+                staff.Add(dictionary);
+            }
+        }
+        result.Staff = staff;
 
         // count total payment of partner join user select name partner
         var partnerPaymentHistories =
@@ -270,6 +326,13 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
         result.ServiceFeedback = serviceFeedback;
         result.Partner = partner;
         result.PartnerPayment = partnerPayment;
+        
+        result.TotalPartner = queryAccounts.Count(x => x.RoleName == RoleName.PARTNER);
+        result.TotalStaff = queryAccounts.Count(x => x.RoleName == RoleName.STAFF);
+        result.TaskInProgress = queryTasks.Count(x => x.Status == (int)TaskStatus.IN_PROGRESS);
+        result.TaskToDo = queryTasks.Count(x => x.Status == (int)TaskStatus.TO_DO);
+        result.TotalTask = queryTasks.Count();
+        result.TaskDone = queryTasks.Count(x => x.Status == (int)TaskStatus.DONE);
 
         return result;
     }

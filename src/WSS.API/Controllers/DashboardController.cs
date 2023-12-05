@@ -16,6 +16,7 @@ public class DashboardController : BaseController
 
     [ApiVersion("1")]
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetDashboards(
         CancellationToken cancellationToken = default)
     {
