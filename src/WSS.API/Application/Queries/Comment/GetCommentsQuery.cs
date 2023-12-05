@@ -50,10 +50,11 @@ public class GetCommentsQueryHandler : IRequestHandler<GetCommentsQuery,
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
 
         query = query.GetWithPaging(request.Page, request.PageSize);
+        
+        var list = await query.ToListAsync(cancellationToken: cancellationToken);
 
+        var result = this._mapper.Map<List<CommentResponse>>(list);
 
-        var result = this._mapper.ProjectTo<CommentResponse>(query.ToList().AsQueryable());
-
-        return new PagingResponseQuery<CommentResponse, CommentSortCriteria>(request, result, total);
+        return new PagingResponseQuery<CommentResponse, CommentSortCriteria>(request, result.AsQueryable(), total);
     }
 }
