@@ -139,9 +139,9 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
         
         var total = await query.CountAsync(cancellationToken: cancellationToken);
 
-        query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
+        // query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
 
-        query = query.GetWithPaging(request.Page, request.PageSize);
+        // query = query.GetWithPaging(request.Page, request.PageSize);
         
         var list = await query.ToListAsync(cancellationToken: cancellationToken);
 
@@ -176,6 +176,8 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
         });
 
         result = result.OrderBy(o => o.Status).ToList();
+        result = result.AsQueryable().GetWithSorting(request.SortKey.ToString(), request.SortOrder).ToList();
+        result = result.GetWithPaging(request.Page, request.PageSize).ToList();
         
         return new PagingResponseQuery<ServiceResponse, ServiceSortCriteria>(request, result.AsQueryable(), total);
     }
