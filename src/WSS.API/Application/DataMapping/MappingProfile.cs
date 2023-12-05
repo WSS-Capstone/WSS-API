@@ -279,6 +279,10 @@ public class MappingProfile : Profile
                         ? 0
                         : src.OrderDetails.Average(o =>
                             o.Feedbacks.Count == 0 ? 0 : o.Feedbacks.Average(f => f.Rating))))
+            .ForMember(dto => dto.TotalFeedback, map => map.MapFrom(src =>
+                src.OrderDetails.Count == 0
+                    ? 0
+                    : src.OrderDetails.Sum(o => o.Feedbacks.Count)))
             .ForMember(dto => dto.TotalRevenue,
                 opt => opt.MapFrom(src =>
                     
