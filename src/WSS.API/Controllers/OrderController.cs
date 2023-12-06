@@ -75,6 +75,22 @@ public class OrderController : BaseController
 
         return Ok(result);
     }
+    
+    [ApiVersion("3")]
+    [HttpPatch("{id}/reject")]
+    public async Task<IActionResult> RejectOrder([FromRoute] Guid id, [FromBody] RejectRequest? request,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(new RejectOrderCommand()
+        {
+            Id = id,
+            Reason = request.Reason
+        }, cancellationToken);
+        
+        return Ok(result);
+    }
+    
+    
     [ApiVersion("1")]
     [HttpPut("approval")]
     public async Task<IActionResult> ApprovalOrder(Guid id, StatusOrder  request,[FromBody] ApprovalOrderRequest? requestReason,
