@@ -1,5 +1,6 @@
 using FirebaseAdmin.Messaging;
 using Microsoft.AspNetCore.Authorization;
+using WSS.API.Application.Commands.Notification;
 using WSS.API.Application.Queries.Notification;
 
 namespace WSS.API.Controllers;
@@ -27,6 +28,26 @@ public class NotiController : BaseController
         CancellationToken cancellationToken = default)
     {
         var result = await this.Mediator.Send(query, cancellationToken);
+
+        return Ok(result);
+    }
+    /// <summary>
+    /// [Guest] Endpoint for update isRead with condition
+    /// </summary>
+    /// <returns>Msg</returns>
+    /// <response code="200">Returns msg</response>
+    /// <response code="204">Returns msg is empty</response>
+    /// <response code="403">Return if token is access denied</response>
+    [HttpPatch("{id}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> UpdateIsReadNotification([FromRoute] Guid id, NotificationIsRead status,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(new UpdateNotificationCommand()
+        {
+            Id = id,
+            Status = status
+        }, cancellationToken);
 
         return Ok(result);
     }

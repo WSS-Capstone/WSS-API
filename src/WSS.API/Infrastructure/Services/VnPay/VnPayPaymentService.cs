@@ -1,11 +1,13 @@
 using WSS.API.Application.Models.Requests;
 using WSS.API.Data.Repositories.Account;
+using WSS.API.Data.Repositories.Notification;
 using WSS.API.Data.Repositories.Order;
 using WSS.API.Data.Repositories.PartnerPaymentHistory;
 using WSS.API.Data.Repositories.PaymentHistory;
 using WSS.API.Infrastructure.Config;
 using WSS.API.Infrastructure.Services.File;
 using WSS.API.Infrastructure.Services.Identity;
+using WSS.API.Infrastructure.Services.Mail;
 using WSS.API.Infrastructure.Services.Noti;
 using WSS.API.Infrastructure.Utilities;
 using Task = System.Threading.Tasks.Task;
@@ -23,6 +25,9 @@ public class VnPayPaymentService : IVnPayPaymentService
     private readonly IIdentitySvc _identitySvc;
     private readonly IFileSvc _fileSvc;
     private readonly IPartnerPaymentHistoryRepo _partnerPaymentHistoryRepo;
+    private readonly INotificationRepo _notificationRepo;
+    private readonly IMailService _mailService;
+    private readonly IAccountRepo _accountRepo;
 
     private const string PayCommand = "pay";
 
@@ -32,7 +37,7 @@ public class VnPayPaymentService : IVnPayPaymentService
 
     public VnPayPaymentService(VnPaySettings vnPaySettings, IHttpContextAccessor contextAccessor,
         IPaymentHistoryRepo paymentHistoryRepo, IOrderRepo orderRepo, IIdentitySvc identitySvc,
-        IPartnerPaymentHistoryRepo partnerPaymentHistoryRepo, IFileSvc fileSvc)
+        IPartnerPaymentHistoryRepo partnerPaymentHistoryRepo, IFileSvc fileSvc, INotificationRepo notificationRepo, IMailService mailService, IAccountRepo accountRepo)
     {
         _vnPaySettings = vnPaySettings;
         _contextAccessor = contextAccessor;
@@ -41,6 +46,9 @@ public class VnPayPaymentService : IVnPayPaymentService
         _identitySvc = identitySvc;
         _partnerPaymentHistoryRepo = partnerPaymentHistoryRepo;
         _fileSvc = fileSvc;
+        _notificationRepo = notificationRepo;
+        _mailService = mailService;
+        _accountRepo = accountRepo;
     }
 
     public async Task<PaymentResponse> CreatePayment(VnPayPayment payment)
@@ -178,6 +186,7 @@ public class VnPayPaymentService : IVnPayPaymentService
             query = query.Include(x => x.OrderDetails).ThenInclude(s => s.Service)
                 .ThenInclude(c => c.Category).ThenInclude(c => c.Commision);
             var order = await query.FirstOrDefaultAsync();
+            var user = await _accountRepo.GetAccountById(Guid.Parse(customerId));
             if (order == null) throw new Exception("Order not found");
             var pphCode = order.PartnerPaymentHistories == null || order.PartnerPaymentHistories.Count == 0 ? null : order.PartnerPaymentHistories.OrderByDescending(o => o.Code).FirstOrDefault().Code;
             if(order.PartnerPaymentHistories == null) order.PartnerPaymentHistories = new List<PartnerPaymentHistory>();
@@ -229,7 +238,33 @@ public class VnPayPaymentService : IVnPayPaymentService
                     };
                     await NotiService.PushNotification.SendMessage(order.CreateBy.ToString(),
                         $"Thông báo thanh toán.",
-                        $"Bạn có 1 đơn hàng được thanh toán.", data);
+                        $"Bạn có 1 đơn hàng {order.Code} được thanh toán.", data);
+                    // insert notification
+                    var notification = new Notification()
+                    {
+                        Title = "Thông báo thanh toán.",
+                        Content = $"Bạn có 1 đơn hàng {order.Code} được thanh toán.",
+                        UserId = order.CreateBy
+                    };
+                    await _notificationRepo.CreateNotification(notification);
+                    // send mail
+                    var mail = new MailInputType()
+                    {
+                        ToEmail = user.Username,
+                        Subject = "Thông báo thanh toán.",
+                        Body = @$"<html> <body> <p> +
+                                Gửi ông/bà:" + user.Username +
+                               "\n\nCảm ơn ông rất nhiều khi đã tin tưởng và sử dụng sản phẩm của cửa hàng Blissful Bell." +
+                               " Rất vui vì ông đã gắn bó với chúng tôi trong thời gian vừa qua." +
+                               "\nCảm ơn ông vì đã là một khách hàng tuyệt vời đến vậy." +
+                               " Mong rằng sau này chúng tôi sẽ tiếp tục được đồng hành với ông." +
+                               " Chúng tôi hứa sẽ mang lại những sản phẩm và dịch vụ tốt nhất." +
+                               "\n\nMột lần nữa chân thành cảm ơn." +
+                               "\n\nTrân trọng," +
+                               "\n\nBlissful Bell" +
+                               " </p> </body> </html>"
+                    };
+                    await _mailService.SendEmailAsync(mail);
                 }
                 else if (orderType == OrderType.Deposit.ToString())
                 {
@@ -255,7 +290,15 @@ public class VnPayPaymentService : IVnPayPaymentService
                     };
                     await NotiService.PushNotification.SendMessage(order.CreateBy.ToString(),
                         $"Thông báo thanh toán.",
-                        $"Bạn có 1 đơn hàng được đặt cọc.", data);
+                        $"Bạn có 1 đơn hàng {order.Code} được đặt cọc.", data);
+                    // insert notification
+                    var notification = new Notification()
+                    {
+                        Title = "Thông báo thanh toán.",
+                        Content = $"Bạn có 1 đơn hàng {order.Code} được đặt cọc.",
+                        UserId = order.CreateBy
+                    };
+                    await _notificationRepo.CreateNotification(notification);
                 }
 
                 await _orderRepo.UpdateOrder(order);
@@ -316,6 +359,7 @@ public class VnPayPaymentService : IVnPayPaymentService
             String vnpSecureHash = context.Request.Query["vnp_SecureHash"];
             bool checkSignature = vnpay.ValidateSignature(vnpSecureHash, vnpHashSecret);
             var order = await _orderRepo.GetOrderById(Guid.Parse(orderId));
+            var user = await _accountRepo.GetAccountById(Guid.Parse(customerId));
             if (order == null) throw new Exception("Order not found");
             if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
             {
@@ -335,6 +379,32 @@ public class VnPayPaymentService : IVnPayPaymentService
                     await NotiService.PushNotification.SendMessage(order.CreateBy.ToString(),
                         $"Thông báo thanh toán.",
                         $"Bạn có 1 đơn hàng {order.Code} được thanh toán.", data);
+                    // insert notification
+                    var notification = new Notification()
+                    {
+                        Title = "Thông báo thanh toán.",
+                        Content = $"Bạn có 1 đơn hàng {order.Code} được thanh toán.",
+                        UserId = order.CreateBy
+                    };
+                    await _notificationRepo.CreateNotification(notification);
+                    // send mail
+                    var mail = new MailInputType()
+                    {
+                        ToEmail = user.Username,
+                        Subject = "Thông báo thanh toán.",
+                        Body = @$"<html> <body> <p> +
+                                Gửi ông/bà:" + user.Username +
+                               "\n\nCảm ơn ông rất nhiều khi đã tin tưởng và sử dụng sản phẩm của cửa hàng Blissful Bell." +
+                               " Rất vui vì ông đã gắn bó với chúng tôi trong thời gian vừa qua." +
+                               "\nCảm ơn ông vì đã là một khách hàng tuyệt vời đến vậy." +
+                               " Mong rằng sau này chúng tôi sẽ tiếp tục được đồng hành với ông." +
+                               " Chúng tôi hứa sẽ mang lại những sản phẩm và dịch vụ tốt nhất." +
+                               "\n\nMột lần nữa chân thành cảm ơn." +
+                               "\n\nTrân trọng," +
+                               "\n\nBlissful Bell" +
+                               " </p> </body> </html>"
+                    };
+                    await _mailService.SendEmailAsync(mail);
                 }
                 else if (orderType == OrderType.Deposit.ToString())
                 {
@@ -352,6 +422,14 @@ public class VnPayPaymentService : IVnPayPaymentService
                     await NotiService.PushNotification.SendMessage(customerId,
                         $"Thông báo thanh toán.",
                         $"Bạn có 1 đơn hàng {order.Code} được đặt cọc.", data);
+                    // insert notification
+                    var notification = new Notification()
+                    {
+                        Title = "Thông báo thanh toán.",
+                        Content = $"Bạn có 1 đơn hàng {order.Code} được đặt cọc.",
+                        UserId = order.CreateBy
+                    };
+                    await _notificationRepo.CreateNotification(notification);
                 }
 
                 await _orderRepo.UpdateOrder(order);

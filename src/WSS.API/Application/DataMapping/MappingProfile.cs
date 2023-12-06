@@ -5,6 +5,7 @@ using WSS.API.Application.Commands.Comment;
 using WSS.API.Application.Commands.Commission;
 using WSS.API.Application.Commands.CurrentPrice;
 using WSS.API.Application.Commands.DayOff;
+using WSS.API.Application.Commands.Notification;
 using WSS.API.Application.Commands.Order;
 using WSS.API.Application.Commands.Service;
 using WSS.API.Application.Commands.Task;
@@ -48,9 +49,16 @@ public class MappingProfile : Profile
     private void NotificationProfile()
     {
         this.CreateMap<Notification, NotificationResponse>()
+            .ForMember(dto => dto.IsRead,
+                opt => opt.MapFrom(src => (NotificationIsRead)src.IsRead))
             .ForMember(dto => dto.User, opt => opt.MapFrom(src => src.User))
             .ReverseMap();
+        this.CreateMap<Notification, UpdateNotificationCommand>()
+            .ForMember(dto => dto.Status,
+                opt => opt.MapFrom(src => (NotificationIsRead)src.IsRead))
+            .ReverseMap();
     }
+
     private void AccountProfile()
     {
         this.CreateMap<User, UserResponse>()
@@ -124,7 +132,7 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Service, opt => opt.MapFrom(src => src.Service))
             .ForMember(dto => dto.Combo, opt => opt.MapFrom(src => src.Combo))
             .ReverseMap();
-        
+
 
         this.CreateMap<ComboService, ServiceResponse>()
             .ForMember(dto => dto.Id, opt => opt.MapFrom(src => src.ServiceId))
@@ -273,7 +281,6 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.CreateByNavigation.RoleName == RoleName.OWNER))
             .ForMember(dto => dto.ComboServices,
                 opt => opt.MapFrom(src => src.ComboServices))
-
             .ForMember(dto => dto.Used,
                 opt => opt.MapFrom(src =>
                     src.OrderDetails.Count == 0
@@ -292,10 +299,12 @@ public class MappingProfile : Profile
                     : src.OrderDetails.Sum(o => o.Feedbacks.Count)))
             .ForMember(dto => dto.TotalRevenue,
                 opt => opt.MapFrom(src =>
-                    
                     src.OrderDetails.Count == 0
                         ? 0
-                        : src.OrderDetails.Sum(o => o.Order != null && o.Order.StatusPayment == (int)OrderDetailStatus.DONE ? o.Price / 100 * (100 - o.Service.Category.Commision.CommisionValue) : 0)));
+                        : src.OrderDetails.Sum(o =>
+                            o.Order != null && o.Order.StatusPayment == (int)OrderDetailStatus.DONE
+                                ? o.Price / 100 * (100 - o.Service.Category.Commision.CommisionValue)
+                                : 0)));
 
         this.CreateMap<Service, CreateServiceCommand>().ReverseMap();
         this.CreateMap<Service, UpdateServiceCommand>().ReverseMap();
