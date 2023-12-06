@@ -1,5 +1,6 @@
 using FirebaseAdmin.Messaging;
 using Microsoft.AspNetCore.Authorization;
+using WSS.API.Application.Queries.Notification;
 
 namespace WSS.API.Controllers;
 
@@ -12,6 +13,24 @@ public class NotiController : BaseController
     public NotiController(IMediator mediator) : base(mediator)
     {
     }
+    
+    /// <summary>
+    /// [Guest] Endpoint for get notificaiton with condition
+    /// </summary>
+    /// <returns>Msg</returns>
+    /// <response code="200">Returns msg</response>
+    /// <response code="204">Returns msg is empty</response>
+    /// <response code="403">Return if token is access denied</response>
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetNotifications([FromQuery] GetNotificationsQuery query,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(query, cancellationToken);
+
+        return Ok(result);
+    }
+    
     /// <summary>
     /// [Guest] Endpoint for company subscribe topic with condition
     /// </summary>

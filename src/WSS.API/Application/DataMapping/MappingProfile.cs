@@ -42,8 +42,15 @@ public class MappingProfile : Profile
         this.WeddingInformationProfile();
         this.DayOffProfile();
         this.CommentProfile();
+        this.NotificationProfile();
     }
 
+    private void NotificationProfile()
+    {
+        this.CreateMap<Notification, NotificationResponse>()
+            .ForMember(dto => dto.User, opt => opt.MapFrom(src => src.User))
+            .ReverseMap();
+    }
     private void AccountProfile()
     {
         this.CreateMap<User, UserResponse>()
