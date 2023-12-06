@@ -70,7 +70,7 @@ public class RejectOrderCommandHandler : IRequestHandler<RejectOrderCommand, Ord
                 $"Đơn hàng {order.Code} đã bị huỷ.", data);
 
             // insert notification
-            var notification = new Notification()
+            var notification = new Data.Models.Notification()
             {
                 Title = "Thông báo hủy đơn hàng.",
                 Content = $"Đơn hàng {order.Code} đã bị hủy.",
