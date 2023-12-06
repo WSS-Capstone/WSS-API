@@ -53,7 +53,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskR
                 $"Bạn có 1 task được tạo.", data);
 
             // insert notification
-            var notification = new Notification()
+            var notification = new Data.Models.Notification()
             {
                 Title = "Thông báo tạo task.",
                 Content = $"Bạn có 1 task được tạo.",
@@ -74,7 +74,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskR
                 $"Thông báo tạo task.",
                 $"Bạn có 1 task được tạo.", data);
             // insert notification
-            var notification = new Notification()
+            var notification = new Data.Models.Notification()
             {
                 Title = "Thông báo tạo task.",
                 Content = $"Bạn có 1 task được tạo.",
