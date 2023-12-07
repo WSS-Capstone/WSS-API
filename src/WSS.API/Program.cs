@@ -12,6 +12,7 @@ using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using WSS.API.Cron;
 using WSS.API.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -60,6 +61,7 @@ builder.Services.RegisterServiceModule();
 builder.Services.RegisterDataRepositories();
 builder.Services.RegisterLogging();
 builder.Services.AddFireBaseAsync();
+builder.Services.RegisterQuartz();
 var app = builder.Build();
 
 app.RegisterFileServer(builder.Environment, builder.Configuration);
