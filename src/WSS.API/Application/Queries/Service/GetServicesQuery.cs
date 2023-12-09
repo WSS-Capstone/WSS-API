@@ -76,7 +76,7 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
             s => s.CurrentPrices,
             s => s.ServiceImages,
             s => s.OrderDetails.Select(o => o.Order),
-            // s => s.OrderDetails.Select(o => o.Feedbacks),
+            s => s.OrderDetails.Select(o => o.Feedbacks),
             s => s.CreateByNavigation,
         });
         
