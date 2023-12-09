@@ -101,7 +101,7 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
             {
                 ToEmail = email,
                 Subject = EmailUtils.MailSubjectConfirm,
-                Body = @"<html> <body> <p> + 
+                Body = @"<html> <body> <p> 
                        Xin chào " + email + $@",
 
                 Chúng tôi vui mừng thông báo cho bạn biết rằng chúng tôi đã nhận được đơn đặt hàng của bạn.
@@ -110,12 +110,12 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
 
                 Nếu bạn có bất kỳ câu hỏi nào, hãy liên hệ với chúng tôi tại đây hoặc gọi cho chúng tôi theo số 098.888.888
 
-                Vui lòng thanh toán tại đây https://loveweddingservice.shop/order-history/+{order.Id} hoặc liên hệ với chúng tôi.
+                Vui lòng thanh toán tại đây https://loveweddingservice.shop/order-history/{order.Id} hoặc liên hệ với chúng tôi.
 
                 Trân trọng,
 
                 Blissful Bell
-                       + </p> </body> </html>"
+                        </p> </body> </html>"
             };
             await this._mailService.SendEmailAsync(mail);
         }
