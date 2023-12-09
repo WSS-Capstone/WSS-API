@@ -289,7 +289,7 @@ public class MappingProfile : Profile
                             .Count(o => o.Order != null && o.Order.StatusOrder == (int)StatusOrder.DONE)))
             .ForMember(dto => dto.Rating,
                 opt => opt.MapFrom(src =>
-                    src.OrderDetails.Count == 0
+                    src.OrderDetails.Sum(o => o.Feedbacks.Count) == 0
                         ? 0
                         : src.OrderDetails.Average(o =>
                             o.Feedbacks.Count == 0 ? 5 : o.Feedbacks.Sum(f => f.Rating) / o.Feedbacks.Count)))
