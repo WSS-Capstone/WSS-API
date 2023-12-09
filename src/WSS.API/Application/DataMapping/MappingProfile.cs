@@ -105,9 +105,11 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Rating, opt =>
                 opt.MapFrom(src => src.ComboServices
                     .Average(c => c.Service != null
-                        ? c.Service.OrderDetails
-                            .Average(od => od.Feedbacks
-                                .Sum(f => f.Rating) / od.Feedbacks.Count)
+                        ? c.Service.OrderDetails != null && c.Service.OrderDetails.Count == 0
+                            ? c.Service.OrderDetails
+                                .Average(od => od.Feedbacks
+                                    .Sum(f => f.Rating) / od.Feedbacks.Count)
+                            : 5
                         : 0)))
             .ReverseMap();
 
