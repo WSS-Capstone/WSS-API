@@ -43,9 +43,11 @@ public class GetPartnerPaymentHistoryQueryHandler : IRequestHandler<GetPartnerPa
         var query = _repo.GetPartnerPaymentHistorys(null, new Expression<Func<Data.Models.PartnerPaymentHistory, object>>[]
         {
             p => p.Partner,
-            p => p.Order
+            p => p.Order,
         });
 
+        query = query.Include(q => q.Order).ThenInclude(s => s.OrderDetails).ThenInclude(s => s.Service);
+        
         query = query.Include(q => q.Order).ThenInclude(d => d.OrderDetails);
         
         var total = await query.CountAsync(cancellationToken: cancellationToken);

@@ -23,6 +23,7 @@ public class ServiceResponse
     public DateTime? CreateDate { get; set; }
     public DateTime? UpdateDate { get; set; }
     public virtual AccountResponse? CreateByNavigation { get; set; }
+    public Guid? CreateBy { get; set; }
   
     public bool? IsOwnerService { get; set; }
 }
