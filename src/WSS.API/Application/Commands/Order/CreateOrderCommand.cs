@@ -1,5 +1,6 @@
 using WSS.API.Data.Repositories.Account;
 using WSS.API.Data.Repositories.Combo;
+using WSS.API.Data.Repositories.Notification;
 using WSS.API.Data.Repositories.Order;
 using WSS.API.Data.Repositories.Service;
 using WSS.API.Data.Repositories.Task;
@@ -57,10 +58,11 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
     private readonly IVoucherRepo _voucherRepo;
     private readonly ITaskRepo _taskRepo;
     private readonly IWeddingInformationRepo _weddingInformationRepo;
+    private readonly INotificationRepo _notificationRepo;
 
     public CreateOrderCommandHandler(IMapper mapper, IOrderRepo orderRepo, IAccountRepo accountRepo,
         IIdentitySvc identitySvc, IWeddingInformationRepo weddingInformationRepo, IServiceRepo serviceRepo,
-        IComboRepo comboRepo, IVoucherRepo voucherRepo, ITaskRepo taskRepo)
+        IComboRepo comboRepo, IVoucherRepo voucherRepo, ITaskRepo taskRepo, INotificationRepo notificationRepo)
     {
         _mapper = mapper;
         _orderRepo = orderRepo;
@@ -71,6 +73,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         _comboRepo = comboRepo;
         _voucherRepo = voucherRepo;
         _taskRepo = taskRepo;
+        _notificationRepo = notificationRepo;
     }
 
     public async Task<OrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -219,6 +222,16 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         await NotiService.PushNotification.SendMessage(user.Id.ToString(),
             $"Thông báo tạo đơn hàng.",
             $"Bạn có 1 đơn hàng mới được tạo.", data1);
+        
+        var accountO = await this._accountRepo.GetAccounts(a => a.RoleName == RoleName.OWNER).FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        
+        var notification = new Data.Models.Notification()
+        {
+            Title = "Thông báo tạo đơn hàng.",
+            Content = $"Bạn có 1 đơn hàng mới được tạo.",
+            UserId = accountO.Id,
+        };
+        await _notificationRepo.CreateNotification(notification);
         
         return _mapper.Map<OrderResponse>(order);
     }
