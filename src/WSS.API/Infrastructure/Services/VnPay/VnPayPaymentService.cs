@@ -221,7 +221,7 @@ public class VnPayPaymentService : IVnPayPaymentService
                                     PartnerId = od.Service.CreateBy,
                                     CreateDate = DateTime.Now,
                                     Status = (int)PartnerPaymentHistoryStatus.INACTIVE,
-                                    Total = price - commission,
+                                    Total = price - (price / 100 * commission),
                                     Code = GenCode.NextId(pphCode),
                                 };
                                 pphCode = partnerPH.Code;
