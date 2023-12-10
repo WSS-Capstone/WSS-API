@@ -78,24 +78,25 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
 
         if (request.StatusOrder == StatusOrder.CONFIRM)
         {
-            // foreach (var orderDetail in order.OrderDetails)
-            // {
-            //     // var task = new Data.Models.Task();
-            //     // task.Id = Guid.NewGuid();
-            //     // task.OrderDetailId = orderDetail.Id;
-            //     // task.StartDate = orderDetail.StartTime;
-            //     // task.EndDate = orderDetail.EndTime;
-            //     // task.PartnerId = orderDetail?.Service?.ApprovalDate != null ? orderDetail.Service.CreateBy : null;
-            //     // task.Status = (int)TaskStatus.TO_DO;
-            //     // task.CreateDate = DateTime.Now;
-            //     // task.CreateBy = user.User?.Id;
-            //     // task.TaskName = "Tạo task cho order " + orderDetail?.Service?.Name;
-            //     // order.OrderDetails.FirstOrDefault().Tasks.Add(task);
-            //     // task.CreateBy = user.Id;
-            //     // await _taskRepo.CreateTask(task);
-            //     //send mail
-            //     
-            // }
+            foreach (var orderDetail in order.OrderDetails)
+            {
+                orderDetail.Status = (int)OrderDetailStatus.INPROCESS;
+                // var task = new Data.Models.Task();
+                // task.Id = Guid.NewGuid();
+                // task.OrderDetailId = orderDetail.Id;
+                // task.StartDate = orderDetail.StartTime;
+                // task.EndDate = orderDetail.EndTime;
+                // task.PartnerId = orderDetail?.Service?.ApprovalDate != null ? orderDetail.Service.CreateBy : null;
+                // task.Status = (int)TaskStatus.TO_DO;
+                // task.CreateDate = DateTime.Now;
+                // task.CreateBy = user.User?.Id;
+                // task.TaskName = "Tạo task cho order " + orderDetail?.Service?.Name;
+                // order.OrderDetails.FirstOrDefault().Tasks.Add(task);
+                // task.CreateBy = user.Id;
+                // await _taskRepo.CreateTask(task);
+                //send mail
+                
+            }
             
             var mail = new MailInputType
             {
