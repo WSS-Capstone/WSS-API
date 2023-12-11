@@ -1,5 +1,6 @@
 using WSS.API.Data.Repositories.Account;
 using WSS.API.Data.Repositories.Combo;
+using WSS.API.Data.Repositories.DayOff;
 using WSS.API.Data.Repositories.Notification;
 using WSS.API.Data.Repositories.Order;
 using WSS.API.Data.Repositories.Service;
@@ -59,10 +60,11 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
     private readonly ITaskRepo _taskRepo;
     private readonly IWeddingInformationRepo _weddingInformationRepo;
     private readonly INotificationRepo _notificationRepo;
+    private readonly IDayOffRepo _dayOffRepo;
 
     public CreateOrderCommandHandler(IMapper mapper, IOrderRepo orderRepo, IAccountRepo accountRepo,
         IIdentitySvc identitySvc, IWeddingInformationRepo weddingInformationRepo, IServiceRepo serviceRepo,
-        IComboRepo comboRepo, IVoucherRepo voucherRepo, ITaskRepo taskRepo, INotificationRepo notificationRepo)
+        IComboRepo comboRepo, IVoucherRepo voucherRepo, ITaskRepo taskRepo, INotificationRepo notificationRepo, IDayOffRepo dayOffRepo)
     {
         _mapper = mapper;
         _orderRepo = orderRepo;
@@ -74,6 +76,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         _voucherRepo = voucherRepo;
         _taskRepo = taskRepo;
         _notificationRepo = notificationRepo;
+        _dayOffRepo = dayOffRepo;
     }
 
     public async Task<OrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -83,6 +86,15 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             {
                 a => a.User
             }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        
+        var serviceIds = request.OrderDetails.ToList().Select(x => x.ServiceId).ToList();
+        var dayOff = await _dayOffRepo.GetDayOffs(d => serviceIds.Contains(d.ServiceId) && d.Day.Value.Date == DateTime.UtcNow.Date).ToListAsync(cancellationToken: cancellationToken);
+        
+        if(dayOff.Count > 0)
+        {
+            throw new Exception("Service is day off" + dayOff.ToString());
+        }
+        
         Guid userId = user.Id;
         // Create Order
         var code = await _orderRepo.GetOrders().OrderByDescending(x => x.Code).Select(x => x.Code)
