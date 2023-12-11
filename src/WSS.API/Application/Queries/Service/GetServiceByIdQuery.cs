@@ -51,7 +51,8 @@ public class GetServiceByIdQueryHandler : IRequestHandler<GetServiceByIdQuery, S
 
         var result = this._mapper.Map<ServiceResponse>(service);
         // result.IsOwnerService = result.CreateByNavigation.RoleName == RoleName.OWNER;
-        result.ComboServices.ForEach(cb => cb.Combo?.ComboServices?.Clear());
+        result.ComboServices.Clear();
+        // result.ComboServices.ForEach(cb => cb.Combo?.ComboServices?.Clear());
         return result;
     }
 }
