@@ -93,7 +93,14 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         
         if(dayOff.Count > 0)
         {
-            throw new Exception("Service is day off" + dayOff.ToString());
+
+            var serviceIdString = "";
+            foreach (var day in dayOff)
+            {
+                serviceIdString += day.ServiceId.ToString() + ",";
+            }
+            
+            throw new ArgumentException(serviceIdString);
         }
         
         Guid userId = user.Id;
