@@ -80,12 +80,12 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
         result.ComboOrderDetails.ForEach(od =>
         {
             od.Service?.Category?.Services.Clear();
-            // od.Service?.ComboServices.Clear();
+            od.Service?.ComboServices.Clear();
         });
         result.OrderDetails.ForEach(od =>
         {
             od.Service?.Category?.Services.Clear();
-            // od.Service?.ComboServices.Clear();
+            od.Service?.ComboServices.Clear();
         });
         result.ComboOrderStatus = result.ComboOrderDetails.Any(od => od.Status == OrderDetailStatus.DONE) ? OrderDetailStatus.DONE : OrderDetailStatus.INPROCESS;
         result.ComboOrderStatus = result.ComboOrderDetails.Any(od => od.Status == OrderDetailStatus.PENDING) ? OrderDetailStatus.PENDING : result.ComboOrderStatus;
