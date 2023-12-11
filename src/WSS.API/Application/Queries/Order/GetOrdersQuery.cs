@@ -93,12 +93,12 @@ public class GetOrdersQueryHandler :  IRequestHandler<GetOrdersQuery, PagingResp
             o.ComboOrderDetails.ForEach(od =>
             {
                 od.Service?.Category?.Services.Clear();
-                od.Service?.ComboServices.Clear();
+                // od.Service?.ComboServices.Clear();
             });
             o.OrderDetails.ForEach(od =>
             {
                 od.Service?.Category?.Services.Clear();
-                od.Service?.ComboServices.Clear();
+                // od.Service?.ComboServices.Clear();
             });
             
             o.ComboOrderStatus = o.ComboOrderDetails.Any(od => od.Status == OrderDetailStatus.DONE) ? OrderDetailStatus.DONE : OrderDetailStatus.INPROCESS;

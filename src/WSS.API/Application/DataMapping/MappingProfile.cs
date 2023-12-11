@@ -280,8 +280,8 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src => src.CurrentPrices.OrderByDescending(s => s.DateOfApply).FirstOrDefault()))
             .ForMember(dto => dto.IsOwnerService,
                 opt => opt.MapFrom(src => src.CreateByNavigation.RoleName == RoleName.OWNER))
-            .ForMember(dto => dto.ComboServices,
-                opt => opt.MapFrom(src => src.ComboServices))
+            // .ForMember(dto => dto.ComboServices,
+            //     opt => opt.MapFrom(src => src.ComboServices))
             .ForMember(dto => dto.Used,
                 opt => opt.MapFrom(src =>
                     src.OrderDetails.Count == 0
