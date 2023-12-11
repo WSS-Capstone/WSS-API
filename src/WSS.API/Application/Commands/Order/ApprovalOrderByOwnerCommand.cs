@@ -80,6 +80,7 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
 
         if (request.StatusOrder == StatusOrder.CONFIRM)
         {
+            order.StatusPayment = (int)StatusPayment.CONFIRM;
             foreach (var orderDetail in order.OrderDetails)
             {
                 orderDetail.Status = (int)OrderDetailStatus.INPROCESS;
