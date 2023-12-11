@@ -3,6 +3,7 @@ using WSS.API.Data.Repositories.Order;
 using WSS.API.Infrastructure.Config;
 using WSS.API.Infrastructure.Services.Identity;
 using WSS.API.Infrastructure.Services.Mail;
+using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
 namespace WSS.API.Application.Commands.Order;
 
@@ -61,6 +62,7 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
             {
                 o => o.OrderDetails,
                 o => o.OrderDetails.Select(od => od.Service),
+                o => o.OrderDetails.Select(od => od.Tasks),
                 o => o.Customer
             });
 
@@ -119,17 +121,26 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
                         </p> </body> </html>"
             };
             await this._mailService.SendEmailAsync(mail);
+        } 
+        if (request.StatusOrder == StatusOrder.CANCEL)
+        {
+            foreach (var od in order.OrderDetails)
+            {
+                od.Status = (int)OrderDetailStatus.CANCEL;
+                foreach (var task in od.Tasks)
+                {
+                    task.Status = (int)TaskStatus.CANCEL;
+                }
+            }
+            
+            // var mail = new MailInputType
+            // {
+            //     ToEmail = email,
+            //     Subject = EmailUtils.MailSubjectCancel,
+            //     Body = @"<html> <body> <p>" + EmailUtils.MailContentCancel + "</p> </body> </html>"
+            // };
+            // await this._mailService.SendEmailAsync(mail);
         }
-        // else if (request.StatusOrder == StatusOrder.CANCEL)
-        // {
-        //     var mail = new MailInputType
-        //     {
-        //         ToEmail = email,
-        //         Subject = EmailUtils.MailSubjectCancel,
-        //         Body = @"<html> <body> <p>" + EmailUtils.MailContentCancel + "</p> </body> </html>"
-        //     };
-        //     await this._mailService.SendEmailAsync(mail);
-        // }
 
         order = _mapper.Map(request, order);
         order.UpdateDate = DateTime.Now;
