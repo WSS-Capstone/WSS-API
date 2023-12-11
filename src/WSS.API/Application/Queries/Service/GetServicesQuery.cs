@@ -169,10 +169,10 @@ public class GetServicesQueryHandler : IRequestHandler<GetServicesQuery,
         result.ForEach(r =>
         {
             // r.IsOwnerService = r.CreateByNavigation?.RoleName == RoleName.OWNER;
-            r.ComboServices?.ForEach(c =>
-            {
-                c.Combo?.ComboServices?.Clear();
-            });
+            // r.ComboServices?.ForEach(c =>
+            // {
+            //     c.Combo?.ComboServices?.Clear();
+            // });
         });
 
         result = result.OrderBy(o => o.Status).ToList();
