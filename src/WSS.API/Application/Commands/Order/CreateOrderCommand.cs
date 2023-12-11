@@ -88,7 +88,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
         
         var serviceIds = request.OrderDetails.ToList().Select(x => x.ServiceId).ToList();
-        var dayOff = await _dayOffRepo.GetDayOffs(d => serviceIds.Contains(d.ServiceId) && d.Day.Value.Date == DateTime.UtcNow.Date).ToListAsync(cancellationToken: cancellationToken);
+        var dateOrderServices = request.OrderDetails.ToList().Select(x => x.StartTime.Value.Date).ToList();
+        var dayOff = await _dayOffRepo.GetDayOffs(d => serviceIds.Contains(d.ServiceId) && dateOrderServices.Contains(d.Day.Value.Date)).ToListAsync(cancellationToken: cancellationToken);
         
         if(dayOff.Count > 0)
         {
