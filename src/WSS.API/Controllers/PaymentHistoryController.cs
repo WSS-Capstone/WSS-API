@@ -46,7 +46,10 @@ public class PaymentHistoryController : BaseController
 
         var result = await this.Mediator.Send(new GetPartnerPaymentHistoryQuery()
         {
-            PartnerId = userId
+            PartnerId = userId,
+            FromDate = query.FromDate,
+            ToDate = query.ToDate,
+            Status = query.Status
         }, cancellationToken);
 
         return Ok(result);

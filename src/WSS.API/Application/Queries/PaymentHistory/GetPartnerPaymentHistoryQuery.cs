@@ -6,10 +6,16 @@ public class GetPartnerPaymentHistoryQuery : PagingParam<PartnerPaymentHistorySo
     IRequest<PagingResponseQuery<PartnerPaymentHistoryResponse, PartnerPaymentHistorySortCriteria>>
 {
     public Guid? PartnerId { get; set; }
+    public DateTime? FromDate { get; set; }
+    public DateTime? ToDate { get; set; }
+    public PartnerPaymentHistoryStatus[]? Status { get; set; } = new []{ PartnerPaymentHistoryStatus.ACTIVE, PartnerPaymentHistoryStatus.INACTIVE };
 }
 
 public class PartnerPaymentHistoryPartnerRequest : PagingParam<PartnerPaymentHistorySortCriteria>
 {
+    public DateTime? FromDate { get; set; }
+    public DateTime? ToDate { get; set; }
+    public PartnerPaymentHistoryStatus[]? Status { get; set; } = new []{ PartnerPaymentHistoryStatus.ACTIVE, PartnerPaymentHistoryStatus.INACTIVE };
 }
 
 
@@ -50,11 +56,24 @@ public class GetPartnerPaymentHistoryQueryHandler : IRequestHandler<GetPartnerPa
         
         query = query.Include(q => q.Order).ThenInclude(d => d.OrderDetails);
         
-        var total = await query.CountAsync(cancellationToken: cancellationToken);
+       
 
         if(request.PartnerId != null)
             query = query.Where(p => p.PartnerId == request.PartnerId);
         
+        if(request.FromDate != null)
+            query = query.Where(p => p.CreateDate >= request.FromDate);
+        
+        if(request.ToDate != null)
+            query = query.Where(p => p.CreateDate <= request.ToDate);
+
+        if (request.Status != null)
+        {
+            var ss = request.Status.Select(s => (int)s).ToList();
+            query = query.Where(p => p.Status != null && request.Status.Select(s => (int)s).Contains((int)p.Status));
+        }
+        
+        var total = await query.CountAsync(cancellationToken: cancellationToken);
         query = query.GetWithSorting(request.SortKey.ToString(), request.SortOrder);
 
         query = query.GetWithPaging(request.Page, request.PageSize);

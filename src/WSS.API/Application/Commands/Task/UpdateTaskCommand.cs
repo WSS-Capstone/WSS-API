@@ -64,6 +64,7 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
         });
         
         query = query.Include(t => t.OrderDetail).ThenInclude(t => t.Order);
+        query = query.Include(t => t.OrderDetail).ThenInclude(t => t.Tasks);
         var task = await query.FirstOrDefaultAsync(cancellationToken: cancellationToken);
         if (task == null)
         {
