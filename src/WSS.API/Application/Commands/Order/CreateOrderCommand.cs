@@ -89,7 +89,10 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         
         var serviceIds = request.OrderDetails.ToList().Select(x => x.ServiceId).ToList();
         var dateOrderServices = request.OrderDetails.ToList().Select(x => x.StartTime.Value.Date).ToList();
-        var dayOff = await _dayOffRepo.GetDayOffs(d => serviceIds.Contains(d.ServiceId) && dateOrderServices.Contains(d.Day.Value.Date)).ToListAsync(cancellationToken: cancellationToken);
+        var dayOff = await _dayOffRepo.GetDayOffs(d => serviceIds.Contains(d.ServiceId) && dateOrderServices.Contains(d.Day.Value.Date), new Expression<Func<Data.Models.DayOff, object>>[]
+        {
+            d => d.Service
+        }).ToListAsync(cancellationToken: cancellationToken);
         
         if(dayOff.Count > 0)
         {
@@ -97,7 +100,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             var serviceIdString = "";
             foreach (var day in dayOff)
             {
-                serviceIdString += day.ServiceId.ToString() + ",";
+                serviceIdString += day.Service.Name + "|";
             }
             
             throw new ArgumentException(serviceIdString);

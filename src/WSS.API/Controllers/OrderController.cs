@@ -71,7 +71,7 @@ public class OrderController : BaseController
         }
         catch (ArgumentException e)
         {
-            var serviceIds = e.Message.Split(",").Where(s => !string.IsNullOrEmpty(s));
+            var serviceIds = e.Message.Split("|").Where(s => !string.IsNullOrEmpty(s));
             return BadRequest(serviceIds);
         }
 
