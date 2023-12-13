@@ -109,7 +109,7 @@ public class MappingProfile : Profile
                             ? c.Service.OrderDetails
                                 .Average(od => od.Feedbacks
                                     .Sum(f => f.Rating) / od.Feedbacks.Count)
-                            : 5
+                            : 0
                         : 0)))
             .ReverseMap();
 
