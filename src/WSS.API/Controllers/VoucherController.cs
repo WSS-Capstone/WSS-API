@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using WSS.API.Application.Commands.Voucher;
 using WSS.API.Application.Queries.Voucher;
 
@@ -14,6 +15,7 @@ public class VoucherController : BaseController
     [ApiVersion("2")]
     [ApiVersion("3")]
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetVouchers([FromQuery] GetVouchersQuery query,
         CancellationToken cancellationToken = default)
     {
@@ -23,6 +25,7 @@ public class VoucherController : BaseController
     }
     
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetVouchers([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         VoucherResponse? result = await this.Mediator.Send(new GetVoucherByIdQuery(id), cancellationToken);

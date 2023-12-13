@@ -29,7 +29,7 @@ public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, TaskRes
             t => t.OrderDetail,
             t => t.Partner,
             t => t.Staff,
-            t => t.Comments,
+            t => t.Comments.Select(c => c.CreateByNavigation)
             
         });
         
