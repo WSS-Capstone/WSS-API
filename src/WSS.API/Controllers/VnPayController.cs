@@ -71,7 +71,9 @@ public class VnPayController : BaseController
     public async Task<IActionResult> Get()
     {
         var result = await _vnPayPaymentService.Confirm();
-        return result != null ? Ok(result) : NotFound();
+        if(result.ContainsKey(true)) return Redirect($@"https://loveweddingservice.shop/order-history/+{result.Values.FirstOrDefault()}");
+        //handle error
+        return NotFound();
     }
     
     //  <summary>
@@ -87,6 +89,8 @@ public class VnPayController : BaseController
     public async Task<IActionResult> Confirm()
     {
         var result = await _vnPayPaymentService.PartnerConfirm();
-        return result != null ? Ok(result) : NotFound();
+        if(result.ContainsKey(true)) return Redirect($@"https://loveweddingservice.shop/order-history/+{result.Values.FirstOrDefault()}");
+        //handle error
+        return NotFound();
     }
 }

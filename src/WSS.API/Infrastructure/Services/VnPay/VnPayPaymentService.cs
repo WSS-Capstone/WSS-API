@@ -146,12 +146,12 @@ public class VnPayPaymentService : IVnPayPaymentService
         return await Task.FromResult(pm);
     }
 
-    public async Task<PaymentResponse> Confirm()
+    public async Task<Dictionary<bool, Guid>> Confirm()
     {
         HttpContext? context = _contextAccessor.HttpContext;
-        var response = new PaymentResponse();
         if (context!.Request.Query.Count > 0)
         {
+            var result = new Dictionary<bool, Guid>();
             string vnpHashSecret = _vnPaySettings.HashSecret;
             var vnpayData = context.Request.Query;
             VnPayLibrary vnpay = new VnPayLibrary();
@@ -194,9 +194,6 @@ public class VnPayPaymentService : IVnPayPaymentService
             {
                 if (orderType == OrderType.Payment.ToString())
                 {
-                    response.OrderType = orderType;
-                    response.Status = PaymentStatus.Success;
-
                     order.StatusOrder = (int)StatusOrder.DONE;
                     order.StatusPayment = (int)StatusPayment.DONE;
                     foreach (var od in order.OrderDetails)
@@ -268,9 +265,6 @@ public class VnPayPaymentService : IVnPayPaymentService
                 }
                 else if (orderType == OrderType.Deposit.ToString())
                 {
-                    response.OrderType = orderType;
-                    response.Status = PaymentStatus.Success;
-
                     foreach (var od in order.OrderDetails)
                     {
                         od.Status = (int)OrderDetailStatus.INPROCESS;
@@ -316,26 +310,19 @@ public class VnPayPaymentService : IVnPayPaymentService
                     Code = GenCode.NextId(code)
                 };
                 await _paymentHistoryRepo.CreatePaymentHistory(paymentHistory);
-                
-            }
-            else
-            {
-                response.OrderType = orderType;
-                response.Status = PaymentStatus.Failed;
+                result.Add(true, Guid.Parse(orderId));
+                return result;
             }
         }
-        response.OrderType = OrderType.Payment.ToString();
-        response.Status = PaymentStatus.Success;
-        response.LinkPay = "https://loveweddingservice.shop";
-        return await Task.FromResult(response);
+        return null;
     }
 
-    public async Task<PaymentResponse> PartnerConfirm()
+    public async Task<Dictionary<bool, Guid>> PartnerConfirm()
     {
         HttpContext? context = _contextAccessor.HttpContext;
-        var response = new PaymentResponse();
         if (context!.Request.Query.Count > 0)
         {
+            var result = new Dictionary<bool, Guid>();
             string vnpHashSecret = _vnPaySettings.HashSecret;
             var vnpayData = context.Request.Query;
             VnPayLibrary vnpay = new VnPayLibrary();
@@ -365,9 +352,6 @@ public class VnPayPaymentService : IVnPayPaymentService
             {
                 if (orderType == OrderType.Payment.ToString())
                 {
-                    response.OrderType = orderType;
-                    response.Status = PaymentStatus.Success;
-
                     order.StatusOrder = (int)StatusOrder.DONE;
                     order.StatusPayment = (int)StatusPayment.DONE;
                     // send notification
@@ -408,9 +392,6 @@ public class VnPayPaymentService : IVnPayPaymentService
                 }
                 else if (orderType == OrderType.Deposit.ToString())
                 {
-                    response.OrderType = orderType;
-                    response.Status = PaymentStatus.Success;
-
                     order.StatusOrder = (int)StatusOrder.CONFIRM;
                     order.StatusPayment = (int)StatusPayment.DOING;
                     // send notification to partner
@@ -450,15 +431,10 @@ public class VnPayPaymentService : IVnPayPaymentService
                     Status = (int)StatusPayment.DONE
                 };
                 await _partnerPaymentHistoryRepo.CreatePartnerPaymentHistory(paymentHistory);
-                
-            }
-            else
-            {
-                response.OrderType = orderType;
-                response.Status = PaymentStatus.Failed;
+                result.Add(true, Guid.Parse(orderId));
+                return result;
             }
         }
-
-        return await Task.FromResult(response);
+        return null;
     }
 }
