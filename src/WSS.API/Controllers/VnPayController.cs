@@ -71,7 +71,7 @@ public class VnPayController : BaseController
     public async Task<IActionResult> Get()
     {
         var result = await _vnPayPaymentService.Confirm();
-        if(result.ContainsKey(true)) return Redirect($@"https://loveweddingservice.shop/order-history/{result.Values.FirstOrDefault()}");
+        if(result.ContainsKey(true)) return Redirect($@"https://loveweddingservice.shop/checkout");
         //handle error
         return NotFound();
     }
