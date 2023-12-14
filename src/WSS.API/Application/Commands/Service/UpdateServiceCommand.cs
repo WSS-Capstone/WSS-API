@@ -84,6 +84,7 @@ public class UpdateServiceCommandHandler : IRequestHandler<UpdateServiceCommand,
         
         if(request.ImageUrls is { Length: > 0 })
         {
+            service.CoverUrl = request.ImageUrls?.FirstOrDefault();
             service.ServiceImages = new List<ServiceImage>();
             foreach (var imageUrl in request.ImageUrls)
             {
