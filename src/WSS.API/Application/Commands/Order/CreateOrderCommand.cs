@@ -1,5 +1,7 @@
 using WSS.API.Data.Repositories.Account;
 using WSS.API.Data.Repositories.Combo;
+using WSS.API.Data.Repositories.DayOff;
+using WSS.API.Data.Repositories.Notification;
 using WSS.API.Data.Repositories.Order;
 using WSS.API.Data.Repositories.Service;
 using WSS.API.Data.Repositories.Task;
@@ -57,10 +59,12 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
     private readonly IVoucherRepo _voucherRepo;
     private readonly ITaskRepo _taskRepo;
     private readonly IWeddingInformationRepo _weddingInformationRepo;
+    private readonly INotificationRepo _notificationRepo;
+    private readonly IDayOffRepo _dayOffRepo;
 
     public CreateOrderCommandHandler(IMapper mapper, IOrderRepo orderRepo, IAccountRepo accountRepo,
         IIdentitySvc identitySvc, IWeddingInformationRepo weddingInformationRepo, IServiceRepo serviceRepo,
-        IComboRepo comboRepo, IVoucherRepo voucherRepo, ITaskRepo taskRepo)
+        IComboRepo comboRepo, IVoucherRepo voucherRepo, ITaskRepo taskRepo, INotificationRepo notificationRepo, IDayOffRepo dayOffRepo)
     {
         _mapper = mapper;
         _orderRepo = orderRepo;
@@ -71,6 +75,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         _comboRepo = comboRepo;
         _voucherRepo = voucherRepo;
         _taskRepo = taskRepo;
+        _notificationRepo = notificationRepo;
+        _dayOffRepo = dayOffRepo;
     }
 
     public async Task<OrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -80,6 +86,26 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             {
                 a => a.User
             }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        
+        var serviceIds = request.OrderDetails.ToList().Select(x => x.ServiceId).ToList();
+        var dateOrderServices = request.OrderDetails.ToList().Select(x => x.StartTime.Value.Date).ToList();
+        var dayOff = await _dayOffRepo.GetDayOffs(d => serviceIds.Contains(d.ServiceId) && dateOrderServices.Contains(d.Day.Value.Date), new Expression<Func<Data.Models.DayOff, object>>[]
+        {
+            d => d.Service
+        }).ToListAsync(cancellationToken: cancellationToken);
+        
+        if(dayOff.Count > 0)
+        {
+
+            var serviceIdString = "";
+            foreach (var day in dayOff)
+            {
+                serviceIdString += day.Service.Name + "|";
+            }
+            
+            throw new ArgumentException(serviceIdString);
+        }
+        
         Guid userId = user.Id;
         // Create Order
         var code = await _orderRepo.GetOrders().OrderByDescending(x => x.Code).Select(x => x.Code)
@@ -156,6 +182,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                     task.TaskName = "Dịch vụ " + serviceDetail.Name + " của " + userCreate.User?.Fullname;
                     task.Status = (int)TaskStatus.EXPECTED;
                     task.StartDate = orderDetail.StartTime;
+                    task.EndDate = task.StartDate.Value.AddDays(1);
                     
                     task.Code = GenCode.NextId(codeLTask);
                     codeLTask = task.Code;
@@ -219,6 +246,16 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         await NotiService.PushNotification.SendMessage(user.Id.ToString(),
             $"Thông báo tạo đơn hàng.",
             $"Bạn có 1 đơn hàng mới được tạo.", data1);
+        
+        var accountO = await this._accountRepo.GetAccounts(a => a.RoleName == RoleName.OWNER).FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        
+        var notification = new Data.Models.Notification()
+        {
+            Title = "Thông báo tạo đơn hàng.",
+            Content = $"Bạn có 1 đơn hàng mới được tạo.",
+            UserId = accountO.Id,
+        };
+        await _notificationRepo.CreateNotification(notification);
         
         return _mapper.Map<OrderResponse>(order);
     }

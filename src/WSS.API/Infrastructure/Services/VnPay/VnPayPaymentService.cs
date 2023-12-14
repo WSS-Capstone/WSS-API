@@ -66,7 +66,7 @@ public class VnPayPaymentService : IVnPayPaymentService
         if (orderInDb == null)
             throw new Exception("Order not found");
 
-        payment.Amount = payment.OrderType == OrderType.Deposit ? orderInDb.TotalAmountRequest : orderInDb.TotalAmount;
+        payment.Amount = payment.OrderType == OrderType.Deposit ? orderInDb.TotalAmountRequest : orderInDb.TotalAmount - orderInDb.TotalAmountRequest;
         payment.CustomerId = userId;
 
         var urlCallBack = $"{_vnPaySettings.CallbackUrl}";
@@ -218,7 +218,7 @@ public class VnPayPaymentService : IVnPayPaymentService
                                     PartnerId = od.Service.CreateBy,
                                     CreateDate = DateTime.Now,
                                     Status = (int)PartnerPaymentHistoryStatus.INACTIVE,
-                                    Total = price - commission,
+                                    Total = price - (price / 100 * commission),
                                     Code = GenCode.NextId(pphCode),
                                 };
                                 pphCode = partnerPH.Code;

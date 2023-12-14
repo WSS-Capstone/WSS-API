@@ -29,7 +29,7 @@ public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery,
         var result = await this._categoryRepo.GetCategoryById(request.Id, new Expression<Func<Data.Models.Category, object>>[]
         {
             c => c.Commision,
-            c => c.Services
+            c => c.Services.Select(s => s.CurrentPrices)
         });
 
         return this._mapper.Map<CategoryResponse>(result);

@@ -78,6 +78,8 @@ app.UseCors(cor => cor
     .UseHttpsRedirection();
 
 
+
+
 app.UseHttpsRedirection();
 
 app.UseApplicationSecurity();

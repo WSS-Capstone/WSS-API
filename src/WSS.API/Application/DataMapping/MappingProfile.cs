@@ -105,9 +105,11 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.Rating, opt =>
                 opt.MapFrom(src => src.ComboServices
                     .Average(c => c.Service != null
-                        ? c.Service.OrderDetails
-                            .Average(od => od.Feedbacks
-                                .Average(f => f.Rating))
+                        ? c.Service.OrderDetails != null && c.Service.OrderDetails.Count == 0
+                            ? c.Service.OrderDetails
+                                .Average(od => od.Feedbacks
+                                    .Sum(f => f.Rating) / od.Feedbacks.Count)
+                            : 0
                         : 0)))
             .ReverseMap();
 
@@ -165,8 +167,7 @@ public class MappingProfile : Profile
     {
         this.CreateMap<Comment, CommentResponse>()
             .ForMember(dto => dto.Task, opt => opt.MapFrom(src => src.Task))
-            .ForMember(dto => dto.CreateBy, opt => opt.MapFrom(src => src.CreateByNavigation))
-            .ReverseMap();
+           .ReverseMap();
         this.CreateMap<Comment, CreateCommentCommand>().ReverseMap();
         this.CreateMap<Comment, UpdateCommentCommand>().ReverseMap();
         this.CreateMap<Comment, DeleteCommentCommand>().ReverseMap();
@@ -289,10 +290,10 @@ public class MappingProfile : Profile
                             .Count(o => o.Order != null && o.Order.StatusOrder == (int)StatusOrder.DONE)))
             .ForMember(dto => dto.Rating,
                 opt => opt.MapFrom(src =>
-                    src.OrderDetails.Count == 0
+                    src.OrderDetails.Sum(o => o.Feedbacks.Count) == 0
                         ? 0
                         : src.OrderDetails.Average(o =>
-                            o.Feedbacks.Count == 0 ? 0 : o.Feedbacks.Average(f => f.Rating))))
+                            o.Feedbacks.Count == 0 ? 5 : o.Feedbacks.Sum(f => f.Rating) / o.Feedbacks.Count)))
             .ForMember(dto => dto.TotalFeedback, map => map.MapFrom(src =>
                 src.OrderDetails.Count == 0
                     ? 0

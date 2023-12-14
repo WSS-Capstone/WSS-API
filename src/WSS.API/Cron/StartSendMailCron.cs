@@ -49,7 +49,7 @@ public class StartSendMailCron : IJob
                            "Hy vong chúng tôi đã đem đến cho bạn trải nghiệm tốt nhất." +
                            "\nVui lòng Bạn tiến hành thanh toán  phần còn lại của đơn hàng trong vòng 24H." +
                            " \nNếu bạn có bất kỳ câu hỏi nào, hãy liên hệ với chúng tôi tại đây hoặc gọi cho chúng tôi theo số 098.888.888" +
-                           $"\n\nVui lòng thanh toán tại đây https://loveweddingservice.shop/order-history/+{order.Id} hoặc liên hệ với chúng tôi." +
+                           $"\n\nVui lòng thanh toán tại đây https://loveweddingservice.shop/order-history/{order.Id} hoặc liên hệ với chúng tôi." +
                            " </p> </body> </html>"
                 };
                 await _mailService.SendEmailAsync(mail);

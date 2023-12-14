@@ -3,6 +3,7 @@ using WSS.API.Data.Repositories.Order;
 using WSS.API.Infrastructure.Config;
 using WSS.API.Infrastructure.Services.Identity;
 using WSS.API.Infrastructure.Services.Mail;
+using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
 namespace WSS.API.Application.Commands.Order;
 
@@ -61,6 +62,7 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
             {
                 o => o.OrderDetails,
                 o => o.OrderDetails.Select(od => od.Service),
+                o => o.OrderDetails.Select(od => od.Tasks),
                 o => o.Customer
             });
 
@@ -78,30 +80,32 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
 
         if (request.StatusOrder == StatusOrder.CONFIRM)
         {
-            // foreach (var orderDetail in order.OrderDetails)
-            // {
-            //     // var task = new Data.Models.Task();
-            //     // task.Id = Guid.NewGuid();
-            //     // task.OrderDetailId = orderDetail.Id;
-            //     // task.StartDate = orderDetail.StartTime;
-            //     // task.EndDate = orderDetail.EndTime;
-            //     // task.PartnerId = orderDetail?.Service?.ApprovalDate != null ? orderDetail.Service.CreateBy : null;
-            //     // task.Status = (int)TaskStatus.TO_DO;
-            //     // task.CreateDate = DateTime.Now;
-            //     // task.CreateBy = user.User?.Id;
-            //     // task.TaskName = "Tạo task cho order " + orderDetail?.Service?.Name;
-            //     // order.OrderDetails.FirstOrDefault().Tasks.Add(task);
-            //     // task.CreateBy = user.Id;
-            //     // await _taskRepo.CreateTask(task);
-            //     //send mail
-            //     
-            // }
+            order.StatusPayment = (int)StatusPayment.CONFIRM;
+            foreach (var orderDetail in order.OrderDetails)
+            {
+                orderDetail.Status = (int)OrderDetailStatus.INPROCESS;
+                // var task = new Data.Models.Task();
+                // task.Id = Guid.NewGuid();
+                // task.OrderDetailId = orderDetail.Id;
+                // task.StartDate = orderDetail.StartTime;
+                // task.EndDate = orderDetail.EndTime;
+                // task.PartnerId = orderDetail?.Service?.ApprovalDate != null ? orderDetail.Service.CreateBy : null;
+                // task.Status = (int)TaskStatus.TO_DO;
+                // task.CreateDate = DateTime.Now;
+                // task.CreateBy = user.User?.Id;
+                // task.TaskName = "Tạo task cho order " + orderDetail?.Service?.Name;
+                // order.OrderDetails.FirstOrDefault().Tasks.Add(task);
+                // task.CreateBy = user.Id;
+                // await _taskRepo.CreateTask(task);
+                //send mail
+                
+            }
             
             var mail = new MailInputType
             {
                 ToEmail = email,
                 Subject = EmailUtils.MailSubjectConfirm,
-                Body = @"<html> <body> <p> + 
+                Body = @"<html> <body> <p> 
                        Xin chào " + email + $@",
 
                 Chúng tôi vui mừng thông báo cho bạn biết rằng chúng tôi đã nhận được đơn đặt hàng của bạn.
@@ -110,25 +114,34 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
 
                 Nếu bạn có bất kỳ câu hỏi nào, hãy liên hệ với chúng tôi tại đây hoặc gọi cho chúng tôi theo số 098.888.888
 
-                Vui lòng thanh toán tại đây https://loveweddingservice.shop/order-history/+{order.Id} hoặc liên hệ với chúng tôi.
+                Vui lòng thanh toán tại đây https://loveweddingservice.shop/order-history/{order.Id} hoặc liên hệ với chúng tôi.
 
                 Trân trọng,
 
                 Blissful Bell
-                       + </p> </body> </html>"
+                        </p> </body> </html>"
             };
             await this._mailService.SendEmailAsync(mail);
+        } 
+        if (request.StatusOrder == StatusOrder.CANCEL)
+        {
+            foreach (var od in order.OrderDetails)
+            {
+                od.Status = (int)OrderDetailStatus.CANCEL;
+                foreach (var task in od.Tasks)
+                {
+                    task.Status = (int)TaskStatus.CANCEL;
+                }
+            }
+            
+            // var mail = new MailInputType
+            // {
+            //     ToEmail = email,
+            //     Subject = EmailUtils.MailSubjectCancel,
+            //     Body = @"<html> <body> <p>" + EmailUtils.MailContentCancel + "</p> </body> </html>"
+            // };
+            // await this._mailService.SendEmailAsync(mail);
         }
-        // else if (request.StatusOrder == StatusOrder.CANCEL)
-        // {
-        //     var mail = new MailInputType
-        //     {
-        //         ToEmail = email,
-        //         Subject = EmailUtils.MailSubjectCancel,
-        //         Body = @"<html> <body> <p>" + EmailUtils.MailContentCancel + "</p> </body> </html>"
-        //     };
-        //     await this._mailService.SendEmailAsync(mail);
-        // }
 
         order = _mapper.Map(request, order);
         order.UpdateDate = DateTime.Now;

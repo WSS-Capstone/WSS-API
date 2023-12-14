@@ -49,6 +49,20 @@ public class DayOffController : BaseController
         return Ok(result);
     }
 
+    [ApiVersion("3")]
+    [HttpGet("check")]
+    [AllowAnonymous]
+    public async Task<IActionResult> CheckDayOff(Guid serviceId, DateTime dayOff, CancellationToken cancellationToken = default)
+    {
+        var result = await this.Mediator.Send(new CheckDayOffQuery()
+        {
+            ServiceId = serviceId,
+            DayOff = dayOff
+        }, cancellationToken);
+
+        return result != null ? Ok(result) : NotFound();
+    }
+    
     [HttpGet("{id}")]
     public async Task<IActionResult> GetDayOffs([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
@@ -81,7 +95,7 @@ public class DayOffController : BaseController
         var userId = await this._identitySvc.GetUserId();
         var result = await this.Mediator.Send(new UpdateDayOffCommand()
         {
-            Id = id, 
+            Id = id,
             PartnerId = userId,
             Day = request.Day,
             ServiceId = request.ServiceId,
@@ -90,7 +104,7 @@ public class DayOffController : BaseController
 
         return Ok(result);
     }
-    
+
     /// <summary>
     /// Xoá ngày đã đăng ký bận mà partner tự đăng ký
     /// </summary>
@@ -105,7 +119,7 @@ public class DayOffController : BaseController
         var userId = await this._identitySvc.GetUserId();
         var result = await this.Mediator.Send(new DeleteDayOffCommand()
         {
-            Id = id, 
+            Id = id,
             PartnerId = userId,
         }, cancellationToken);
 
