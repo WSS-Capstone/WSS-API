@@ -32,7 +32,7 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
         var newId = Guid.NewGuid();
         var category = _mapper.Map<Data.Models.Category>(request);
         category.Id = newId;
-        category.Code = GenCode.NextId(code);
+        category.Code = GenCode.NextId(code, "C");
         category.CreateDate = DateTime.Now;
         category.Status = (int?)CategoryStatus.Active;
         category.CommisionId = request.CommissionValue == null ? null : newId;

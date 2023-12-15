@@ -114,7 +114,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         order.StatusOrder = (int)StatusOrder.PENDING;
         order.StatusPayment = (int)StatusPayment.PENDING;
         order.Id = Guid.NewGuid();
-        order.Code = GenCode.NextId(code);
+        order.Code = GenCode.NextId(code, "O");
         order.CreateDate = DateTime.UtcNow;
         order.CreateBy = user.Id;
         order.CustomerId = user.Id;

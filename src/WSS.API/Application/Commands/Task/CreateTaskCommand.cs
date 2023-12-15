@@ -37,7 +37,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskR
         var task = _mapper.Map<Data.Models.Task>(request);
         task.OrderDetailId = (Guid)request.OrderDetailId;
         task.Id = Guid.NewGuid();
-        task.Code = GenCode.NextId(code);
+        task.Code = GenCode.NextId(code, "T");
         task.CreateDate = DateTime.UtcNow;
         task.Status = (int)TaskStatus.TO_DO;
         if (request.StaffId != null)

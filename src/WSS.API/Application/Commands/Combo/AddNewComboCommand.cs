@@ -33,7 +33,7 @@ public class AddNewComboCommandHandler : IRequestHandler<AddNewComboCommand, Com
         var combo = _mapper.Map<Data.Models.Combo>(request);
         var newId = Guid.NewGuid();
         combo.Id = newId;
-        combo.Code = GenCode.NextId(code);
+        combo.Code = GenCode.NextId(code, "CB");
         combo.Status = (int?)CategoryStatus.Active;
         
         var serviceInCombo = await this._serviceRepo.GetServices(s => request.ComboServicesId.Contains(s.Id), new Expression<Func<Data.Models.Service, object>>[]

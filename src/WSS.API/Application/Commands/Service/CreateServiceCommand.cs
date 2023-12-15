@@ -58,7 +58,7 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
 
 
         service.Id = Guid.NewGuid();
-        service.Code = GenCode.NextId(code);
+        service.Code = GenCode.NextId(code, "S");
         service.CreateDate = DateTime.Now;
         
         service.Status = (int?)(user.RoleName == "Owner" ? ServiceStatus.Active : ServiceStatus.Pending);
