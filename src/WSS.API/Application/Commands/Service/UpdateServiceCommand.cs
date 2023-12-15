@@ -7,7 +7,7 @@ namespace WSS.API.Application.Commands.Service;
 
 public class UpdateServiceCommand : IRequest<ServiceResponse>
 {
-    public UpdateServiceCommand(Guid id , CreateServiceCommand command)
+    public UpdateServiceCommand(Guid id, CreateServiceCommand command)
     {
         Id = id;
         Name = command.Name;
@@ -29,7 +29,7 @@ public class UpdateServiceCommand : IRequest<ServiceResponse>
     public string? Description { get; set; }
 }
 
-public class InactiveServiceRequest 
+public class InactiveServiceRequest
 {
     public string? Reason { get; set; }
 }
@@ -41,7 +41,8 @@ public class UpdateServiceCommandHandler : IRequestHandler<UpdateServiceCommand,
     private readonly IIdentitySvc _identitySvc;
     private readonly IAccountRepo _accountRepo;
 
-    public UpdateServiceCommandHandler(IMapper mapper, IServiceRepo serviceRepo, IIdentitySvc identitySvc, IAccountRepo accountRepo)
+    public UpdateServiceCommandHandler(IMapper mapper, IServiceRepo serviceRepo, IIdentitySvc identitySvc,
+        IAccountRepo accountRepo)
     {
         _mapper = mapper;
         _serviceRepo = serviceRepo;
@@ -67,22 +68,36 @@ public class UpdateServiceCommandHandler : IRequestHandler<UpdateServiceCommand,
         {
             throw new Exception("You are not allowed to create service");
         }
-        
-        var service = await this._serviceRepo.GetServiceById(request.Id, new Expression<Func<Data.Models.Service, object>>[]
-        {
-            s => s.Category,
-            s => s.ServiceImages
-        });
-        
+
+        var service = await this._serviceRepo.GetServiceById(request.Id,
+            new Expression<Func<Data.Models.Service, object>>[]
+            {
+                s => s.Category,
+                s => s.ServiceImages
+            });
+
         if (service == null)
         {
             throw new Exception("service not found");
         }
-        
+
         service = _mapper.Map(request, service);
+        service.CurrentPrices = new List<Data.Models.CurrentPrice>()
+        {
+            new()
+            {
+                Price = request.Price,
+                CreateDate = DateTime.Now,
+                ServiceId = service.Id,
+                Id = Guid.NewGuid(),
+                DateOfApply = DateTime.Today,
+            } 
+        };
         service.UpdateDate = DateTime.Now;
-        
-        if(request.ImageUrls is { Length: > 0 })
+        if (request.ImageUrls is
+            {
+                Length: > 0
+            })
         {
             service.CoverUrl = request.ImageUrls?.FirstOrDefault();
             service.ServiceImages = new List<ServiceImage>();
@@ -101,7 +116,7 @@ public class UpdateServiceCommandHandler : IRequestHandler<UpdateServiceCommand,
         {
             service.CurrentPrices = new List<Data.Models.CurrentPrice>()
             {
-                new ()
+                new()
                 {
                     Id = Guid.NewGuid(),
                     ServiceId = service.Id,
@@ -110,9 +125,9 @@ public class UpdateServiceCommandHandler : IRequestHandler<UpdateServiceCommand,
                 }
             };
         }
-        
+
         var query = await _serviceRepo.UpdateService(service);
-        
+
         var result = this._mapper.Map<ServiceResponse>(query);
         result.IsOwnerService = user.RoleName == "Owner";
         return result;

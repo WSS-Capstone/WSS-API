@@ -303,7 +303,7 @@ public class MappingProfile : Profile
                     src.OrderDetails.Count == 0
                         ? 0
                         : src.OrderDetails.Sum(o =>
-                            o.Order != null && o.Order.StatusPayment == (int)OrderDetailStatus.DONE
+                            o.Order != null && o.Order.StatusPayment == (int)StatusPayment.DONE
                                 ? o.Price / 100 * (100 - o.Service.Category.Commision.CommisionValue)
                                 : 0)));
 

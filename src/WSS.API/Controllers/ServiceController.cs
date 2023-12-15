@@ -109,8 +109,8 @@ public class ServiceController: BaseController
         CancellationToken cancellationToken = default)
     {
         ServiceResponse? result = await this.Mediator.Send(new UpdateServiceCommand(id, command), cancellationToken);
-
-        return result != null ? Ok(result) : BadRequest();
+        var result1 = await this.Mediator.Send(new GetServiceByIdQuery(id), cancellationToken);
+        return result != null ? Ok(result1) : BadRequest();
     }
     
     [HttpPut("approval/{id}")]
