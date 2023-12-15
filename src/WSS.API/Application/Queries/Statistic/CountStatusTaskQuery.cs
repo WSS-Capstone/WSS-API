@@ -23,6 +23,7 @@ public class CountStatusTaskQueryHandler : IRequestHandler<CountStatusTaskQuery,
         { "1", "Mới giao" },
         { "2", "Đang thực hiện" },
         { "3", "Đã hoàn thành" },
+        { "4", "Đã hủy" }
     };
 
     public CountStatusTaskQueryHandler(IMapper mapper, ITaskRepo repo, IIdentitySvc identitySvc)
