@@ -267,7 +267,7 @@ public class VnPayPaymentService : IVnPayPaymentService
                 {
                     foreach (var od in order.OrderDetails)
                     {
-                        od.Status = (int)OrderDetailStatus.INPROCESS;
+                        // od.Status = (int)OrderDetailStatus.INPROCESS;
                         foreach (var task in od.Tasks)
                         {
                             task.Status = (int)TaskStatus.TO_DO;
