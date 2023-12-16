@@ -73,7 +73,8 @@ public class UpdateServiceCommandHandler : IRequestHandler<UpdateServiceCommand,
             new Expression<Func<Data.Models.Service, object>>[]
             {
                 s => s.Category,
-                s => s.ServiceImages
+                s => s.ServiceImages,
+                s => s.CurrentPrices
             });
 
         if (service == null)
@@ -82,8 +83,7 @@ public class UpdateServiceCommandHandler : IRequestHandler<UpdateServiceCommand,
         }
 
         service = _mapper.Map(request, service);
-        service.CurrentPrices = new List<Data.Models.CurrentPrice>()
-        {
+        service.CurrentPrices.Add(
             new()
             {
                 Price = request.Price,
@@ -92,7 +92,7 @@ public class UpdateServiceCommandHandler : IRequestHandler<UpdateServiceCommand,
                 Id = Guid.NewGuid(),
                 DateOfApply = DateTime.Today,
             } 
-        };
+        );
         service.UpdateDate = DateTime.Now;
         if (request.ImageUrls is
             {
