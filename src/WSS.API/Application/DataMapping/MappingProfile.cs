@@ -304,7 +304,7 @@ public class MappingProfile : Profile
                         ? 0
                         : src.OrderDetails.Sum(o =>
                             o.Order != null
-                                ? o.Order.PartnerPaymentHistories.Sum(p =>  p.Total)
+                                ? o.Order.PartnerPaymentHistories.Sum(p =>  p.Status == (int)PartnerPaymentHistoryStatus.ACTIVE ? p.Total : 0)
                                 : 0)));
 
         this.CreateMap<Service, CreateServiceCommand>().ReverseMap();
