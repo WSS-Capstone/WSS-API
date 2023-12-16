@@ -76,8 +76,8 @@ public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, PagingRespons
         if (request.StartDate != null && request.EndDate != null)
         {
             query = query.Where(t =>
-                t.StartDate.Value.Date >= request.StartDate.Value.Date &&
-                t.EndDate.Value.Date <= request.EndDate.Value.Date);
+                t.StartDate >= request.StartDate &&
+                t.EndDate <= request.EndDate);
         }
 
         if (request.TaskName != null)
