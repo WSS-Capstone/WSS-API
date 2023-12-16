@@ -35,6 +35,9 @@ public class GetServiceByIdQueryHandler : IRequestHandler<GetServiceByIdQuery, S
             S => S.OrderDetails.Select(o => o.Feedbacks),
             s => s.CreateByNavigation,
         });
+        
+        query = query.Include(s => s.OrderDetails)
+            .ThenInclude(c => c.Order).ThenInclude(s => s.PartnerPaymentHistories);
 
         query = query
             .Include(s => s.Category)

@@ -55,8 +55,8 @@ public class
         {
             predicate = doff =>
                 (request.UserId == null || doff.PartnerId == request.UserId) &&
-                (request.FromDate == null || doff.Day.Value.Date >= request.FromDate.Value.Date) &&
-                (request.ToDate == null || doff.Day.Value.Date <= request.ToDate.Value.Date);
+                (request.FromDate == null || doff.Day >= request.FromDate) &&
+                (request.ToDate == null || doff.Day <= request.ToDate);
         }
 
         var query = _repo.GetDayOffs(predicate, new Expression<Func<Data.Models.DayOff, object>>[]

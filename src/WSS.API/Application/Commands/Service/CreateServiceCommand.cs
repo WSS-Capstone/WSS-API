@@ -1,7 +1,9 @@
 using WSS.API.Data.Repositories.Account;
+using WSS.API.Data.Repositories.Notification;
 using WSS.API.Data.Repositories.Service;
 using WSS.API.Data.Repositories.User;
 using WSS.API.Infrastructure.Services.Identity;
+using WSS.API.Infrastructure.Services.Noti;
 using WSS.API.Infrastructure.Utilities;
 
 namespace WSS.API.Application.Commands.Service;
@@ -23,14 +25,16 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
     private readonly IServiceRepo _serviceRepo;
     private readonly IIdentitySvc _identitySvc;
     private readonly IAccountRepo _accountRepo;
+    private readonly INotificationRepo _notificationRepo;
 
     public CreateServiceCommandHandler(IMapper mapper, IServiceRepo serviceRepo, IIdentitySvc identitySvc,
-        IAccountRepo accountRepo)
+        IAccountRepo accountRepo, INotificationRepo notificationRepo)
     {
         _mapper = mapper;
         _serviceRepo = serviceRepo;
         _identitySvc = identitySvc;
         _accountRepo = accountRepo;
+        _notificationRepo = notificationRepo;
     }
 
     /// <summary>
@@ -60,7 +64,7 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
         service.Id = Guid.NewGuid();
         service.Code = GenCode.NextId(code, "S");
         service.CreateDate = DateTime.Now;
-        
+
         service.Status = (int?)(user.RoleName == "Owner" ? ServiceStatus.Active : ServiceStatus.Pending);
         service.CreateBy = user.Id;
         if (request.ImageUrls is { Length: > 0 })
@@ -97,10 +101,28 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
             s => s.ServiceImages
         });
 
+        // if (user.RoleName == "Partner")
+        // {
+        //     // send notification to partner
+        //     Dictionary<string, string> data = new Dictionary<string, string>()
+        //     {
+        //         { "type", "Task" },
+        //         { "userId", userCreate.Id.ToString() }
+        //     };
+        //     await NotiService.PushNotification.SendMessage(userCreate.Id.ToString(),
+        //         $"Thông báo tạo task.",
+        //         $"Bạn có 1 task {task.Code} mới được tạo.", data);
+        //     
+        //     await this._notificationRepo.CreateNotification(new Data.Models.Notification()
+        //     {
+        //
+        //     });
+        // }
+
         var result = this._mapper.Map<ServiceResponse>(query);
 
-         result.IsOwnerService = user.RoleName == "Owner";
-        
+        result.IsOwnerService = user.RoleName == "Owner";
+
         return result;
     }
 }
