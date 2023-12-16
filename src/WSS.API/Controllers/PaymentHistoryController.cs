@@ -49,7 +49,11 @@ public class PaymentHistoryController : BaseController
             PartnerId = userId,
             FromDate = query.FromDate,
             ToDate = query.ToDate,
-            Status = query.Status
+            Status = query.Status,
+            SortKey = query.SortKey,
+            SortOrder = query.SortOrder,
+            Page = query.Page,
+            PageSize = query.PageSize
         }, cancellationToken);
 
         return Ok(result);
