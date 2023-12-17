@@ -297,15 +297,7 @@ public class MappingProfile : Profile
             .ForMember(dto => dto.TotalFeedback, map => map.MapFrom(src =>
                 src.OrderDetails.Count == 0
                     ? 0
-                    : src.OrderDetails.Sum(o => o.Feedbacks.Count)))
-            .ForMember(dto => dto.TotalRevenue,
-                opt => opt.MapFrom(src =>
-                    src.OrderDetails.Count == 0
-                        ? 0
-                        : src.OrderDetails.Sum(o =>
-                            o.Order != null
-                                ? o.Order.PartnerPaymentHistories.Sum(p =>  p.Status == (int)PartnerPaymentHistoryStatus.ACTIVE ? p.Total : 0)
-                                : 0)));
+                    : src.OrderDetails.Sum(o => o.Feedbacks.Count)));
 
         this.CreateMap<Service, CreateServiceCommand>().ReverseMap();
         this.CreateMap<Service, UpdateServiceCommand>().ReverseMap();
