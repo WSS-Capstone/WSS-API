@@ -114,7 +114,7 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
             // task.OrderDetail.Status = (int)OrderDetailStatus.DONE;
             if(task.OrderDetail.Tasks.All(t => t.Status == (int)TaskStatus.DONE))
             {
-                task.OrderDetail.Order.StatusOrder = (int)StatusOrder.DONE;
+                task.OrderDetail.Status = (int)OrderDetailStatus.DONE;
             }
         }
         
