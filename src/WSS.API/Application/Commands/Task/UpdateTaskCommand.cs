@@ -1,6 +1,9 @@
+using WSS.API.Data.Repositories.Account;
+using WSS.API.Data.Repositories.Notification;
 using WSS.API.Data.Repositories.Order;
 using WSS.API.Data.Repositories.Task;
 using WSS.API.Data.Repositories.User;
+using WSS.API.Infrastructure.Config;
 using WSS.API.Infrastructure.Services.Noti;
 using TaskStatus = WSS.API.Application.Models.ViewModels.TaskStatus;
 
@@ -47,13 +50,17 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
     private ITaskRepo _repo;
     private IUserRepo _userRepo;
     private IOrderRepo _orderRepo;
+    private INotificationRepo _notificationRepo;
+    private IAccountRepo _accountRepo;
 
-    public UpdateTaskCommandHandler(IMapper mapper, ITaskRepo repo, IUserRepo userRepo, IOrderRepo orderRepo)
+    public UpdateTaskCommandHandler(IMapper mapper, ITaskRepo repo, IUserRepo userRepo, IOrderRepo orderRepo, INotificationRepo notificationRepo, IAccountRepo accountRepo)
     {
         _mapper = mapper;
         _repo = repo;
         _userRepo = userRepo;
         _orderRepo = orderRepo;
+        _notificationRepo = notificationRepo;
+        _accountRepo = accountRepo;
     }
 
     public async Task<TaskResponse> Handle(UpdateTaskCommand request, CancellationToken cancellationToken)
@@ -87,6 +94,7 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
         {
             u => u.IdNavigation
         }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
+        var owner = await this._accountRepo.GetAccounts(a => a.RoleName == RoleName.OWNER).FirstOrDefaultAsync();
    
         if(user.IdNavigation.RoleName == "Partner")
         {
@@ -116,6 +124,16 @@ public class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand, TaskR
             {
                 task.OrderDetail.Status = (int)OrderDetailStatus.DONE;
             }
+            
+            var ownerNotification = new Data.Models.Notification()
+            {
+                Title = "Thông báo công việc.",
+                Content = $"Công việc {task.Code} {task.TaskName} đã được hoàn thành.",
+                UserId = owner.Id,
+                IsRead = 0
+            };
+            await _notificationRepo.CreateNotification(ownerNotification);
+            
         }
         
         if(task.Status == (int)TaskStatus.CANCEL)

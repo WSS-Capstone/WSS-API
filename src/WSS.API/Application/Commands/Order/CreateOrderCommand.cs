@@ -203,6 +203,14 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                     await NotiService.PushNotification.SendMessage(userCreate.Id.ToString(),
                         $"Thông báo tạo task.",
                         $"Bạn có 1 task {task.Code} mới được tạo.", data);
+                    
+                    var nP = new Data.Models.Notification()
+                    {
+                        Title = "Thông báo tạo đơn hàng.",
+                        Content = $"Bạn có 1 đơn hàng {order.Code} mới được tạo.",
+                        UserId =userCreate.Id,
+                    };
+                    await _notificationRepo.CreateNotification(nP);
                 }
 
                 orderDetail.StartTime = orderDetail.StartTime;
@@ -252,7 +260,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         var notification = new Data.Models.Notification()
         {
             Title = "Thông báo tạo đơn hàng.",
-            Content = $"Bạn có 1 đơn hàng mới được tạo.",
+            Content = $"Bạn có 1 đơn hàng {order.Code} mới được tạo.",
             UserId = accountO.Id,
         };
         await _notificationRepo.CreateNotification(notification);

@@ -187,8 +187,18 @@ public class VnPayPaymentService : IVnPayPaymentService
                 .ThenInclude(c => c.Category).ThenInclude(c => c.Commision);
             var order = await query.FirstOrDefaultAsync();
             var user = await _accountRepo.GetAccountById(Guid.Parse(customerId));
+            var owner = await _accountRepo.GetAccounts(a => a.RoleName == RoleName.OWNER).FirstOrDefaultAsync();
             if (order == null) throw new Exception("Order not found");
             var pphCode = order.PartnerPaymentHistories == null || order.PartnerPaymentHistories.Count == 0 ? null : order.PartnerPaymentHistories.OrderByDescending(o => o.Code).FirstOrDefault().Code;
+
+            foreach (var od in order.OrderDetails)
+            {
+                if (od.Service.CreateByNavigation.RoleName == RoleName.PARTNER)
+                {
+                    
+                }
+            }
+            
             if(order.PartnerPaymentHistories == null) order.PartnerPaymentHistories = new List<PartnerPaymentHistory>();
             if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
             {
@@ -243,7 +253,17 @@ public class VnPayPaymentService : IVnPayPaymentService
                         Content = $"Bạn có 1 đơn hàng {order.Code} được thanh toán.",
                         UserId = order.CreateBy
                     };
+                    var ownerNotification = new Notification()
+                    {
+                        Title = "Thông báo thanh toán.",
+                        Content = $"Bạn có 1 đơn hàng {order.Code} được thanh toán.",
+                        UserId = owner.Id
+                    };
+                    
+                    
+                    
                     await _notificationRepo.CreateNotification(notification);
+                    await _notificationRepo.CreateNotification(ownerNotification);
                     // send mail
                     var mail = new MailInputType()
                     {
@@ -290,9 +310,18 @@ public class VnPayPaymentService : IVnPayPaymentService
                     {
                         Title = "Thông báo thanh toán.",
                         Content = $"Bạn có 1 đơn hàng {order.Code} được đặt cọc.",
-                        UserId = order.CreateBy
+                        UserId = order.CreateBy,
+                        IsRead = 0
+                    };
+                    var ownerNotification = new Notification()
+                    {
+                        Title = "Thông báo thanh toán.",
+                        Content = $"Bạn có 1 đơn hàng {order.Code} được đặt cọc.",
+                        UserId = owner.Id,
+                        IsRead = 0
                     };
                     await _notificationRepo.CreateNotification(notification);
+                    await _notificationRepo.CreateNotification(ownerNotification);
                 }
 
                 await _orderRepo.UpdateOrder(order);
@@ -309,6 +338,7 @@ public class VnPayPaymentService : IVnPayPaymentService
                     PaymentType = orderType,
                     Code = GenCode.NextId(code)
                 };
+                
                 await _paymentHistoryRepo.CreatePaymentHistory(paymentHistory);
                 result.Add(true, Guid.Parse(orderId));
                 return result;

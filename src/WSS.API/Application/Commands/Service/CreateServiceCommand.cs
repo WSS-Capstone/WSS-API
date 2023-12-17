@@ -2,6 +2,7 @@ using WSS.API.Data.Repositories.Account;
 using WSS.API.Data.Repositories.Notification;
 using WSS.API.Data.Repositories.Service;
 using WSS.API.Data.Repositories.User;
+using WSS.API.Infrastructure.Config;
 using WSS.API.Infrastructure.Services.Identity;
 using WSS.API.Infrastructure.Services.Noti;
 using WSS.API.Infrastructure.Utilities;
@@ -60,6 +61,8 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
             throw new Exception("You are not allowed to create service");
         }
 
+        var owner = await this._accountRepo.GetAccounts(a => a.RoleName == RoleName.OWNER).FirstOrDefaultAsync();
+
 
         service.Id = Guid.NewGuid();
         service.Code = GenCode.NextId(code, "S");
@@ -101,23 +104,26 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
             s => s.ServiceImages
         });
 
-        // if (user.RoleName == "Partner")
-        // {
-        //     // send notification to partner
-        //     Dictionary<string, string> data = new Dictionary<string, string>()
-        //     {
-        //         { "type", "Task" },
-        //         { "userId", userCreate.Id.ToString() }
-        //     };
-        //     await NotiService.PushNotification.SendMessage(userCreate.Id.ToString(),
-        //         $"Thông báo tạo task.",
-        //         $"Bạn có 1 task {task.Code} mới được tạo.", data);
-        //     
-        //     await this._notificationRepo.CreateNotification(new Data.Models.Notification()
-        //     {
-        //
-        //     });
-        // }
+        if (user.RoleName == "Partner")
+        {
+            // send notification to partner
+            // Dictionary<string, string> data = new Dictionary<string, string>()
+            // {
+            //     { "type", "Task" },
+            //     { "userId", userCreate.Id.ToString() }
+            // };
+            // await NotiService.PushNotification.SendMessage(userCreate.Id.ToString(),
+            //     $"Thông báo tạo task.",
+            //     $"Bạn có 1 task {task.Code} mới được tạo.", data);
+            //
+            var notification = new Data.Models.Notification()
+            {
+                Title = "Thông báo dịch vụ.",
+                Content = $"Bạn có 1 dịch vụ đối tác mới.",
+                UserId = owner.Id
+            };
+            await _notificationRepo.CreateNotification(notification);
+        }
 
         var result = this._mapper.Map<ServiceResponse>(query);
 
