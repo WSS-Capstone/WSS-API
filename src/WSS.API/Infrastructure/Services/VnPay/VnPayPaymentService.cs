@@ -195,7 +195,23 @@ public class VnPayPaymentService : IVnPayPaymentService
             {
                 if (od.Service.CreateByNavigation.RoleName == RoleName.PARTNER)
                 {
-                    
+                    // send notification
+                    Dictionary<string, string> data = new Dictionary<string, string>()
+                    {
+                        { "type", "Payment" },
+                        { "userId", od.Service.CreateBy.ToString() }
+                    };
+                    await NotiService.PushNotification.SendMessage(od.Service.CreateBy.ToString(),
+                        $"Thông báo thanh toán.",
+                        $"Bạn có 1 đơn hàng {order.Code} sử dụng dịch vụ {od.Service.Name} được thanh toán.", data);
+                    // insert notification
+                    var notification = new Notification()
+                    {
+                        Title = "Thông báo thanh toán.",
+                        Content = $"Bạn có 1 đơn hàng {order.Code} sử dụng dịch vụ {od.Service.Name} được thanh toán.",
+                        UserId = od.Service.CreateBy
+                    };
+                    await _notificationRepo.CreateNotification(notification);
                 }
             }
             
