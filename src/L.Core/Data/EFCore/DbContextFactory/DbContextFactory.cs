@@ -58,10 +58,10 @@ public class DbContextFactory : IDbContextFactory, IDisposable
             throw new ObjectDisposedException(nameof(DbContextFactory));
         }
 
-        if (_completed)
-        {
-            throw new InvalidOperationException("Transaction already completed");
-        }
+        // if (_completed)
+        // {
+        //     throw new InvalidOperationException("Transaction already completed");
+        // }
 
         int totalRecords = 0;
 

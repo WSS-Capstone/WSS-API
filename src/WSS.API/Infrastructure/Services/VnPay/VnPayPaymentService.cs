@@ -278,8 +278,8 @@ public class VnPayPaymentService : IVnPayPaymentService
                     
                     
                     
-                    await _notificationRepo.CreateNotification(notification, true);
-                    await _notificationRepo.CreateNotification(ownerNotification, true);
+                    await _notificationRepo.CreateNotification(notification);
+                    await _notificationRepo.CreateNotification(ownerNotification);
                     // send mail
                     var mail = new MailInputType()
                     {
@@ -336,8 +336,8 @@ public class VnPayPaymentService : IVnPayPaymentService
                         UserId = owner.Id,
                         IsRead = 0
                     };
-                    await _notificationRepo.CreateNotification(notification, true);
-                    await _notificationRepo.CreateNotification(ownerNotification, true);
+                    await _notificationRepo.CreateNotification(notification);
+                    await _notificationRepo.CreateNotification(ownerNotification);
                 }
 
                 await _orderRepo.UpdateOrder(order);
