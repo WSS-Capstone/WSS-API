@@ -89,6 +89,7 @@ public class GetOrderByIdQueryHandler : IRequestHandler<GetOrderByIdQuery, Order
         });
         result.ComboOrderStatus = result.ComboOrderDetails.Any(od => od.Status == OrderDetailStatus.DONE) ? OrderDetailStatus.DONE : OrderDetailStatus.INPROCESS;
         result.ComboOrderStatus = result.ComboOrderDetails.Any(od => od.Status == OrderDetailStatus.PENDING) ? OrderDetailStatus.PENDING : result.ComboOrderStatus;
+        result.ComboOrderStatus = result.ComboOrderDetails.Any(od => od.Status == OrderDetailStatus.CANCEL) ? OrderDetailStatus.CANCEL : result.ComboOrderStatus;
         
 
         return result;
