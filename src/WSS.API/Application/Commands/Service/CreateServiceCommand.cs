@@ -62,8 +62,7 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
         }
 
         var owner = await this._accountRepo.GetAccounts(a => a.RoleName == RoleName.OWNER).FirstOrDefaultAsync();
-
-
+        
         service.Id = Guid.NewGuid();
         service.Code = GenCode.NextId(code, "S");
         service.CreateDate = DateTime.Now;
@@ -103,23 +102,23 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
             s => s.CurrentPrices,
             s => s.ServiceImages
         });
-
+        
         if (user.RoleName == "Partner")
         {
             // send notification to partner
-            // Dictionary<string, string> data = new Dictionary<string, string>()
-            // {
-            //     { "type", "Task" },
-            //     { "userId", userCreate.Id.ToString() }
-            // };
-            // await NotiService.PushNotification.SendMessage(userCreate.Id.ToString(),
-            //     $"Thông báo tạo task.",
-            //     $"Bạn có 1 task {task.Code} mới được tạo.", data);
-            //
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                { "type", "Task" },
+                { "userId", owner.Id.ToString() }
+            };
+            await NotiService.PushNotification.SendMessage(owner.Id.ToString(),
+                $"Thông báo dịch vụ.",
+                $"Bạn có 1 dịch vụ {query.Code} của đối tác cần được duyệt.", data);
+            
             var notification = new Data.Models.Notification()
             {
                 Title = "Thông báo dịch vụ.",
-                Content = $"Bạn có 1 dịch vụ đối tác mới.",
+                Content = $"Bạn có 1 dịch vụ {query.Code} đối tác mới cần được duyệt.",
                 UserId = owner.Id
             };
             await _notificationRepo.CreateNotification(notification);

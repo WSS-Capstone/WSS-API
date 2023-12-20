@@ -107,13 +107,9 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
                 Subject = EmailUtils.MailSubjectConfirm,
                 Body = @"<html> <body> <p> 
                        Xin chào " + email + $@",
-
                 Chúng tôi vui mừng thông báo cho bạn biết rằng chúng tôi đã nhận được đơn đặt hàng của bạn.
-
                 Vui lòng Bạn tiến hành thanh toán đặt cọc trong vòng 24H. Điều này sẽ giúp chúng tôi đẩy nhanh tiến độ, và đem đến trải nghiệm dịch vụ tốt nhất.
-
                 Nếu bạn có bất kỳ câu hỏi nào, hãy liên hệ với chúng tôi tại đây hoặc gọi cho chúng tôi theo số 098.888.888
-
                 Vui lòng thanh toán tại đây https://loveweddingservice.shop/order-history/{order.Id} hoặc liên hệ với chúng tôi.
 
                 Trân trọng,
@@ -141,6 +137,36 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
             //     Body = @"<html> <body> <p>" + EmailUtils.MailContentCancel + "</p> </body> </html>"
             // };
             // await this._mailService.SendEmailAsync(mail);
+        }
+
+        if (request.StatusOrder == StatusOrder.DONE)
+        {
+            foreach (var od in order.OrderDetails)
+            {
+                od.Status = (int)OrderDetailStatus.CANCEL;
+                foreach (var task in od.Tasks)
+                {
+                    task.Status = (int)TaskStatus.CANCEL;
+                }
+            }
+            
+            var mail = new MailInputType
+            {
+                ToEmail = email,
+                Subject = EmailUtils.MailDone,
+                Body = @"<html> <body> <p> 
+                       Xin chào " + email + $@",
+                Chúng tôi vui mừng thông báo cho bạn biết rằng chúng tôi đã hoàn thành được đơn đặt hàng của bạn.
+                Vui lòng Bạn tiến hành thanh toán đơn hàng trong vòng 24H. Điều này sẽ giúp chúng tôi đẩy nhanh tiến độ, và đem đến trải nghiệm dịch vụ tốt nhất.
+                Nếu bạn có bất kỳ câu hỏi nào, hãy liên hệ với chúng tôi tại đây hoặc gọi cho chúng tôi theo số 098.888.888
+                Vui lòng thanh toán tại đây https://loveweddingservice.shop/order-history/{order.Id} hoặc liên hệ với chúng tôi.
+
+                Trân trọng,
+
+                Blissful Bell
+                        </p> </body> </html>"
+            };
+            await this._mailService.SendEmailAsync(mail);
         }
 
         order = _mapper.Map(request, order);

@@ -21,4 +21,5 @@ public class EmailUtils
     /// Content cancel order
     /// </summary>
     public static string MailContentCancel = "Order của bạn đã bị huỷ";
+    public static string MailDone = "Order của bạn đã hoàn thành";
 }

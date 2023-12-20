@@ -1,6 +1,8 @@
 using WSS.API.Data.Repositories.Account;
+using WSS.API.Data.Repositories.Notification;
 using WSS.API.Data.Repositories.Service;
 using WSS.API.Infrastructure.Services.Identity;
+using WSS.API.Infrastructure.Services.Noti;
 
 namespace WSS.API.Application.Commands.Service;
 
@@ -30,14 +32,16 @@ public class ApprovalServiceCommandHandler : IRequestHandler<ApprovalServiceComm
     private readonly IServiceRepo _serviceRepo;
     private readonly IMapper _mapper;
     private readonly IIdentitySvc _identitySvc;
+    private readonly INotificationRepo _notificationRepo;
 
     public ApprovalServiceCommandHandler(IAccountRepo accountRepo, IServiceRepo serviceRepo, IMapper mapper,
-        IIdentitySvc identitySvc)
+        IIdentitySvc identitySvc, INotificationRepo notificationRepo)
     {
         _accountRepo = accountRepo;
         _serviceRepo = serviceRepo;
         _mapper = mapper;
         _identitySvc = identitySvc;
+        _notificationRepo = notificationRepo;
     }
 
     public async Task<ServiceResponse> Handle(ApprovalServiceCommand request, CancellationToken cancellationToken)
@@ -71,7 +75,24 @@ public class ApprovalServiceCommandHandler : IRequestHandler<ApprovalServiceComm
         service.Reason = request.Reason;
         service.ApprovalDate = request.Status == ServiceStatus.Active ? DateTime.Now : null;
         var query = await _serviceRepo.UpdateService(service);
-
+        var content = request.Status == ServiceStatus.Active ? "đã được duyệt" : "đã bị từ chối";
+        var noti = new Data.Models.Notification()
+        {
+            Title = "Thông báo duyệt dịch vụ.",
+            Content = $"Dịch vụ {service.Name} {content}.",
+            UserId = service.CreateBy,
+            IsRead = 0
+        };
+        await _notificationRepo.CreateNotification(noti);
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            { "type", "Service" },
+            { "userId", service.CreateBy.ToString() }
+        };
+        await NotiService.PushNotification.SendMessage(service.CreateBy.ToString(),
+            $"Thông báo duyệt dịch vụ.",
+            $"Bạn có 1 dịch vụ {content}.", data); 
+        
         var result = this._mapper.Map<ServiceResponse>(query);
 
         return result;
