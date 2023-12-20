@@ -113,12 +113,12 @@ public class CreateServiceCommandHandler : IRequestHandler<CreateServiceCommand,
             };
             await NotiService.PushNotification.SendMessage(owner.Id.ToString(),
                 $"Thông báo dịch vụ.",
-                $"Bạn có 1 dịch vụ {query.Code} của đối tác cần được duyệt.", data);
+                $"Bạn có một dịch vụ {query.Code} của đối tác cần được duyệt.", data);
             
             var notification = new Data.Models.Notification()
             {
                 Title = "Thông báo dịch vụ.",
-                Content = $"Bạn có 1 dịch vụ {query.Code} đối tác mới cần được duyệt.",
+                Content = $"Bạn có một dịch vụ {query.Code} đối tác mới cần được duyệt.",
                 UserId = owner.Id
             };
             await _notificationRepo.CreateNotification(notification);

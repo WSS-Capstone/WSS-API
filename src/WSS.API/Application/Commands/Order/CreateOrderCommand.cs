@@ -202,18 +202,18 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                     };
                     await NotiService.PushNotification.SendMessage(userCreate.Id.ToString(),
                         $"Thông báo công việc.",
-                        $"Bạn có 1 công việc {task.Code} mới.", data);
+                        $"Bạn có một công việc mới {task.Code}.", data);
                     
                     var nP = new Data.Models.Notification()
                     {
                         Title = "Thông báo tạo đơn hàng.",
-                        Content = $"Bạn có 1 đơn hàng {order.Code} mới.",
+                        Content = $"Bạn có một đơn hàng mới {order.Code} .",
                         UserId =userCreate.Id,
                     };
                     var nTask = new Data.Models.Notification()
                     {
                         Title = "Thông báo công việc.",
-                        Content = $"Bạn có 1 công việc {task.Code} mới.",
+                        Content = $"Bạn có một công việc mới {task.Code} .",
                         UserId =userCreate.Id,
                     };
                     
@@ -261,14 +261,14 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         }; 
         await NotiService.PushNotification.SendMessage(user.Id.ToString(),
             $"Thông báo tạo đơn hàng.",
-            $"Bạn có 1 đơn hàng mới được tạo.", data1);
+            $"Bạn có một đơn hàng mới được tạo.", data1);
         
         var accountO = await this._accountRepo.GetAccounts(a => a.RoleName == RoleName.OWNER).FirstOrDefaultAsync(cancellationToken: cancellationToken);
         
         var notification = new Data.Models.Notification()
         {
             Title = "Thông báo tạo đơn hàng.",
-            Content = $"Bạn có 1 đơn hàng {order.Code} mới được tạo.",
+            Content = $"Bạn có một đơn hàng {order.Code} mới được tạo.",
             UserId = accountO.Id,
         };
         await _notificationRepo.CreateNotification(notification);

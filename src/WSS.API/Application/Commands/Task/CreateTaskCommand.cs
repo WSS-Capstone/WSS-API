@@ -49,14 +49,14 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskR
                 { "staffId", request.StaffId.ToString() }
             };
             await NotiService.PushNotification.SendMessage(request.StaffId.ToString(),
-                $"Thông báo tạo task.",
-                $"Bạn có 1 task được tạo.", data);
+                $"Thông báo công việc.",
+                $"Bạn có một công việc được tạo.", data);
 
             // insert notification
             var notification = new Data.Models.Notification()
             {
-                Title = "Thông báo tạo task.",
-                Content = $"Bạn có 1 task được tạo.",
+                Title = "Thông báo công việc.",
+                Content = $"Bạn có một công việc được tạo.",
                 UserId = request.StaffId
             };
             await _notificationRepo.CreateNotification(notification);
@@ -71,13 +71,13 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskR
                 { "partnerId", request.PartnerId.ToString() }
             };
             await NotiService.PushNotification.SendMessage(request.PartnerId.ToString(),
-                $"Thông báo tạo task.",
-                $"Bạn có 1 task được tạo.", data);
+                $"Thông báo công việc.",
+                $"Bạn có một công việc được tạo.", data);
             // insert notification
             var notification = new Data.Models.Notification()
             {
-                Title = "Thông báo tạo task.",
-                Content = $"Bạn có 1 task được tạo.",
+                Title = "Thông báo công việc.",
+                Content = $"Bạn có công việc được tạo.",
                 UserId = request.PartnerId
             };
             await _notificationRepo.CreateNotification(notification);

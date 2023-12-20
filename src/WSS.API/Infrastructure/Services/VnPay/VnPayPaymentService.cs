@@ -267,18 +267,18 @@ public class VnPayPaymentService : IVnPayPaymentService
                     };
                     await NotiService.PushNotification.SendMessage(order.CreateBy.ToString(),
                         $"Thông báo thanh toán.",
-                        $"Bạn có 1 đơn hàng {order.Code} được thanh toán.", data);
+                        $"Bạn có một đơn hàng {order.Code} được thanh toán.", data);
                     // insert notification
                     var notification = new Notification()
                     {
                         Title = "Thông báo thanh toán.",
-                        Content = $"Bạn có 1 đơn hàng {order.Code} được thanh toán.",
+                        Content = $"Bạn có một đơn hàng {order.Code} được thanh toán.",
                         UserId = order.CreateBy
                     };
                     var ownerNotification = new Notification()
                     {
                         Title = "Thông báo thanh toán.",
-                        Content = $"Bạn có 1 đơn hàng {order.Code} được thanh toán.",
+                        Content = $"Bạn có một đơn hàng {order.Code} được thanh toán.",
                         UserId = owner.Id
                     };
 
@@ -325,19 +325,19 @@ public class VnPayPaymentService : IVnPayPaymentService
                     };
                     await NotiService.PushNotification.SendMessage(order.CreateBy.ToString(),
                         $"Thông báo thanh toán.",
-                        $"Bạn có 1 đơn hàng {order.Code} được đặt cọc.", data);
+                        $"Bạn có một đơn hàng {order.Code} được đặt cọc.", data);
                     // insert notification
                     var notification = new Notification()
                     {
                         Title = "Thông báo thanh toán.",
-                        Content = $"Bạn có 1 đơn hàng {order.Code} được đặt cọc.",
+                        Content = $"Bạn có một đơn hàng {order.Code} được đặt cọc.",
                         UserId = order.CreateBy,
                         IsRead = 0
                     };
                     var ownerNotification = new Notification()
                     {
                         Title = "Thông báo thanh toán.",
-                        Content = $"Bạn có 1 đơn hàng {order.Code} được đặt cọc.",
+                        Content = $"Bạn có một đơn hàng {order.Code} được đặt cọc.",
                         UserId = owner.Id,
                         IsRead = 0
                     };
@@ -419,7 +419,7 @@ public class VnPayPaymentService : IVnPayPaymentService
                     var notification = new Notification()
                     {
                         Title = "Thông báo thanh toán.",
-                        Content = $"Bạn có 1 đơn hàng {order.Code} được thanh toán.",
+                        Content = $"Bạn có một đơn hàng {order.Code} được thanh toán.",
                         UserId = order.CreateBy
                     };
                     await _notificationRepo.CreateNotification(notification);
@@ -459,7 +459,7 @@ public class VnPayPaymentService : IVnPayPaymentService
                     var notification = new Notification()
                     {
                         Title = "Thông báo thanh toán.",
-                        Content = $"Bạn có 1 đơn hàng {order.Code} được đặt cọc.",
+                        Content = $"Bạn có một đơn hàng {order.Code} được đặt cọc.",
                         UserId = order.CreateBy
                     };
                     await _notificationRepo.CreateNotification(notification);
