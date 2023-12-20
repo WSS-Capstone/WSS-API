@@ -37,7 +37,8 @@ public class VnPayPaymentService : IVnPayPaymentService
 
     public VnPayPaymentService(VnPaySettings vnPaySettings, IHttpContextAccessor contextAccessor,
         IPaymentHistoryRepo paymentHistoryRepo, IOrderRepo orderRepo, IIdentitySvc identitySvc,
-        IPartnerPaymentHistoryRepo partnerPaymentHistoryRepo, IFileSvc fileSvc, INotificationRepo notificationRepo, IMailService mailService, IAccountRepo accountRepo)
+        IPartnerPaymentHistoryRepo partnerPaymentHistoryRepo, IFileSvc fileSvc, INotificationRepo notificationRepo,
+        IMailService mailService, IAccountRepo accountRepo)
     {
         _vnPaySettings = vnPaySettings;
         _contextAccessor = contextAccessor;
@@ -66,7 +67,9 @@ public class VnPayPaymentService : IVnPayPaymentService
         if (orderInDb == null)
             throw new Exception("Order not found");
 
-        payment.Amount = payment.OrderType == OrderType.Deposit ? orderInDb.TotalAmountRequest : orderInDb.TotalAmount - orderInDb.TotalAmountRequest;
+        payment.Amount = payment.OrderType == OrderType.Deposit
+            ? orderInDb.TotalAmountRequest
+            : orderInDb.TotalAmount - orderInDb.TotalAmountRequest;
         payment.CustomerId = userId;
 
         var urlCallBack = $"{_vnPaySettings.CallbackUrl}";
@@ -189,7 +192,7 @@ public class VnPayPaymentService : IVnPayPaymentService
             var user = await _accountRepo.GetAccountById(Guid.Parse(customerId));
             var owner = await _accountRepo.GetAccounts(a => a.RoleName == RoleName.OWNER).FirstOrDefaultAsync();
             if (order == null) throw new Exception("Order not found");
-            var pphCode = order.PartnerPaymentHistories == null || order.PartnerPaymentHistories.Count == 0 ? null : order.PartnerPaymentHistories.OrderByDescending(o => o.Code).FirstOrDefault().Code;
+            // var pphCode = order.PartnerPaymentHistories == null || order.PartnerPaymentHistories.Count == 0 ? null : order.PartnerPaymentHistories.OrderByDescending(o => o.Code).FirstOrDefault().Code;
 
             foreach (var od in order.OrderDetails)
             {
@@ -214,8 +217,9 @@ public class VnPayPaymentService : IVnPayPaymentService
                     // await _notificationRepo.CreateNotification(notification, true);
                 }
             }
-            
-            if(order.PartnerPaymentHistories == null) order.PartnerPaymentHistories = new List<PartnerPaymentHistory>();
+
+            if (order.PartnerPaymentHistories == null)
+                order.PartnerPaymentHistories = new List<PartnerPaymentHistory>();
             if (vnpResponseCode == "00" && vnpTransactionStatus == "00")
             {
                 if (orderType == OrderType.Payment.ToString())
@@ -237,6 +241,8 @@ public class VnPayPaymentService : IVnPayPaymentService
                             }
                             else
                             {
+                                var lCode = await this._partnerPaymentHistoryRepo.GetPartnerPaymentHistorys()
+                                    .OrderByDescending(p => p.Code).Select(p => p.Code).FirstOrDefaultAsync();
                                 var partnerPH = new PartnerPaymentHistory()
                                 {
                                     Id = Guid.NewGuid(),
@@ -245,14 +251,14 @@ public class VnPayPaymentService : IVnPayPaymentService
                                     CreateDate = DateTime.Now,
                                     Status = (int)PartnerPaymentHistoryStatus.INACTIVE,
                                     Total = price - (price / 100 * commission),
-                                    Code = GenCode.NextId(pphCode),
+                                    Code = GenCode.NextId(lCode),
                                 };
-                                pphCode = partnerPH.Code;
+                                // pphCode = partnerPH.Code;
                                 order.PartnerPaymentHistories.Add(partnerPH);
                             }
                         }
-                        
                     }
+
                     // send notification
                     Dictionary<string, string> data = new Dictionary<string, string>()
                     {
@@ -275,9 +281,8 @@ public class VnPayPaymentService : IVnPayPaymentService
                         Content = $"Bạn có 1 đơn hàng {order.Code} được thanh toán.",
                         UserId = owner.Id
                     };
-                    
-                    
-                    
+
+
                     await _notificationRepo.CreateNotification(notification);
                     await _notificationRepo.CreateNotification(ownerNotification);
                     // send mail
@@ -354,12 +359,13 @@ public class VnPayPaymentService : IVnPayPaymentService
                     PaymentType = orderType,
                     Code = GenCode.NextId(code)
                 };
-                
+
                 await _paymentHistoryRepo.CreatePaymentHistory(paymentHistory);
                 result.Add(true, Guid.Parse(orderId));
                 return result;
             }
         }
+
         return null;
     }
 
@@ -481,6 +487,7 @@ public class VnPayPaymentService : IVnPayPaymentService
                 return result;
             }
         }
+
         return null;
     }
 }
