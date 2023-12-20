@@ -329,7 +329,7 @@ public class GetDashboardQueryHandler : IRequestHandler<GetDashboardQuery, Dashb
         result.ServiceFeedback = serviceFeedback;
         result.Partner = partner;
         result.PartnerPayment = partnerPayment;
-        
+        result.TotalOrder = orders.Count();
         result.TotalPartner = queryAccounts.Count(x => x.RoleName == RoleName.PARTNER);
         result.TotalStaff = queryAccounts.Count(x => x.RoleName == RoleName.STAFF);
         result.TaskInProgress = queryTasks.Count(x => x.Status == (int)TaskStatus.IN_PROGRESS);

@@ -21,4 +21,6 @@ public class DashboardResponse
     public int? TaskDone { get; set; }
     public int? TotalOrderDone { get; set; }
     
+    public int? TotalOrder { get; set; }
+    
 }
