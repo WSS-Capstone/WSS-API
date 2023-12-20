@@ -80,10 +80,11 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
 
         if (request.StatusOrder == StatusOrder.CONFIRM)
         {
+            order.StatusOrder = (int)StatusOrder.CONFIRM;
             order.StatusPayment = (int)StatusPayment.CONFIRM;
             foreach (var orderDetail in order.OrderDetails)
             {
-                orderDetail.Status = (int)OrderDetailStatus.INPROCESS;
+                orderDetail.Status = (int)OrderDetailStatus.PENDING;
                 // var task = new Data.Models.Task();
                 // task.Id = Guid.NewGuid();
                 // task.OrderDetailId = orderDetail.Id;
@@ -143,10 +144,10 @@ public class ApprovalOrderByOwnerCommandHandler : IRequestHandler<ApprovalOrderB
         {
             foreach (var od in order.OrderDetails)
             {
-                od.Status = (int)OrderDetailStatus.CANCEL;
+                od.Status = (int)OrderDetailStatus.DONE;
                 foreach (var task in od.Tasks)
                 {
-                    task.Status = (int)TaskStatus.CANCEL;
+                    task.Status = (int)TaskStatus.DONE;
                 }
             }
             

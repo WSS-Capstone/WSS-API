@@ -213,7 +213,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
                     var nTask = new Data.Models.Notification()
                     {
                         Title = "Thông báo công việc.",
-                        Content = $"Bạn có 1 công việc {order.Code} mới.",
+                        Content = $"Bạn có 1 công việc {task.Code} mới.",
                         UserId =userCreate.Id,
                     };
                     
