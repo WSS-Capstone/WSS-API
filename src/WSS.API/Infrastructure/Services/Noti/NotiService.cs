@@ -37,7 +37,9 @@ public class NotiService
                     // Data = dataSend,
                     Topic = topic
                 };
-
+                
+                string response = await FirebaseMessaging.DefaultInstance.SendAsync(message);
+                Console.WriteLine("Successfully sent message: " + response);
             }
             catch (Exception e)
             {
